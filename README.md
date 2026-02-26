@@ -158,8 +158,8 @@ Rytha_Gelathi/
 
 ## 👩‍💻 Team
 
-| Name | Role | Skills |
-|---|---|---|
+| Name
+|---
 | **Yashaswini V** 
 | **Darshini KH** 
 ---
