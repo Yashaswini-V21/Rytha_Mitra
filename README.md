@@ -158,8 +158,7 @@ Rytha_Gelathi/
 
 ## 👩‍💻 Team
 
-| Name
-|---
+|**Team Name = "the scarlet compiled"**🌟 
 | **Yashaswini V** 
 | **Darshini KH** 
 ---
