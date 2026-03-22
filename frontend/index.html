@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RythaGelathi | Women-Centric Climate Advisory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="landing-page">
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-overlay"></div>
+        <div class="splash-reveal"></div>
+        <div class="splash-content">
+            <h1>RythaGelathi</h1>
+            <p class="splash-line">AI Climate Advisor for Women Farmers of Karnataka</p>
+            <button class="splash-enter" id="enterExperience">Enter Experience</button>
+        </div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <div class="container nav-inner">
+            <a href="#home" class="brand"><span class="dot"></span>RythaGelathi</a>
+            <div class="nav-links">
+                <a href="#problem">Problem</a>
+                <a href="#features">Features</a>
+                <a href="#agents">Agents</a>
+                <a href="#tech">Tech Stack</a>
+                <a href="core.html">Core App</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-backdrop"></div>
+            <div class="container hero-grid">
+                <div class="hero-copy">
+                    <p class="women-tag">Built for women farmers first</p>
+                    <h1 class="headline reveal-headline">From uncertain weather to confident crop decisions</h1>
+                    <p class="typing-wrap">
+                        <span class="typing-prefix">RythaGelathi helps you farm with </span>
+                        <span class="typing-text" id="typingText"></span>
+                    </p>
+                    <p class="hero-subtext">
+                        Personalized climate-smart advisory using district-level weather, soil health, crop suitability,
+                        and market context instead of generic bulletins.
+                    </p>
+                    <div class="hero-chips">
+                        <span class="chip">CrewAI Powered</span>
+                        <span class="chip">Groq LLaMA</span>
+                        <span class="chip">Market + Climate Aware</span>
+                    </div>
+                    <div class="hero-actions">
+                        <a class="btn btn-gold" href="core.html">Open Core Advisory</a>
+                        <a class="btn btn-glass" href="#features">Explore Features</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="problem">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <h2>The Problem We Solve</h2>
+                    <p>Women farmers often receive one-size-fits-all advice despite very different soil, rainfall, and crop risks.</p>
+                </div>
+                <div class="stats-grid">
+                    <article class="stat-box reveal"><h3>287</h3><p>farmer suicides in Karnataka in 2024 tied to crop stress.</p></article>
+                    <article class="stat-box reveal"><h3>62 Lakh</h3><p>women are central to farm labor in Karnataka.</p></article>
+                    <article class="stat-box reveal"><h3>73%</h3><p>get no personalized advisory for field decisions.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="features">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <h2>What RythaGelathi Delivers</h2>
+                    <p>Core decision tools described in the project README, shaped for real field use.</p>
+                </div>
+                <div class="feature-grid">
+                    <article class="feature-card reveal">
+                        <h3>Crop Recommender</h3>
+                        <p>Top crop choices based on NPK, weather profile, rainfall patterns, and district context.</p>
+                    </article>
+                    <article class="feature-card reveal">
+                        <h3>Irrigation Guidance</h3>
+                        <p>Daily timing and practical watering guidance using forecast and field conditions.</p>
+                    </article>
+                    <article class="feature-card reveal">
+                        <h3>Pest Risk Signals</h3>
+                        <p>Temperature and humidity based risk awareness to prepare early interventions.</p>
+                    </article>
+                    <article class="feature-card reveal">
+                        <h3>Fertilizer Optimization</h3>
+                        <p>Soil-aware NPK direction to avoid overuse and reduce unnecessary input cost.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="agents">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <h2>Agentic Intelligence Pipeline</h2>
+                    <p>RythaGelathi uses coordinated agents to mirror practical advisory workflow.</p>
+                </div>
+                <div class="info-grid">
+                    <article class="card reveal"><h3>CropAdvisor</h3><p>Random Forest + SHAP explanation for transparent crop suitability suggestions.</p></article>
+                    <article class="card reveal"><h3>MarketAnalyst</h3><p>Price and profitability support through mandi-aligned data interpretation.</p></article>
+                    <article class="card reveal"><h3>WeatherIntel</h3><p>Weather compatibility checks and risk signaling for near-term planning.</p></article>
+                    <article class="card reveal"><h3>SoilExpert</h3><p>Nutrient and soil health awareness to reduce mismatch between crop and soil profile.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="tech">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <h2>How The Full Stack Works</h2>
+                    <p>Clear architecture from user input to actionable output.</p>
+                </div>
+                <div class="journey-steps">
+                    <article class="step reveal"><span>01</span><p>Frontend captures district and farm metrics.</p></article>
+                    <article class="step reveal"><span>02</span><p>Flask API receives payload at /api/recommend.</p></article>
+                    <article class="step reveal"><span>03</span><p>CrewAI coordinates model and tool reasoning.</p></article>
+                    <article class="step reveal"><span>04</span><p>Advisory output returns crop, market, and climate tips.</p></article>
+                </div>
+                <div class="cta-block reveal">
+                    <h3>Ready to Use the Main Core Application?</h3>
+                    <p>Open the dedicated core page for full advisory tabs and interactive recommendation workflow.</p>
+                    <a class="btn btn-gold" href="core.html">Go To Core Advisory Page</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" id="footer">
+        <div class="container footer-main">
+            <div class="footer-brand-col">
+                <h3>RythaGelathi</h3>
+                <p>An AI-powered climate advisor for women farmers in Karnataka. Bridging the gap between data and the soil.</p>
+            </div>
+            <div class="footer-nav-col">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#agents">Agents</a></li>
+                    <li><a href="core.html">Core Advisory</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li>Bengaluru, Karnataka</li>
+                    <li>hello@rythagelathi.in</li>
+                    <li>+91 80 1234 5678</li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>© 2026 RythaGelathi. All rights reserved.</p>
+            <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+        </div>
+        <div class="footer-grass-lite" aria-hidden="true"></div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

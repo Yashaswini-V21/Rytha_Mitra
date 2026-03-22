@@ -6,6 +6,8 @@
 
 ### AI Climate Advisor for Women Farmers of Karnataka
 
+**Now powered with Groq LLaMA + CrewAI orchestration for climate-aware farm decisions.**
+
 [![WitchHunt 2026](https://img.shields.io/badge/WitchHunt-2026-orange?style=flat-square)](.)
 [![Climate Action](https://img.shields.io/badge/Theme-Climate%20Action%20%232-2d6a4f?style=flat-square)](.)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)](.)
@@ -51,6 +53,33 @@ She receives — **in Kannada** — four things:
 | ⚗️ **Fertilizer Optimizer** | Soil + crop + growth stage → exact NPK in kg/acre and money saved vs typical overuse |
 
 **Plus:** KVK centre map · KSSC subsidy scheme links · WhatsApp share button
+
+---
+
+## 🧠 Agentic Intelligence (CrewAI)
+
+RythaGelathi runs a **4-agent CrewAI pipeline** that mirrors real advisory workflow:
+
+| Agent | Role | Output |
+|------|------|--------|
+| **CropAdvisor** | Random Forest (100 trees, max depth 10) + SHAP | Top 3 crops + explainability reasons |
+| **MarketAnalyst** | Agmarknet mandi price intelligence | Price + profit projection |
+| **WeatherIntel** | OpenWeatherMap 7-day forecast | GREEN / AMBER / RED compatibility |
+| **SoilExpert** | Karnataka soil health checks | Nutrient deficiency alerts |
+
+Final recommendation is translated to **Kannada** using Bhashini API.
+
+---
+
+## 🎯 Proposal Snapshot (Hackathon)
+
+This project addresses the Climate Action challenge by solving one clear gap:
+
+- Women farmers in Karnataka receive generic advisories not tailored to land size, crop, water source, or district weather risk.
+- A bad crop choice in drought-prone districts directly leads to debt stress and income loss.
+- RythaGelathi provides district-level personalized, explainable, and local-language recommendations designed for real field decisions.
+
+Target geography: Raichur, Kalaburagi, Vijayapura, Bidar, Koppal, Davanagere, Chitradurga, Tumakuru.
 
 ---
 
@@ -225,13 +254,43 @@ cd Rytha_Gelathi
 # Install dependencies
 pip install -r requirements.txt
 
-# Add your API key
+# Configure environment
 cp .env.example .env
-# Add OPENWEATHER_API_KEY=your_key_here in .env
+# Fill keys in .env: GROQ, OpenWeather, Bhashini, Agmarknet
 
-# Run the app
-streamlit run app.py
+# Run CrewAI demo pipeline
+python run_demo.py
+
+# Start web app (Flask + static frontend)
+python api/server.py
 ```
+
+Open:
+
+- Landing page: `http://127.0.0.1:8000`
+- Core advisory page: `http://127.0.0.1:8000/core.html`
+
+Current frontend includes:
+
+- Modern landing page with climate-story sections
+- Dedicated core advisory page with tabbed workflow
+- Flask API integration for `/api/recommend`
+- Responsive layout and animations for demo/judging flow
+
+### Judge Quick Test
+
+```bash
+python run_demo.py
+```
+
+This prints a structured JSON with:
+
+- `top_crop`
+- `profit_estimate`
+- `weather_flag`
+- `soil_alerts`
+- `shap_reasons`
+- `kannada_summary`
 
 ---
 
@@ -240,27 +299,28 @@ streamlit run app.py
 ```
 Rytha_Gelathi/
 │
-├── app.py                        # Main Streamlit app — entry point
+├── crew/
+│   └── krishi_crew.py            # 4-agent CrewAI pipeline
 │
-├── model/
-│   ├── train_model.py            # Random Forest training script
-│   ├── crop_model.pkl            # Saved trained model
-│   └── shap_explainer.pkl        # SHAP explainer object
+├── tools/
+│   ├── market_price_tool.py      # Agmarknet mandi price tool with fallback cache
+│   └── Karnataka_mandi_prices.json
 │
-├── modules/
-│   ├── weather.py                # OpenWeatherMap API integration
-│   ├── irrigation.py             # Irrigation scheduler logic
-│   ├── pest.py                   # Pest risk calculator
-│   ├── fertilizer.py             # Fertilizer optimizer (NPK)
-│   └── translate.py              # Bhashini Kannada translation
-│
-├── data/
-│   └── crop_dataset.csv          # Kaggle crop recommendation dataset
-│
-├── maps/
-│   └── kvk_centres.py            # KVK centre Folium map generator
-│
-├── .env.example                  # API key template
+├── api/
+│   └── server.py                 # Flask server, routes, static serving, /api/recommend
+├── crew/
+│   └── krishi_crew.py            # CrewAI orchestration and recommendation logic
+├── frontend/
+│   ├── index.html                # Landing page
+│   ├── core.html                 # Main advisory UI page
+│   ├── styles.css                # Shared styles
+│   └── app.js                    # Shared frontend behavior + API integration
+├── public/
+│   └── ...                       # Images and static media
+├── tools/
+│   ├── market_price_tool.py      # Mandi price tool
+│   └── Karnataka_mandi_prices.json
+├── run_demo.py                   # One-command end-to-end demo
 ├── requirements.txt              # Python dependencies
 └── README.md
 ```
