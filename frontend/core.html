@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RythaGelathi Core Advisory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="core-page">
+    <nav class="navbar" id="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="brand"><span class="dot"></span>RythaGelathi</a>
+            <div class="nav-links">
+                <a href="index.html">Landing</a>
+                <a href="#core">Core</a>
+                <a href="#advisory">Advisory</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="core-hero" id="core">
+            <div class="container">
+                <div class="section-heading reveal is-visible">
+                    <h1>Main Core Advisory Application</h1>
+                    <p>This page contains the primary project workflow: overview, advisory form, full-stack flow, and action plan.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-section" id="advisory">
+            <div class="container">
+                <div class="tabs-shell">
+                    <div class="tab-list" role="tablist" aria-label="Core Tabs">
+                        <button class="tab active" role="tab" data-tab="overview">Overview</button>
+                        <button class="tab" role="tab" data-tab="advisory">Crop Advisory</button>
+                        <button class="tab" role="tab" data-tab="fullstack">Full Stack Flow</button>
+                        <button class="tab" role="tab" data-tab="action">Action Plan</button>
+                    </div>
+
+                    <div class="tab-panel active" id="tab-overview">
+                        <div class="overview-cards">
+                            <div class="mini-card"><h3>Personalized Advisory</h3><p>District and soil-aware recommendations for better field-level decisions.</p></div>
+                            <div class="mini-card"><h3>Explainability</h3><p>Model-backed guidance with practical reasoning for trust and clarity.</p></div>
+                            <div class="mini-card"><h3>Women First</h3><p>Designed for women farmers with clear and usable decision support.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-panel" id="tab-advisory">
+                        <form id="advisorForm" class="advisor-form">
+                            <div class="form-grid">
+                                <label>District
+                                    <select id="district" required>
+                                        <option value="">Select district</option>
+                                        <option value="Raichur">Raichur</option>
+                                        <option value="Belgaum">Belgaum</option>
+                                        <option value="Bagalkot">Bagalkot</option>
+                                        <option value="Kalaburagi">Kalaburagi</option>
+                                        <option value="Dharwad">Dharwad</option>
+                                        <option value="Hassan">Hassan</option>
+                                        <option value="Shimoga">Shimoga</option>
+                                        <option value="Tumkur">Tumkur</option>
+                                        <option value="Bangalore">Bangalore</option>
+                                    </select>
+                                </label>
+                                <label>Land Size (acres)
+                                    <input id="land" type="number" min="0.5" step="0.5" placeholder="2" required>
+                                </label>
+                                <label>Temperature (deg C)
+                                    <input id="temperature" type="number" step="0.1" placeholder="31.5" required>
+                                </label>
+                                <label>Humidity (%)
+                                    <input id="humidity" type="number" placeholder="62" required>
+                                </label>
+                                <label>Rainfall (mm)
+                                    <input id="rainfall" type="number" placeholder="92" required>
+                                </label>
+                                <label>Soil pH
+                                    <input id="ph" type="number" step="0.1" placeholder="6.7" required>
+                                </label>
+                                <label>Nitrogen (N)
+                                    <input id="N" type="number" placeholder="82" required>
+                                </label>
+                                <label>Phosphorus (P)
+                                    <input id="P" type="number" placeholder="42" required>
+                                </label>
+                                <label>Potassium (K)
+                                    <input id="K" type="number" placeholder="38" required>
+                                </label>
+                                <label>Input Budget (INR)
+                                    <input id="inputCosts" type="number" step="1000" placeholder="18000" required>
+                                </label>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-gold" id="submitBtn" type="submit">Get Advisory</button>
+                            </div>
+                        </form>
+                        <div id="resultsContainer" class="results-container" style="display:none;">
+                            <h3>Advisory Results</h3>
+                            <div id="resultsContent"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-panel" id="tab-fullstack">
+                        <div class="flow-grid">
+                            <div class="flow-card"><h4>Frontend</h4><p>Input capture and UX for field data collection.</p></div>
+                            <div class="flow-card"><h4>Flask API</h4><p>Serves pages and handles recommendation requests.</p></div>
+                            <div class="flow-card"><h4>CrewAI Layer</h4><p>Multi-agent analysis combining weather and market context.</p></div>
+                            <div class="flow-card"><h4>Model Logic</h4><p>Crop suitability with explainable factors and confidence.</p></div>
+                            <div class="flow-card"><h4>Final Output</h4><p>Actionable advisory for crop, climate, and next steps.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-panel" id="tab-action">
+                        <div class="action-list">
+                            <p>1. Enter current farm and district condition.</p>
+                            <p>2. Run advisory and compare recommended crops.</p>
+                            <p>3. Verify cost and risk before final sowing decision.</p>
+                            <p>4. Re-run weekly as weather conditions update.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
