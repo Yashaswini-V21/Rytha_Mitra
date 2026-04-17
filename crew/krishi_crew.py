@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -28,6 +29,13 @@ try:
     from sklearn.ensemble import RandomForestClassifier
 except ImportError:  # pragma: no cover
     RandomForestClassifier = None  # type: ignore[assignment]
+
+try:
+    from sklearn.metrics import accuracy_score
+    from sklearn.model_selection import train_test_split
+except ImportError:  # pragma: no cover
+    accuracy_score = None  # type: ignore[assignment]
+    train_test_split = None  # type: ignore[assignment]
 
 try:
     from langchain_groq import ChatGroq
@@ -68,6 +76,384 @@ DEFAULT_YIELD_PER_ACRE = {
     "toor dal": 7.0,
     "cotton": 8.0,
 }
+
+CROP_ROTATION_MAP = {
+    "rice": {"rotation": "groundnut", "reason_en": "Rice depletes nitrogen; groundnut fixes it", "reason_kn": "ಅರಿಶಿನ ನಂತರ ಮುಂಗಾರಿ ಉತ್ತಮ - ನೈಟ್ರೋಜನ್ ಸುಧಾರಕ"},
+    "ragi": {"rotation": "groundnut", "reason_en": "Ragi depletes nitrogen; groundnut restores soil", "reason_kn": "ರಾಗಿ ನಂತರ ಮುಂಗಾರಿ - ಮಣ್ಣು ಸುಧಾರ"},
+    "maize": {"rotation": "soybean", "reason_en": "Maize depletes nitrogen; soybean adds nitrogen", "reason_kn": "ಮೆಕ್ಕೆಜೋಳ ನಂತರ ಸೋಯಾ - ನೈಟ್ರೋಜನ್ ಸೇರಿಸುತ್ತದೆ"},
+    "jowar": {"rotation": "bengalgram", "reason_en": "Sorghum is nitrogen-depleting; pulse fixes nitrogen", "reason_kn": "ಜೋವಾರಿ ನಂತರ ಬೇಳೆ - ನೈಟ್ರೋಜನ್ ಸ್ಥಿರತೆ"},
+    "wheat": {"rotation": "mustard", "reason_en": "Wheat depletes nitrogen; mustard is nitrogen-fixing", "reason_kn": "ಗೋದಿ ನಂತರ ಸಾಸೆ - ಭೂಮಿ ಸಮೃದ್ಧಿ"},
+    "groundnut": {"rotation": "ragi", "reason_en": "After nitrogen-fixing crop, grow nitrogen-demanding cereal", "reason_kn": "ಮುಂಗಾರಿ ನಂತರ ರಾಗಿ - ಸುಸಂಪನ್ನ ಮಣ್ಣಿನಿಂದ ಲಾಭ"},
+    "soybean": {"rotation": "rice", "reason_en": "After soybean, nitrogen-rich soil supports rice well", "reason_kn": "ಸೋಯಾ ನಂತರ ಅರಿಶಿ - ಉತ್ತಮ ಇಳುವರಿ"},
+    "bengalgram": {"rotation": "jowar", "reason_en": "Pulse followed by sorghum is a stable rotation", "reason_kn": "ಬೇಳೆ ನಂತರ ಜೋವಾರಿ - ರೈತ ಸುಖ"},
+}
+
+CROP_PROFITABILITY_FACTORS = {
+    "rice": {"cultivation_cost": 25000, "yield_variance": 0.15},
+    "ragi": {"cultivation_cost": 18000, "yield_variance": 0.12},
+    "maize": {"cultivation_cost": 20000, "yield_variance": 0.18},
+    "jowar": {"cultivation_cost": 16000, "yield_variance": 0.10},
+    "groundnut": {"cultivation_cost": 22000, "yield_variance": 0.20},
+    "soybean": {"cultivation_cost": 19000, "yield_variance": 0.16},
+    "bengalgram": {"cultivation_cost": 17000, "yield_variance": 0.14},
+    "wheat": {"cultivation_cost": 21000, "yield_variance": 0.11},
+}
+
+DROUGHT_TOLERANT_CROPS = {
+    "ragi",
+    "jowar",
+    "toor dal",
+    "groundnut",
+    "bengalgram",
+    "millet",
+}
+
+# Approximate 15-day historical rainfall normals (mm) used for drought risk context.
+DISTRICT_RAINFALL_NORMAL_15D = {
+    "raichur": 38.0,
+    "kalaburagi": 42.0,
+    "vijayapura": 35.0,
+    "bidar": 48.0,
+    "koppal": 40.0,
+    "davanagere": 58.0,
+    "chitradurga": 52.0,
+    "tumakuru": 62.0,
+    "dharwad": 72.0,
+    "hassan": 82.0,
+    "shimoga": 95.0,
+    "mysore": 68.0,
+    "bangalore": 56.0,
+    "belgaum": 84.0,
+}
+
+
+def _project_rainfall_15d(daily_rows: List[Dict[str, Any]]) -> float:
+    """Project 15-day rainfall from available daily forecast rows."""
+    if not daily_rows:
+        return 0.0
+
+    observed = [float(row.get("rain", 0.0) or 0.0) for row in daily_rows]
+    observed_total = float(sum(observed))
+
+    if len(observed) >= 15:
+        return float(sum(observed[:15]))
+
+    remaining_days = 15 - len(observed)
+    tail = observed[-3:] if len(observed) >= 3 else observed
+    projected_daily = float(sum(tail) / max(len(tail), 1))
+    return observed_total + (projected_daily * remaining_days)
+
+
+def _classify_drought_risk(
+    district: str,
+    avg_temp: float,
+    rain_15d_projected: float,
+    dry_day_ratio: float,
+) -> Dict[str, Any]:
+    """Enhancement 4: classify drought risk using 15-day projection + district historical normal."""
+    district_norm = _normalize_text(district)
+    historical_15d = DISTRICT_RAINFALL_NORMAL_15D.get(district_norm, 60.0)
+    deficit_ratio = 0.0
+    if historical_15d > 0:
+        deficit_ratio = max(0.0, (historical_15d - rain_15d_projected) / historical_15d)
+
+    temp_penalty = max(0.0, (avg_temp - 33.0) / 7.0)
+    dryness_penalty = max(0.0, dry_day_ratio)
+    drought_score = (deficit_ratio * 0.65) + (temp_penalty * 0.2) + (dryness_penalty * 0.15)
+
+    if drought_score >= 0.8:
+        level = "EMERGENCY"
+    elif drought_score >= 0.6:
+        level = "WARNING"
+    elif drought_score >= 0.35:
+        level = "WATCH"
+    else:
+        level = "NORMAL"
+
+    return {
+        "level": level,
+        "score": round(drought_score, 3),
+        "projected_rainfall_15d": round(rain_15d_projected, 2),
+        "historical_rainfall_15d": round(historical_15d, 2),
+        "deficit_pct": round(deficit_ratio * 100.0, 1),
+        "dry_day_ratio": round(dry_day_ratio, 3),
+    }
+
+
+def _pick_drought_tolerant_crop(top_crops: List[str], market_rows: List[Dict[str, Any]]) -> Optional[str]:
+    """Pick the best drought-tolerant crop prioritizing profitability ranking when possible."""
+    for row in market_rows:
+        crop_name = str(row.get("crop", ""))
+        if _normalize_text(crop_name) in DROUGHT_TOLERANT_CROPS:
+            return crop_name
+
+    for crop in top_crops:
+        if _normalize_text(str(crop)) in DROUGHT_TOLERANT_CROPS:
+            return str(crop)
+
+    return None
+
+
+def _build_profitability_comparison(market_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Enhancement 6: build side-by-side profitability for top 3 crops."""
+    comparison: List[Dict[str, Any]] = []
+    for row in market_rows[:3]:
+        crop_name = str(row.get("crop", ""))
+        crop_key = _normalize_text(crop_name)
+        crop_factor = CROP_PROFITABILITY_FACTORS.get(crop_key, {"cultivation_cost": 19000})
+
+        price = _safe_float(row.get("price_per_quintal"), 0.0)
+        yield_per_acre = _safe_float(row.get("yield_per_acre"), 0.0)
+        cultivation_cost = _safe_float(crop_factor.get("cultivation_cost"), 19000.0)
+        net_profit_per_acre = (yield_per_acre * price) - cultivation_cost
+
+        comparison.append(
+            {
+                "crop": crop_name,
+                "expected_yield_per_acre": round(yield_per_acre, 2),
+                "mandi_price_per_quintal": round(price, 2),
+                "cultivation_cost_per_acre": round(cultivation_cost, 2),
+                "net_profit_per_acre": round(net_profit_per_acre, 2),
+            }
+        )
+
+    return comparison
+
+
+def _build_profitability_voice_text(rows: List[Dict[str, Any]]) -> str:
+    if not rows:
+        return ""
+    parts = []
+    for row in rows[:3]:
+        crop = str(row.get("crop", "Crop"))
+        net = _safe_float(row.get("net_profit_per_acre"), 0.0)
+        parts.append(f"{crop} gives Rs {int(net)} per acre")
+    joined = "; ".join(parts)
+    return f"Profitability comparison. {joined}."
+
+
+def _match_government_schemes(inputs: Dict[str, Any], top_crop: Optional[str]) -> List[Dict[str, Any]]:
+    """Enhancement 7: simple personalized scheme matcher for Karnataka farmers."""
+    district = str(inputs.get("district", "Karnataka"))
+    land_acres = _safe_float(inputs.get("land_acres"), 0.0)
+    gender = _normalize_text(str(inputs.get("gender", "")))
+
+    matches: List[Dict[str, Any]] = []
+
+    matches.append(
+        {
+            "name": "PM-KISAN",
+            "eligibility": "All eligible landholding farmer families",
+            "why_matched": f"Land record present for {district}",
+            "documents": ["Aadhaar", "Bank passbook", "Land RTC"],
+            "nearest_center": f"Raitha Samparka Kendra, {district}",
+        }
+    )
+
+    if land_acres > 0:
+        matches.append(
+            {
+                "name": "KCC Loan (Kisan Credit Card)",
+                "eligibility": "Cultivating farmers with land details",
+                "why_matched": f"Operational land size: {round(land_acres, 2)} acres",
+                "documents": ["Aadhaar", "Land record", "Bank account", "Passport photo"],
+                "nearest_center": f"Primary Agriculture Credit Society / Bank, {district}",
+            }
+        )
+
+    if top_crop:
+        matches.append(
+            {
+                "name": "PMFBY Crop Insurance",
+                "eligibility": "Farmers growing notified crops",
+                "why_matched": f"Recommended crop: {top_crop}",
+                "documents": ["Sowing proof", "Land details", "Bank account", "Aadhaar"],
+                "nearest_center": f"Taluk Agriculture Office, {district}",
+            }
+        )
+
+    if gender in {"female", "woman", "women"}:
+        matches.append(
+            {
+                "name": "Raitha Siri Support (Karnataka)",
+                "eligibility": "Women farmers and SHG-linked applicants",
+                "why_matched": "Applicant marked as woman farmer",
+                "documents": ["Aadhaar", "Land/lease proof", "SHG card (if available)", "Bank account"],
+                "nearest_center": f"Women & Child / Agriculture help desk, {district}",
+            }
+        )
+
+    return matches[:4]
+
+
+def _get_rotation_recommendation(last_crop: str) -> Optional[Dict[str, Any]]:
+    """Get crop rotation recommendation based on previous season's crop."""
+    last_crop_norm = _normalize_text(last_crop)
+    for crop, info in CROP_ROTATION_MAP.items():
+        if _normalize_text(crop) == last_crop_norm:
+            return {
+                "last_crop": crop,
+                "rotation_crop": info["rotation"],
+                "reason_en": info["reason_en"],
+                "reason_kn": info["reason_kn"],
+            }
+    return None
+
+
+def _generate_kalasa_mandi_voice_text(crop: str, modal_price: float) -> str:
+    """Generate Kannada voice text for mandi price."""
+    price_str = f"₹{int(modal_price)}"
+    return f"{crop} ದ ಬೆಲೆ {price_str} ರೂಪಾಯಿ ಪ್ರತಿ ಕ್ವಿಂಟ್. {crop} ತರುವ ಸಿದ್ಧತೆ ಮಾಡಿ."
+
+
+def _synthesize_mandi_price_audio_bhashini(crop: str, district: str, modal_price: float) -> Dict[str, Any]:
+    """
+    Enhancement 2: Synthesize Kannada voice for current mandi price.
+    Returns audio payload ready for frontend playback.
+    """
+    try:
+        kannada_text = _generate_kalasa_mandi_voice_text(crop, modal_price)
+        return _synthesize_kannada_audio_bhashini(kannada_text)
+    except Exception:
+        return {"available": False, "error": "Mandi price voice synthesis failed", "audio_base64": "", "audio_mime": ""}
+
+
+def _generate_soil_health_card_pdf(
+    n_value: float, p_value: float, k_value: float, ph_value: float, top_crop: str
+) -> Dict[str, Any]:
+    """
+    Enhancement 3: Generate Kannada-labeled soil health card PDF.
+    Returns base64-encoded PDF for frontend download.
+    """
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.colors import HexColor, white, black
+        from reportlab.lib.units import mm
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.styles import ParagraphStyle
+        from io import BytesIO
+        import base64
+
+        # Create PDF buffer
+        pdf_buffer = BytesIO()
+        width, height = A4
+        c = canvas.Canvas(pdf_buffer, pagesize=A4)
+
+        # Colors for status indicators
+        color_ok = HexColor("#10B981")
+        color_warn = HexColor("#F59E0B")
+        color_alert = HexColor("#EF4444")
+
+        # Helper to determine status
+        def get_status(value: float, ideal_min: float, ideal_max: float):
+            if ideal_min <= value <= ideal_max:
+                return "OK", color_ok
+            elif value < ideal_min:
+                return "LOW", color_warn
+            else:
+                return "HIGH", color_alert
+
+        # Header
+        c.setFont("Helvetica-Bold", 24)
+        c.drawString(2 * mm, height - 2 * mm - 24, "ಮಡಿ ಆರೋಗ್ಯ ಕಾರ್ಡ್")  # "Soil Health Card" in Kannada
+        c.setFont("Helvetica", 12)
+        c.drawString(2 * mm, height - 3.5 * mm - 24, "Soil Health Card")
+
+        # Crop recommendation
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(2 * mm, height - 5 * mm - 24, f"ಶಿಫಾರಸುಪಡಿಸಿದ ಸಸ್ಯ: {top_crop}")
+        c.setFont("Helvetica", 10)
+        c.drawString(2 * mm, height - 5.8 * mm - 24, "Recommended Crop: " + top_crop)
+
+        # NPK Status with indicators
+        y_pos = height - 8 * mm - 24
+        c.setFont("Helvetica-Bold", 11)
+        c.drawString(2 * mm, y_pos, "ಪೋಷಕ ಸ್ಥಿತಿ (Nutrient Status)")
+
+        # N Status
+        y_pos -= 1.5 * mm
+        n_status, n_color = get_status(n_value, 40, 200)
+        c.setFillColor(n_color)
+        c.rect(2 * mm, y_pos - 2 * mm, 3 * mm, 3 * mm, fill=True)
+        c.setFillColor(black)
+        c.setFont("Helvetica", 10)
+        c.drawString(6 * mm, y_pos - 1 * mm, f"N (ನೈಟ್ರೋಜನ್): {n_value:.0f} kg/ha [{n_status}]")
+
+        # P Status
+        y_pos -= 1.5 * mm
+        p_status, p_color = get_status(p_value, 10, 80)
+        c.setFillColor(p_color)
+        c.rect(2 * mm, y_pos - 2 * mm, 3 * mm, 3 * mm, fill=True)
+        c.setFillColor(black)
+        c.drawString(6 * mm, y_pos - 1 * mm, f"P (ಫಾಸ್ಫರಸ್): {p_value:.0f} kg/ha [{p_status}]")
+
+        # K Status
+        y_pos -= 1.5 * mm
+        k_status, k_color = get_status(k_value, 100, 300)
+        c.setFillColor(k_color)
+        c.rect(2 * mm, y_pos - 2 * mm, 3 * mm, 3 * mm, fill=True)
+        c.setFillColor(black)
+        c.drawString(6 * mm, y_pos - 1 * mm, f"K (ಪೊಟಾಶ್): {k_value:.0f} kg/ha [{k_status}]")
+
+        # pH Status
+        y_pos -= 1.5 * mm
+        ph_status, ph_color = get_status(ph_value, 6.0, 7.5)
+        c.setFillColor(ph_color)
+        c.rect(2 * mm, y_pos - 2 * mm, 3 * mm, 3 * mm, fill=True)
+        c.setFillColor(black)
+        c.drawString(6 * mm, y_pos - 1 * mm, f"pH (ಆಮ್ಲತೆ): {ph_value:.1f} [{ph_status}]")
+
+        # Summary
+        y_pos -= 3 * mm
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(2 * mm, y_pos, "ಸಾರಾಂಶ (Summary):")
+        y_pos -= 1.2 * mm
+        c.setFont("Helvetica", 9)
+        issues = []
+        if n_status != "OK":
+            issues.append(f"N is {n_status}")
+        if p_status != "OK":
+            issues.append(f"P is {p_status}")
+        if k_status != "OK":
+            issues.append(f"K is {k_status}")
+        if ph_status != "OK":
+            issues.append(f"pH is {ph_status}")
+
+        if issues:
+            summary_text = "Issues found: " + ", ".join(issues)
+        else:
+            summary_text = "All nutrients within ideal range. Soil is healthy for crop cultivation."
+
+        # Wrap text
+        c.drawString(2 * mm, y_pos, summary_text[:60])
+        if len(summary_text) > 60:
+            c.drawString(2 * mm, y_pos - 1 * mm, summary_text[60:])
+
+        # Footer
+        c.setFont("Helvetica", 8)
+        c.drawString(2 * mm, 1.5 * mm, "RythaGelathi • AI-Powered Soil Health Card • April 2026")
+
+        # Save PDF
+        c.save()
+
+        # Encode to base64
+        pdf_buffer.seek(0)
+        pdf_base64 = base64.b64encode(pdf_buffer.read()).decode("utf-8")
+
+        return {
+            "available": True,
+            "pdf_base64": pdf_base64,
+            "filename": f"soil_health_{top_crop.lower()}.pdf",
+        }
+
+    except Exception as e:
+        return {
+            "available": False,
+            "error": f"PDF generation failed: {str(e)}",
+            "pdf_base64": "",
+            "filename": "",
+        }
+
 
 CROP_WEATHER_BANDS = {
     "rice": {"temp": (20, 36), "humidity": (60, 95), "rainfall_7d": (20, 180)},
@@ -159,7 +545,7 @@ def _load_crop_dataframe() -> pd.DataFrame:
     return pd.DataFrame(synthetic_rows, columns=FEATURE_COLUMNS + ["label"])
 
 
-def _build_or_load_model() -> Tuple[RandomForestClassifier, shap.TreeExplainer, List[str]]:
+def _build_or_load_model() -> Tuple[RandomForestClassifier, shap.TreeExplainer, List[str], Optional[float]]:
     if RandomForestClassifier is None:
         raise RuntimeError("scikit-learn is required for crop recommendation.")
     if shap is None:
@@ -171,11 +557,68 @@ def _build_or_load_model() -> Tuple[RandomForestClassifier, shap.TreeExplainer, 
     y = df["label"]
 
     model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
-    model.fit(X, y)
+    model_accuracy: Optional[float] = None
+
+    if train_test_split is not None and accuracy_score is not None and len(df) >= 10:
+        try:
+            X_train, X_test, y_train, y_test = train_test_split(
+                X,
+                y,
+                test_size=0.2,
+                random_state=42,
+                stratify=y if len(set(y)) > 1 else None,
+            )
+            model.fit(X_train, y_train)
+            y_pred = model.predict(X_test)
+            model_accuracy = float(accuracy_score(y_test, y_pred))
+        except Exception:
+            model.fit(X, y)
+            model_accuracy = float(model.score(X, y))
+    else:
+        model.fit(X, y)
+        model_accuracy = float(model.score(X, y))
 
     explainer = shap.TreeExplainer(model)
     classes = [str(c) for c in model.classes_]
-    return model, explainer, classes
+    return model, explainer, classes, model_accuracy
+
+
+def _find_audio_base64(payload: Any) -> Optional[str]:
+    if isinstance(payload, dict):
+        for key in ("audioContent", "audio_base64", "audioBase64", "audio"):
+            value = payload.get(key)
+            if isinstance(value, str) and value and not value.lower().startswith("http"):
+                return value.strip()
+            if isinstance(value, dict):
+                nested = _find_audio_base64(value)
+                if nested:
+                    return nested
+
+        for value in payload.values():
+            nested = _find_audio_base64(value)
+            if nested:
+                return nested
+
+    if isinstance(payload, list):
+        for item in payload:
+            nested = _find_audio_base64(item)
+            if nested:
+                return nested
+
+    return None
+
+
+def _infer_audio_mime(audio_base64: str) -> str:
+    try:
+        decoded = base64.b64decode(audio_base64[:256] + "===", validate=False)
+    except Exception:
+        return "audio/wav"
+
+    if decoded.startswith(b"RIFF"):
+        return "audio/wav"
+    if decoded.startswith(b"ID3") or decoded[:2] == b"\xff\xfb":
+        return "audio/mpeg"
+    return "audio/wav"
 
 
 def _force_plot_html(base_value: Any, shap_values: np.ndarray, features_row: pd.DataFrame) -> str:
@@ -257,6 +700,49 @@ def _translate_to_kannada_bhashini(text: str) -> str:
         pass
 
     return "Kannada translation unavailable: unexpected Bhashini response."
+
+
+def _synthesize_kannada_audio_bhashini(text: str) -> Dict[str, Any]:
+    url = os.getenv("BHASHINI_API_URL", "").strip()
+    if not url:
+        return {"available": False, "error": "BHASHINI_API_URL not set."}
+
+    payload = {
+        "pipelineTasks": [
+            {
+                "taskType": "tts",
+                "config": {
+                    "language": {
+                        "sourceLanguage": "kn",
+                    },
+                    "gender": os.getenv("BHASHINI_TTS_GENDER", "female"),
+                },
+            }
+        ],
+        "inputData": {"input": [{"source": text}]},
+    }
+
+    headers = {"Content-Type": "application/json"}
+    api_key = os.getenv("BHASHINI_API_KEY", "").strip()
+    if api_key:
+        headers["Authorization"] = api_key
+
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+    except (requests.RequestException, ValueError):
+        return {"available": False, "error": "Bhashini TTS request failed."}
+
+    audio_base64 = _find_audio_base64(data)
+    if not audio_base64:
+        return {"available": False, "error": "No audio payload in Bhashini response."}
+
+    return {
+        "available": True,
+        "audio_base64": audio_base64,
+        "audio_mime": _infer_audio_mime(audio_base64),
+    }
 
 
 def _parse_price_from_line(line: str) -> float:
@@ -341,8 +827,9 @@ class CropAdvisorTool(BaseTool):
         self.model = None
         self.explainer = None
         self.classes: List[str] = []
+        self.model_accuracy: Optional[float] = None
         try:
-            self.model, self.explainer, self.classes = _build_or_load_model()
+            self.model, self.explainer, self.classes, self.model_accuracy = _build_or_load_model()
         except Exception as exc:
             self._init_error = str(exc)
 
@@ -358,11 +845,13 @@ class CropAdvisorTool(BaseTool):
     ) -> str:
         if self._init_error:
             result = _heuristic_crop_output(N, P, K, temperature, humidity, ph, rainfall)
+            result["model_accuracy"] = self.model_accuracy
             result["warning"] = f"CropAdvisorTool initialization fallback used: {self._init_error}"
             return json.dumps(result, ensure_ascii=True)
 
         if pd is None or np is None or self.model is None or self.explainer is None:
             result = _heuristic_crop_output(N, P, K, temperature, humidity, ph, rainfall)
+            result["model_accuracy"] = self.model_accuracy
             result["warning"] = "Heuristic fallback used because ML dependencies are unavailable."
             return json.dumps(result, ensure_ascii=True)
 
@@ -417,6 +906,7 @@ class CropAdvisorTool(BaseTool):
                 "ph": ph,
                 "rainfall": rainfall,
             },
+            "model_accuracy": round(self.model_accuracy, 4) if self.model_accuracy is not None else None,
         }
         return json.dumps(result, ensure_ascii=True)
 
@@ -494,7 +984,7 @@ class MarketAnalystTool(BaseTool):
 
 class WeatherIntelTool(BaseTool):
     name: str = "weather_intel_tool"
-    description: str = "Fetch OpenWeatherMap 7-day forecast and return GREEN/AMBER/RED crop compatibility"
+    description: str = "Fetch OpenWeatherMap forecast, return crop compatibility and drought risk classification"
 
     def _fetch_weather(self, district: str) -> Optional[Dict[str, Any]]:
         api_key = os.getenv("OPENWEATHER_API_KEY", "").strip()
@@ -565,6 +1055,9 @@ class WeatherIntelTool(BaseTool):
                     "avg_temp": None,
                     "avg_humidity": None,
                     "rainfall_7d": None,
+                    "rainfall_15d_projected": None,
+                    "historical_rainfall_15d": None,
+                    "drought_risk": "WATCH",
                     "weather_flags": {},
                     "error": "numpy is required for weather aggregation.",
                 },
@@ -582,6 +1075,9 @@ class WeatherIntelTool(BaseTool):
                     "avg_temp": None,
                     "avg_humidity": None,
                     "rainfall_7d": None,
+                    "rainfall_15d_projected": None,
+                    "historical_rainfall_15d": DISTRICT_RAINFALL_NORMAL_15D.get(_normalize_text(district), 60.0),
+                    "drought_risk": "WATCH",
                     "weather_flags": {crop: "AMBER" for crop in crops},
                 },
                 ensure_ascii=True,
@@ -595,6 +1091,9 @@ class WeatherIntelTool(BaseTool):
                     "avg_temp": None,
                     "avg_humidity": None,
                     "rainfall_7d": None,
+                    "rainfall_15d_projected": None,
+                    "historical_rainfall_15d": DISTRICT_RAINFALL_NORMAL_15D.get(_normalize_text(district), 60.0),
+                    "drought_risk": "WATCH",
                     "weather_flags": {crop: "AMBER" for crop in crops},
                 },
                 ensure_ascii=True,
@@ -603,6 +1102,19 @@ class WeatherIntelTool(BaseTool):
         avg_temp = float(np.mean([d.get("temp", {}).get("day", 0.0) for d in daily]))
         avg_humidity = float(np.mean([d.get("humidity", 0.0) for d in daily]))
         rain_7d = float(np.sum([d.get("rain", 0.0) for d in daily]))
+
+        daily_15d = weather.get("daily", [])[:15]
+        if not daily_15d:
+            daily_15d = daily
+        rain_15d_projected = _project_rainfall_15d(daily_15d)
+        dry_days = [row for row in daily_15d if _safe_float(row.get("rain"), 0.0) < 1.0]
+        dry_day_ratio = float(len(dry_days) / max(len(daily_15d), 1))
+        drought_meta = _classify_drought_risk(
+            district=district,
+            avg_temp=avg_temp,
+            rain_15d_projected=rain_15d_projected,
+            dry_day_ratio=dry_day_ratio,
+        )
 
         flags = {
             crop: self._compatibility_flag(crop, avg_temp=avg_temp, avg_humidity=avg_humidity, rain_7d=rain_7d)
@@ -615,6 +1127,11 @@ class WeatherIntelTool(BaseTool):
                 "avg_temp": round(avg_temp, 2),
                 "avg_humidity": round(avg_humidity, 2),
                 "rainfall_7d": round(rain_7d, 2),
+                "rainfall_15d_projected": drought_meta["projected_rainfall_15d"],
+                "historical_rainfall_15d": drought_meta["historical_rainfall_15d"],
+                "drought_risk": drought_meta["level"],
+                "drought_risk_score": drought_meta["score"],
+                "drought_deficit_pct": drought_meta["deficit_pct"],
                 "weather_flags": flags,
             },
             ensure_ascii=True,
@@ -805,14 +1322,33 @@ class KrishiCrew:
         task2_obj: Dict[str, Any],
         task3_obj: Dict[str, Any],
         task4_obj: Dict[str, Any],
+        inputs: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
 
         top_crops = task1_obj.get("top_crops", []) if isinstance(task1_obj.get("top_crops", []), list) else []
-        top_crop = task2_obj.get("top_crop") or (top_crops[0] if top_crops else None)
+        original_top_crop = task2_obj.get("top_crop") or (top_crops[0] if top_crops else None)
+        top_crop = original_top_crop
         profit_estimate = task2_obj.get("profit_estimate", 0.0)
 
         weather_flags = task3_obj.get("weather_flags", {})
         weather_flag = weather_flags.get(top_crop, "AMBER") if isinstance(weather_flags, dict) else "AMBER"
+
+        market_rows = task2_obj.get("market", []) if isinstance(task2_obj.get("market", []), list) else []
+        drought_level = str(task3_obj.get("drought_risk", "WATCH"))
+        drought_switch_recommended = drought_level in {"WARNING", "EMERGENCY"}
+        drought_switched_to: Optional[str] = None
+
+        if drought_switch_recommended:
+            tolerant = _pick_drought_tolerant_crop(top_crops=top_crops, market_rows=market_rows)
+            if tolerant and _normalize_text(str(tolerant)) != _normalize_text(str(top_crop)):
+                drought_switched_to = tolerant
+                top_crop = tolerant
+                weather_flag = weather_flags.get(top_crop, weather_flag) if isinstance(weather_flags, dict) else weather_flag
+
+                for row in market_rows:
+                    if _normalize_text(str(row.get("crop", ""))) == _normalize_text(top_crop):
+                        profit_estimate = _safe_float(row.get("total_profit"), profit_estimate)
+                        break
 
         soil_alerts_all = task4_obj.get("soil_alerts", {})
         if not isinstance(soil_alerts_all, dict):
@@ -829,21 +1365,89 @@ class KrishiCrew:
         )
         kannada_summary = _translate_to_kannada_bhashini(english_summary)
 
+        tts_payload: Dict[str, Any] = {"available": False, "error": "Skipped"}
+        if kannada_summary and "unavailable" not in kannada_summary.lower():
+            tts_payload = _synthesize_kannada_audio_bhashini(kannada_summary)
+
+        model_accuracy = task1_obj.get("model_accuracy")
+
+        # Enhancement 1: Crop Rotation Recommendation
+        rotation_recommendation: Optional[Dict[str, Any]] = None
+        if inputs and inputs.get("last_crop"):
+            rotation_recommendation = _get_rotation_recommendation(inputs["last_crop"])
+
+        # Enhancement 2: Mandi Price Voice
+        mandi_price_voice: Dict[str, Any] = {"available": False, "error": "No market data"}
+        market_data = market_rows
+        if market_data and isinstance(market_data, list) and len(market_data) > 0:
+            top_market = market_data[0] if isinstance(market_data[0], dict) else {}
+            modal_price = _safe_float(top_market.get("today_price") or top_market.get("modal_price"), 0.0)
+            if modal_price > 0:
+                district = str(inputs.get("district", "Karnataka")) if inputs else "Karnataka"
+                mandi_price_voice = _synthesize_mandi_price_audio_bhashini(top_crop, district, modal_price)
+
+        # Enhancement 6: Top-3 profitability comparison + Kannada voice summary
+        profitability_comparison = _build_profitability_comparison(market_rows)
+        profitability_voice = {"available": False, "audio_base64": "", "audio_mime": "", "error": "No comparison rows"}
+        profitability_voice_text = _build_profitability_voice_text(profitability_comparison)
+        if profitability_voice_text:
+            profitability_voice = _synthesize_kannada_audio_bhashini(profitability_voice_text)
+
+        # Enhancement 7: personalized government scheme matcher
+        scheme_matches = _match_government_schemes(inputs or {}, top_crop)
+
+        # Enhancement 3: Soil Health Card PDF
+        soil_pdf_payload: Dict[str, Any] = {"available": False, "error": "PDF generation skipped"}
+        if top_crop and inputs:
+            n_value = _safe_float(inputs.get("N"), 50.0)
+            p_value = _safe_float(inputs.get("P"), 25.0)
+            k_value = _safe_float(inputs.get("K"), 30.0)
+            ph_value = _safe_float(inputs.get("ph"), 6.7)
+            soil_pdf_payload = _generate_soil_health_card_pdf(n_value, p_value, k_value, ph_value, top_crop)
+
         final_output = {
             "top_crop": top_crop,
+            "original_top_crop": original_top_crop,
             "profit_estimate": round(_safe_float(profit_estimate), 2),
+            "model_accuracy": model_accuracy,
             "weather_flag": weather_flag,
             "soil_alerts": soil_alerts,
             "shap_reasons": top_crop_reasons,
             "kannada_summary": kannada_summary,
+            "kannada_audio_available": bool(tts_payload.get("available")),
+            "kannada_audio_base64": str(tts_payload.get("audio_base64", "")),
+            "kannada_audio_mime": str(tts_payload.get("audio_mime", "")),
+            "crop_rotation": rotation_recommendation,
+            "mandi_price_voice_available": bool(mandi_price_voice.get("available")),
+            "mandi_price_voice_base64": str(mandi_price_voice.get("audio_base64", "")),
+            "mandi_price_voice_mime": str(mandi_price_voice.get("audio_mime", "")),
+            "soil_health_pdf_available": bool(soil_pdf_payload.get("available")),
+            "soil_health_pdf_base64": str(soil_pdf_payload.get("pdf_base64", "")),
+            "soil_health_pdf_filename": str(soil_pdf_payload.get("filename", "")),
+            "drought_risk": {
+                "level": drought_level,
+                "score": _safe_float(task3_obj.get("drought_risk_score"), 0.0),
+                "rainfall_15d_projected": _safe_float(task3_obj.get("rainfall_15d_projected"), 0.0),
+                "historical_rainfall_15d": _safe_float(task3_obj.get("historical_rainfall_15d"), 0.0),
+                "deficit_pct": _safe_float(task3_obj.get("drought_deficit_pct"), 0.0),
+                "switch_recommended": drought_switch_recommended,
+                "switched_to": drought_switched_to,
+            },
+            "profitability_comparison": profitability_comparison,
+            "profitability_voice_available": bool(profitability_voice.get("available")),
+            "profitability_voice_base64": str(profitability_voice.get("audio_base64", "")),
+            "profitability_voice_mime": str(profitability_voice.get("audio_mime", "")),
+            "government_schemes": scheme_matches,
             "details": {
                 "top_crops": task1_obj.get("top_crops", []),
                 "probabilities": task1_obj.get("probabilities", {}),
+                "model_accuracy": model_accuracy,
                 "shap_reasons_by_crop": task1_obj.get("shap_reasons", {}),
                 "shap_force_plot_html": task1_obj.get("shap_force_plot_html", {}),
-                "market": task2_obj.get("market", []),
+                "market": market_rows,
                 "weather_flags": task3_obj.get("weather_flags", {}),
                 "soil_alerts_by_crop": task4_obj.get("soil_alerts", {}),
+                "kannada_tts_error": str(tts_payload.get("error", "")),
             },
         }
         return final_output
@@ -882,7 +1486,7 @@ class KrishiCrew:
         )
         task4_obj = _extract_json_from_text(task4_raw, {})
 
-        return self._compose_final_output(task1_obj, task2_obj, task3_obj, task4_obj)
+        return self._compose_final_output(task1_obj, task2_obj, task3_obj, task4_obj, inputs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if CREWAI_AVAILABLE:
@@ -896,7 +1500,7 @@ class KrishiCrew:
                 task2_obj = _extract_json_from_text(str(task_outputs[1]) if len(task_outputs) > 1 else "", {})
                 task3_obj = _extract_json_from_text(str(task_outputs[2]) if len(task_outputs) > 2 else "", {})
                 task4_obj = _extract_json_from_text(str(task_outputs[3]) if len(task_outputs) > 3 else "", {})
-                return self._compose_final_output(task1_obj, task2_obj, task3_obj, task4_obj)
+                return self._compose_final_output(task1_obj, task2_obj, task3_obj, task4_obj, inputs)
             except Exception:
                 return self._run_tools_fallback(inputs)
 

@@ -48,6 +48,8 @@ def _payload_to_inputs(payload: Dict[str, Any]) -> Dict[str, Any]:
         "district": payload.get("district", "Raichur"),
         "input_costs": payload.get("input_costs", payload.get("inputCosts", 18000)),
         "land_acres": payload.get("land_acres", payload.get("land", 2.0)),
+        "last_crop": payload.get("last_crop", ""),
+        "gender": payload.get("gender", ""),
     }
 
 

@@ -1,174 +1,514 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RythaGelathi | Women-Centric Climate Advisory</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RythaGelathi — ರೈತ ಗೆಳತಿ | AI Crop Advisor for Women Farmers of Karnataka</title>
+  <meta name="description" content="AI crop advisor for 62 lakh women farmers of Karnataka. Personalised Kannada recommendations powered by CrewAI, Groq, SHAP and Bhashini.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="landing-page">
-    <div class="splash-screen" id="splashScreen">
-        <div class="splash-overlay"></div>
-        <div class="splash-reveal"></div>
-        <div class="splash-content">
-            <h1>RythaGelathi</h1>
-            <p class="splash-line">AI Climate Advisor for Women Farmers of Karnataka</p>
-            <button class="splash-enter" id="enterExperience">Enter Experience</button>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     SPLASH SCREEN
+════════════════════════════════════════════════ -->
+<div id="splash">
+  <!-- background with dark overlay -->
+  <div class="sp-bg"></div>
+  <div class="sp-overlay"></div>
+  <div class="sp-stars" id="spStars"></div>
+
+  <!-- Centered content -->
+  <div class="sp-body">
+    <div class="sp-eyebrow"><span class="sp-dot"></span>WitchHunt 2026 · Climate Action · Karnataka</div>
+    <div class="sp-title-wrap">
+      <h1 class="sp-title">RythaGelathi</h1>
+    </div>
+    <p class="sp-kn">ರೈತ ಗೆಳತಿ · The Farmer's Friend</p>
+    <p class="sp-tag">Simple climate guidance for women farmers, built for Karnataka conditions.</p>
+    <button class="sp-enter" id="spEnter">
+      Enter App
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <!-- Full-width grass — CSS ::before handles all the tiling -->
+  <div class="sp-grass"></div>
+</div>
+
+<!-- Theme toggle -->
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+
+<!-- ════════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="container nav-inner">
+    <a href="#home" class="brand">
+      <span class="brand-emoji">🌾</span>
+      <span>RythaGelathi</span>
+      <span class="brand-kn">ರೈತ ಗೆಳತಿ</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#why">Why Built</a>
+      <a href="#howworks">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#agents">AI Agents</a>
+      <a href="#mlstack">ML Engine</a>
+      <a href="core.html" class="nav-cta">Open App →</a>
+    </div>
+    <a href="core.html" class="nav-float-cta" id="navFloatCta">Open Advisory</a>
+    <button class="nav-ham" id="navHam" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-dots"></div>
+
+  <div class="hero-wrap container">
+    <div class="hero-center">
+      <div class="hero-copy-col">
+        <div class="h-badge"><span class="h-bdot"></span>Built for 62 lakh women farmers in Karnataka</div>
+        <h1 class="hero-title rv d1">
+          Smart climate guidance<br>
+          in <span class="t-gold">Kannada</span>,<br>
+          <span class="t-mint">clean and actionable</span>.
+        </h1>
+        <p class="hero-desc rv d2">
+          One advisory flow that combines district conditions, soil health,
+          weather and mandi trends into practical next steps for daily farm decisions.
+        </p>
+        <div class="hero-mini-stats rv d3">
+          <div class="hms"><span class="hms-n">74%</span><span class="hms-l">Top crop confidence</span></div>
+          <div class="hms"><span class="hms-n">4</span><span class="hms-l">AI agents</span></div>
+          <div class="hms"><span class="hms-n">₹0</span><span class="hms-l">Platform cost</span></div>
         </div>
+        <div class="h-tags rv d3">
+          <span class="h-tag">CrewAI Pipeline</span>
+          <span class="h-tag">SHAP Explanations</span>
+          <span class="h-tag">Bhashini Kannada</span>
+        </div>
+
+        <div class="h-actions rv d4">
+          <a href="core.html" class="btn btn-green">Open Core Advisory →</a>
+          <a href="#why" class="btn btn-out">Why We Built This</a>
+        </div>
+      </div>
+
+      <aside class="hero-visual-col rv d4" aria-label="Product preview">
+        <div class="hv-shell">
+          <div class="hv-topbar">
+            <span class="hv-dot hv-dot-r"></span>
+            <span class="hv-dot hv-dot-y"></span>
+            <span class="hv-dot hv-dot-g"></span>
+            <span class="hv-title">Live Advisory Preview</span>
+          </div>
+
+          <div class="hv-image-wrap">
+            <img src="/public/12.webp" alt="Farm landscape product preview" loading="lazy" decoding="async">
+          </div>
+
+          <div class="hv-info-grid">
+            <div class="hv-pill">Top crop confidence: <strong>74%</strong></div>
+            <div class="hv-pill">7-day weather flag: <strong>AMBER</strong></div>
+            <div class="hv-pill">Soil alerts: <strong>NPK enabled</strong></div>
+            <div class="hv-pill">Language output: <strong>Kannada</strong></div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════════════════
+     TRUST STRIP
+════════════════════════════════════════════════ -->
+<section class="trust-strip" aria-label="Technology trust indicators">
+  <div class="container trust-inner rv">
+    <span class="trust-label">Trusted Stack</span>
+    <span class="trust-item">CrewAI Orchestration</span>
+    <span class="trust-item">Groq LLaMA 3.3 70B</span>
+    <span class="trust-item">SHAP Explainability</span>
+    <span class="trust-item">Bhashini Kannada API</span>
+    <span class="trust-item">Agmarknet + OWM</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     PRODUCT LOOK SHOWCASE
+════════════════════════════════════════════════ -->
+<section class="product-look" id="productlook">
+  <div class="container">
+    <div class="pl-head rv">
+      <div class="sec-label">Product Look</div>
+      <h2>Built like a product, not just a prototype</h2>
+      <p>Real farm visuals, structured data cards, and a polished advisory flow designed for trust, clarity, and mobile usability.</p>
     </div>
 
-    <nav class="navbar" id="navbar">
-        <div class="container nav-inner">
-            <a href="#home" class="brand"><span class="dot"></span>RythaGelathi</a>
-            <div class="nav-links">
-                <a href="#problem">Problem</a>
-                <a href="#features">Features</a>
-                <a href="#agents">Agents</a>
-                <a href="#tech">Tech Stack</a>
-                <a href="core.html">Core App</a>
-            </div>
+    <div class="pl-grid">
+      <article class="pl-card pl-main pl-card-1 rv d1">
+        <img src="/public/11.webp" alt="Farmer in field using mobile advisory" loading="lazy" decoding="async">
+        <div class="pl-overlay">
+          <h3>Farmer-first Experience</h3>
+          <p>Simple interface for quick district-based decisions in Kannada.</p>
         </div>
-    </nav>
+      </article>
 
-    <main>
-        <section class="hero" id="home">
-            <div class="hero-backdrop"></div>
-            <div class="container hero-grid">
-                <div class="hero-copy">
-                    <p class="women-tag">Built for women farmers first</p>
-                    <h1 class="headline reveal-headline">From uncertain weather to confident crop decisions</h1>
-                    <p class="typing-wrap">
-                        <span class="typing-prefix">RythaGelathi helps you farm with </span>
-                        <span class="typing-text" id="typingText"></span>
-                    </p>
-                    <p class="hero-subtext">
-                        Personalized climate-smart advisory using district-level weather, soil health, crop suitability,
-                        and market context instead of generic bulletins.
-                    </p>
-                    <div class="hero-chips">
-                        <span class="chip">CrewAI Powered</span>
-                        <span class="chip">Groq LLaMA</span>
-                        <span class="chip">Market + Climate Aware</span>
-                    </div>
-                    <div class="hero-actions">
-                        <a class="btn btn-gold" href="core.html">Open Core Advisory</a>
-                        <a class="btn btn-glass" href="#features">Explore Features</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="problem">
-            <div class="container">
-                <div class="section-heading reveal">
-                    <h2>The Problem We Solve</h2>
-                    <p>Women farmers often receive one-size-fits-all advice despite very different soil, rainfall, and crop risks.</p>
-                </div>
-                <div class="stats-grid">
-                    <article class="stat-box reveal"><h3>287</h3><p>farmer suicides in Karnataka in 2024 tied to crop stress.</p></article>
-                    <article class="stat-box reveal"><h3>62 Lakh</h3><p>women are central to farm labor in Karnataka.</p></article>
-                    <article class="stat-box reveal"><h3>73%</h3><p>get no personalized advisory for field decisions.</p></article>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="features">
-            <div class="container">
-                <div class="section-heading reveal">
-                    <h2>What RythaGelathi Delivers</h2>
-                    <p>Core decision tools described in the project README, shaped for real field use.</p>
-                </div>
-                <div class="feature-grid">
-                    <article class="feature-card reveal">
-                        <h3>Crop Recommender</h3>
-                        <p>Top crop choices based on NPK, weather profile, rainfall patterns, and district context.</p>
-                    </article>
-                    <article class="feature-card reveal">
-                        <h3>Irrigation Guidance</h3>
-                        <p>Daily timing and practical watering guidance using forecast and field conditions.</p>
-                    </article>
-                    <article class="feature-card reveal">
-                        <h3>Pest Risk Signals</h3>
-                        <p>Temperature and humidity based risk awareness to prepare early interventions.</p>
-                    </article>
-                    <article class="feature-card reveal">
-                        <h3>Fertilizer Optimization</h3>
-                        <p>Soil-aware NPK direction to avoid overuse and reduce unnecessary input cost.</p>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="agents">
-            <div class="container">
-                <div class="section-heading reveal">
-                    <h2>Agentic Intelligence Pipeline</h2>
-                    <p>RythaGelathi uses coordinated agents to mirror practical advisory workflow.</p>
-                </div>
-                <div class="info-grid">
-                    <article class="card reveal"><h3>CropAdvisor</h3><p>Random Forest + SHAP explanation for transparent crop suitability suggestions.</p></article>
-                    <article class="card reveal"><h3>MarketAnalyst</h3><p>Price and profitability support through mandi-aligned data interpretation.</p></article>
-                    <article class="card reveal"><h3>WeatherIntel</h3><p>Weather compatibility checks and risk signaling for near-term planning.</p></article>
-                    <article class="card reveal"><h3>SoilExpert</h3><p>Nutrient and soil health awareness to reduce mismatch between crop and soil profile.</p></article>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="tech">
-            <div class="container">
-                <div class="section-heading reveal">
-                    <h2>How The Full Stack Works</h2>
-                    <p>Clear architecture from user input to actionable output.</p>
-                </div>
-                <div class="journey-steps">
-                    <article class="step reveal"><span>01</span><p>Frontend captures district and farm metrics.</p></article>
-                    <article class="step reveal"><span>02</span><p>Flask API receives payload at /api/recommend.</p></article>
-                    <article class="step reveal"><span>03</span><p>CrewAI coordinates model and tool reasoning.</p></article>
-                    <article class="step reveal"><span>04</span><p>Advisory output returns crop, market, and climate tips.</p></article>
-                </div>
-                <div class="cta-block reveal">
-                    <h3>Ready to Use the Main Core Application?</h3>
-                    <p>Open the dedicated core page for full advisory tabs and interactive recommendation workflow.</p>
-                    <a class="btn btn-gold" href="core.html">Go To Core Advisory Page</a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer" id="footer">
-        <div class="container footer-main">
-            <div class="footer-brand-col">
-                <h3>RythaGelathi</h3>
-                <p>An AI-powered climate advisor for women farmers in Karnataka. Bridging the gap between data and the soil.</p>
-            </div>
-            <div class="footer-nav-col">
-                <h4>Navigation</h4>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#agents">Agents</a></li>
-                    <li><a href="core.html">Core Advisory</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact-col">
-                <h4>Contact</h4>
-                <ul>
-                    <li>Bengaluru, Karnataka</li>
-                    <li>hello@rythagelathi.in</li>
-                    <li>+91 80 1234 5678</li>
-                </ul>
-            </div>
+      <article class="pl-card pl-card-2 rv d2">
+        <img src="/public/15.webp" alt="Crop field landscape in Karnataka" loading="lazy" decoding="async">
+        <div class="pl-overlay">
+          <h3>Climate Context</h3>
+          <p>Grounded in local weather and district conditions.</p>
         </div>
-        <div class="container footer-bottom">
-            <p>© 2026 RythaGelathi. All rights reserved.</p>
-            <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
-        </div>
-        <div class="footer-grass-lite" aria-hidden="true"></div>
-    </footer>
+      </article>
 
-    <script src="app.js"></script>
+      <article class="pl-card pl-card-3 rv d3">
+        <img src="/public/3.jpg" alt="Agricultural work closeup" loading="lazy" decoding="async">
+        <div class="pl-overlay">
+          <h3>Actionable Guidance</h3>
+          <p>From data input to advisory in one streamlined flow.</p>
+        </div>
+      </article>
+
+      <article class="pl-card pl-card-4 rv d4">
+        <img src="/public/4.jpg" alt="Field and crop monitoring view" loading="lazy" decoding="async">
+        <div class="pl-overlay">
+          <h3>Reliable Output</h3>
+          <p>Clear recommendations with explainability and confidence.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="pl-dots" id="plDots" aria-label="Product spotlight indicators"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     METRICS
+════════════════════════════════════════════════ -->
+<div class="metrics">
+  <div class="container">
+    <div class="metrics-inner">
+      <div class="m-item"><span class="m-num" data-target="287">0</span><span class="m-lbl">Farmer suicides in Karnataka 2024</span></div>
+      <div class="m-div"></div>
+      <div class="m-item"><span class="m-num" data-target="62" data-suffix=" Lakh">0</span><span class="m-lbl">Women doing majority of farm work</span></div>
+      <div class="m-div"></div>
+      <div class="m-item"><span class="m-num" data-target="73" data-suffix="%">0</span><span class="m-lbl">Receive zero personalised advisory</span></div>
+      <div class="m-div"></div>
+      <div class="m-item"><span class="m-num">₹0</span><span class="m-lbl">Total stack cost — fully free tier</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     WHY WE BUILT
+════════════════════════════════════════════════ -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="sec-head rv">
+      <div class="sec-label">Why We Built This</div>
+      <h2>A problem hiding in plain sight</h2>
+      <p>Women farmers in Karnataka get the same generic government bulletin — identical for 2 acres in Raichur or 20 acres in Bengaluru. That generality is costing lives.</p>
+    </div>
+
+    <div class="stats-3">
+      <div class="sc rv d1"><div class="sc-icon">⚠️</div><h3>287</h3><p>Farmer suicides in Karnataka 2024, most linked directly to crop failure from unfit advisory.</p></div>
+      <div class="sc rv d2"><div class="sc-icon">👩‍🌾</div><h3>62 Lakh</h3><p>Women do the majority of farm labour in Karnataka but receive the least tailored guidance.</p></div>
+      <div class="sc rv d3"><div class="sc-icon">📵</div><h3>73%</h3><p>Women farmers receive zero personalised advisory for their actual land, crop, and district.</p></div>
+    </div>
+
+    <div class="quote-box rv">
+      <p>"The government SMS they get? The <strong>same generic bulletin</strong> for every farmer in the district — regardless of their soil, water source, or land size. <strong>RythaGelathi changes that.</strong>"</p>
+    </div>
+
+    <!-- For Whom -->
+    <div class="sec-head rv" style="margin-top:3.5rem;margin-bottom:2rem">
+      <div class="sec-label">For Whom</div>
+      <h2>Who benefits from RythaGelathi</h2>
+    </div>
+    <div class="whom-grid">
+      <div class="wc rv d1"><div class="wc-ico">👩‍🌾</div><h3>Women Smallholder Farmers</h3><p>62 lakh women in Karnataka making daily crop decisions without science-backed, personalised advice in their own language.</p></div>
+      <div class="wc rv d2"><div class="wc-ico">📊</div><h3>Field Extension Officers</h3><p>KVK officers serving dozens of villages can generate district-specific structured advisory instantly, not from monthly bulletins.</p></div>
+      <div class="wc rv d3"><div class="wc-ico">🏛️</div><h3>NGOs & Government Bodies</h3><p>KSSC, NABARD, and climate-action NGOs can deploy this as a ₹0-cost advisory layer for drought-prone taluk programs.</p></div>
+    </div>
+
+    <div class="chips rv">
+      <span>Target districts:</span>
+      <span class="chip chip-r">Raichur</span>
+      <span class="chip chip-r">Kalaburagi</span>
+      <span class="chip chip-r">Vijayapura</span>
+      <span class="chip chip-r">Bidar</span>
+      <span class="chip chip-r">Koppal</span>
+      <span class="chip chip-y">Davanagere</span>
+      <span class="chip chip-y">Chitradurga</span>
+      <span class="chip chip-y">Tumakuru</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════════ -->
+<section class="section section-alt" id="howworks">
+  <div class="container">
+    <div class="sec-head rv">
+      <div class="sec-label">How It Works</div>
+      <h2>From farm data to Kannada advice in 4 steps</h2>
+      <p>A farmer fills 10 fields on mobile. Our 4-agent AI pipeline does the rest — in 10–20 seconds.</p>
+    </div>
+    <div class="how-wrap">
+      <div class="hw rv d1">
+        <div class="hw-n">01</div>
+        <div class="hw-b">
+          <h4>Farmer enters field conditions</h4>
+          <p>District, land size, current temperature, humidity, rainfall, soil pH, N-P-K values, and input budget. Takes under 2 minutes on any mobile browser — no app install.</p>
+          <span class="hw-tag">frontend/core.html</span>
+        </div>
+      </div>
+      <div class="hw rv d2">
+        <div class="hw-n">02</div>
+        <div class="hw-b">
+          <h4>4 AI agents analyse in parallel</h4>
+          <p>CropAdvisor runs Random Forest + SHAP. MarketAnalyst fetches live Agmarknet mandi prices. WeatherIntel gets 7-day OWM forecast. SoilExpert checks Karnataka Soil Health Card NPK.</p>
+          <span class="hw-tag">crew/krishi_crew.py · tools/market_price_tool.py</span>
+        </div>
+      </div>
+      <div class="hw rv d3">
+        <div class="hw-n">03</div>
+        <div class="hw-b">
+          <h4>Results structured as clean JSON</h4>
+          <p>top_crop, profit_estimate, weather_flag (GREEN/AMBER/RED), soil_alerts, SHAP reasons. Every single field filled — no bullet-point vagueness.</p>
+          <span class="hw-tag">api/server.py → POST /api/recommend</span>
+        </div>
+      </div>
+      <div class="hw rv d4">
+        <div class="hw-n">04</div>
+        <div class="hw-b">
+          <h4>Full advisory translated to Kannada</h4>
+          <p>The entire recommendation is translated to natural Kannada via Government of India's Bhashini API — so the farmer herself can read and share it on WhatsApp.</p>
+          <span class="hw-tag">Bhashini API · en→kn · _translate_to_kannada_bhashini</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════════ -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="sec-head rv">
+      <div class="sec-label">What We Deliver</div>
+      <h2>Four tools. One decision. In Kannada.</h2>
+      <p>Select district, land size, water source. Get four personalised outputs from a single API call.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="fc rv d1"><div class="fc-icon">🌱</div><h3>Crop Recommender</h3><p>ML recommends top 3 crops most likely to succeed this season — with SHAP explanation, not generic advice.</p><div class="fc-pts"><span class="fc-pt">2,200-sample Kaggle dataset · N, P, K, temp, humidity, pH, rainfall</span><span class="fc-pt">100 Random Forest trees · max_depth=10 · scikit-learn</span><span class="fc-pt">SHAP force_plot + top 3 feature reasons per crop</span></div></div>
+      <div class="fc rv d2"><div class="fc-icon">💧</div><h3>Irrigation Scheduler</h3><p>7-day OWM forecast translates to exact daily irrigation windows and skip-days when rain is predicted.</p><div class="fc-pts"><span class="fc-pt">Daily watering timing per crop type</span><span class="fc-pt">Skip-day detection when rain probability is high</span><span class="fc-pt">GREEN / AMBER / RED 7-day compatibility flag</span></div></div>
+      <div class="fc rv d3"><div class="fc-icon">🐛</div><h3>Pest Risk Alert</h3><p>Temperature and humidity patterns drive weekly pest probability with organic intervention steps per crop.</p><div class="fc-pts"><span class="fc-pt">Weekly pest probability per crop-district pair</span><span class="fc-pt">Climate-pattern risk modelling</span><span class="fc-pt">Organic intervention advice in Kannada</span></div></div>
+      <div class="fc rv d4"><div class="fc-icon">⚗️</div><h3>Fertilizer Optimizer</h3><p>Soil Health Card + crop type maps to exact N-P-K in kg/acre and shows money saved vs overuse.</p><div class="fc-pts"><span class="fc-pt">Karnataka Soil Health Card data per district</span><span class="fc-pt">Exact NPK kg/acre — not ranges or estimates</span><span class="fc-pt">Cost saving vs overuse calculated inline</span></div></div>
+    </div>
+    <div class="extra-row rv">
+      <span class="extra-lbl">Also included:</span>
+      <span class="ext">🗺️ KVK Centre Map</span>
+      <span class="ext">💰 KSSC Subsidy Links</span>
+      <span class="ext">📱 WhatsApp Share</span>
+      <span class="ext">🇮🇳 Full Kannada via Bhashini</span>
+      <span class="ext">📋 JSON Export</span>
+      <span class="ext">📊 SHAP Explainability</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     ML ENGINE
+════════════════════════════════════════════════ -->
+<section class="section section-alt" id="mlstack">
+  <div class="container">
+    <div class="sec-head rv">
+      <div class="sec-label">ML Engine</div>
+      <h2>How the machine learning works</h2>
+      <p>Every recommendation is backed by a trained Random Forest. SHAP ensures the farmer sees why — not just what.</p>
+    </div>
+    <div class="ml-strip rv">
+      <div class="ml-node"><div class="ml-ico">📋</div><strong>User Input</strong><span>District · N/P/K · temp · humidity · pH</span></div>
+      <div class="ml-arr">→</div>
+      <div class="ml-node"><div class="ml-ico">🌦️</div><strong>OpenWeatherMap</strong><span>7-day live forecast per district</span></div>
+      <div class="ml-arr">→</div>
+      <div class="ml-node"><div class="ml-ico">🌲</div><strong>Random Forest</strong><span>100 trees · max_depth=10</span></div>
+      <div class="ml-arr">→</div>
+      <div class="ml-node"><div class="ml-ico">📊</div><strong>SHAP Explainer</strong><span>force_plot + top 3 reasons</span></div>
+      <div class="ml-arr">→</div>
+      <div class="ml-node"><div class="ml-ico">🇮🇳</div><strong>Bhashini</strong><span>Full Kannada output</span></div>
+    </div>
+    <div class="demo-terminal rv">
+      <div class="dt-bar"><div class="dt-dot dt-r"></div><div class="dt-dot dt-y"></div><div class="dt-dot dt-g"></div></div>
+      <span class="dt-lbl">Sample Output — Lakshmi, Raichur</span>
+      <div class="dt-row"><span class="dt-k">District</span><span class="dt-v">Raichur · 39°C · 18% RH · rainfall deficit −31%</span></div>
+      <hr class="dt-sep">
+      <div class="dt-row dt-hl"><span class="dt-k">Top Crop</span><span class="dt-v">Toor Dal → 74% · Jowar → 71% · Cotton → ⚠️ 16% fail risk</span></div>
+      <div class="dt-row"><span class="dt-k">Irrigation</span><span class="dt-v">Water 5:30–7am daily · Skip Day 3 (4.2mm rain forecast)</span></div>
+      <div class="dt-row"><span class="dt-k">Pest Risk</span><span class="dt-v">Aphid 62% this week · Inspect undersides Day 4</span></div>
+      <div class="dt-row"><span class="dt-k">Fertilizer</span><span class="dt-v">Apply 35 kg Urea/acre (not 65 kg) · Save ₹840/acre</span></div>
+      <hr class="dt-sep">
+      <div class="dt-row"><span class="dt-k">Kannada</span><span class="dt-v dt-kn">ತೂರ್ ದಾಲ್ ಬೆಳೆಯಿರಿ — ಬರ ನಿರೋಧಕ ಬೆಳೆ · ₹1,64,320 ಲಾಭ ನಿರೀಕ್ಷೆ</span></div>
+    </div>
+    <div class="specs rv">
+      <div class="spec"><div class="spec-ico">🌲</div><h4>Random Forest</h4><p>100 estimators · max_depth=10 · random_state=42</p></div>
+      <div class="spec"><div class="spec-ico">📊</div><h4>SHAP TreeExplainer</h4><p>force_plot per prediction · top 3 feature reasons</p></div>
+      <div class="spec"><div class="spec-ico">📦</div><h4>Kaggle Dataset</h4><p>2,200 samples · 7 features per row</p></div>
+      <div class="spec"><div class="spec-ico">🇮🇳</div><h4>Bhashini API</h4><p>Government of India en→kn pipeline</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     AI AGENTS
+════════════════════════════════════════════════ -->
+<section class="section" id="agents">
+  <div class="container">
+    <div class="sec-head rv">
+      <div class="sec-label">AI Pipeline</div>
+      <h2>4-Agent CrewAI pipeline</h2>
+      <p>Four sequential specialised agents — crop model, market, weather, soil — coordinated by CrewAI with Groq LLaMA 3.3 70B.</p>
+    </div>
+    <div class="agents-grid">
+      <div class="ag rv d1"><div class="ag-head"><span class="ag-num">01</span><span class="ag-icon">🌱</span></div><h3>CropAdvisor</h3><p class="ag-fn">crop_advisor_tool</p><p>Random Forest (100 trees, max_depth=10) on N-P-K, temperature, humidity, pH, rainfall. SHAP TreeExplainer generates force_plot and top 3 reasons per crop.</p><div class="ag-out">→ top_crops · shap_reasons · probabilities</div></div>
+      <div class="ag rv d2"><div class="ag-head"><span class="ag-num">02</span><span class="ag-icon">📈</span></div><h3>MarketAnalyst</h3><p class="ag-fn">AgmarknetPriceTool</p><p>Fetches live Karnataka mandi prices via Agmarknet API (3s timeout, 6hr LRU cache, static JSON fallback). Profit = yield × price − input_costs.</p><div class="ag-out">→ market_prices · top_crop · profit_estimate</div></div>
+      <div class="ag rv d3"><div class="ag-head"><span class="ag-num">03</span><span class="ag-icon">🌦️</span></div><h3>WeatherIntel</h3><p class="ag-fn">weather_intel_tool</p><p>OWM Geo API → district lat/lon → 7-day one-call forecast → aggregated temp, humidity, rainfall → GREEN/AMBER/RED flag per crop based on suitability bands.</p><div class="ag-out">→ weather_flags (GREEN / AMBER / RED)</div></div>
+      <div class="ag rv d4"><div class="ag-head"><span class="ag-num">04</span><span class="ag-icon">🪨</span></div><h3>SoilExpert + Bhashini</h3><p class="ag-fn">soil_expert_tool · bhashini_translate</p><p>Karnataka Soil Health Card JSON per district flags N, P, K deficiencies. Bhashini API translates the final structured advisory to natural Kannada.</p><div class="ag-out">→ soil_alerts · kannada_summary</div></div>
+    </div>
+    <div class="output-box rv">
+      <div class="ob-title">Final Structured JSON Output</div>
+      <div class="ob-grid">
+        <div class="ob-field"><span class="ob-k">top_crop</span><span class="ob-v">Best crop for current conditions</span></div>
+        <div class="ob-field"><span class="ob-k">profit_estimate</span><span class="ob-v">Expected ₹ profit based on mandi price</span></div>
+        <div class="ob-field"><span class="ob-k">weather_flag</span><span class="ob-v">GREEN / AMBER / RED from 7-day OWM</span></div>
+        <div class="ob-field"><span class="ob-k">soil_alerts</span><span class="ob-v">N / P / K deficiency flags by district</span></div>
+        <div class="ob-field"><span class="ob-k">shap_reasons</span><span class="ob-v">Top 3 SHAP features that drove the pick</span></div>
+        <div class="ob-field ob-gold"><span class="ob-k">kannada_summary</span><span class="ob-v">Full advisory in Kannada via Bhashini</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     CTA
+════════════════════════════════════════════════ -->
+<section class="cta-sec">
+  <div class="container">
+    <div class="cta-box rv">
+      <div class="cta-glow"></div>
+      <h2>Try the Core Advisory App</h2>
+      <p>Enter your farm data and get an AI-powered crop recommendation in Kannada. Made for real sowing decisions by women farmers of Karnataka.</p>
+      <div class="cta-btns">
+        <a href="core.html" class="btn btn-green">Open Core Advisory →</a>
+        <a href="#why" class="btn btn-out">Learn More</a>
+      </div>
+      <p class="cta-note">Made with 💚 for the 62 lakh women farmers of Karnataka · ರೈತ ಗೆಳತಿ · ₹0 stack cost</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer class="footer">
+  <!-- Grass strip — single div, CSS ::before tiles it edge-to-edge -->
+  <div class="foot-grass"></div>
+  <div class="container">
+    <div class="foot-convert rv">
+      <div>
+        <h4>Ready to generate your farm advisory?</h4>
+        <p>Run the full AI pipeline and get district-specific, Kannada-friendly recommendations in under a minute.</p>
+      </div>
+      <a href="core.html" class="foot-convert-btn">Launch Core Advisory</a>
+    </div>
+
+    <div class="foot-tabs rv" id="footTabs" aria-label="Footer section tabs">
+      <a href="#home" class="foot-tab is-active">Home</a>
+      <a href="#why" class="foot-tab">Problem</a>
+      <a href="#howworks" class="foot-tab">Workflow</a>
+      <a href="#features" class="foot-tab">Features</a>
+      <a href="#agents" class="foot-tab">Agents</a>
+      <a href="#mlstack" class="foot-tab">ML Engine</a>
+    </div>
+
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <div class="foot-logo">🌾 RythaGelathi</div>
+        <div class="foot-kn">ರೈತ ಗೆಳತಿ — The Farmer's Friend</div>
+        <p class="foot-desc">AI climate advisory designed for women farmers of Karnataka, turning local data into practical decisions.</p>
+        <div class="foot-pills">
+          <span class="fp">MIT License</span>
+          <span class="fp">Python 3.10+</span>
+          <span class="fp">₹0 Stack</span>
+          <span class="fp">WitchHunt 2026</span>
+        </div>
+        <a class="foot-cta" href="core.html">Open Core Advisory →</a>
+      </div>
+      <div class="foot-col">
+        <h5>Navigation</h5>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#why">Why We Built</a></li>
+          <li><a href="#howworks">How It Works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#mlstack">ML Engine</a></li>
+          <li><a href="#agents">AI Agents</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <ul>
+          <li>4-agent advisory workflow</li>
+          <li>Live weather and mandi integration</li>
+          <li>Structured output + Kannada summary</li>
+          <li>Mobile-first farmer experience</li>
+        </ul>
+        <h5 style="margin-top:1.3rem">Focus Districts</h5>
+        <ul>
+          <li>Raichur · Kalaburagi · Vijayapura</li>
+          <li>Bidar · Koppal · Davanagere</li>
+          <li>Chitradurga · Tumakuru</li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="https://github.com/Yashaswini-V21/Rytha_Gelathi" target="_blank" rel="noopener noreferrer">GitHub Repository ↗</a></li>
+          <li><a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap ↗</a></li>
+          <li><a href="https://www.agmarknet.gov.in/" target="_blank" rel="noopener noreferrer">Agmarknet ↗</a></li>
+          <li><a href="https://bhashini.gov.in/" target="_blank" rel="noopener noreferrer">Bhashini ↗</a></li>
+        </ul>
+        <h5 style="margin-top:1.3rem">Contact</h5>
+        <p class="foot-meta">Built by harvest hex harvesters for climate-resilient farming in Karnataka.</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 RythaGelathi · harvest hex harvesters.</p>
+      <div class="foot-leg"><a href="#home">Back to Top</a><a href="core.html">Launch App</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
 </body>
 </html>

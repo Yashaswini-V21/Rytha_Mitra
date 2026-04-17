@@ -1,132 +1,622 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RythaGelathi Core Advisory</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RythaGelathi — Core Advisory | ರೈತ ಗೆಳತಿ</title>
+  <meta name="description" content="RythaGelathi Core Advisory — AI crop recommendations with SHAP, live mandi prices, weather flag, soil alerts, and Kannada output.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="core.css">
 </head>
 <body class="core-page">
-    <nav class="navbar" id="navbar">
-        <div class="container nav-inner">
-            <a href="index.html" class="brand"><span class="dot"></span>RythaGelathi</a>
-            <div class="nav-links">
-                <a href="index.html">Landing</a>
-                <a href="#core">Core</a>
-                <a href="#advisory">Advisory</a>
-            </div>
+
+  <!-- ── NAVBAR ─────────────────────────────── -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-icon">🌾</span>
+        <span>RythaGelathi</span>
+        <span class="brand-kannada">ರೈತ ಗೆಳತಿ</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">← Landing</a>
+        <a href="#advisory-form">Advisory</a>
+        <a href="#tab-howto">How To</a>
+        <a href="#agent-strip">AI Agents</a>
+      </div>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+
+  <!-- ── HERO BAND ──────────────────────────── -->
+  <header class="core-hero-band">
+    <div class="chb-farm-img"></div>
+    <div class="chb-inner container">
+      <div class="chb-badge">
+        <span class="hero-badge-dot"></span>
+        4-Agent CrewAI · Groq LLaMA 3.3 · SHAP · Bhashini
+      </div>
+      <h1 class="chb-title">Core Advisory Application</h1>
+      <p class="chb-sub">Enter your district, soil data, and climate conditions. Get AI-powered crop recommendations with live mandi prices, 7-day weather flag, soil alerts, and a full Kannada summary.</p>
+      <div class="chb-pills">
+        <span>🌱 Crop Advisor</span>
+        <span>📈 Market Analyst</span>
+        <span>🌦️ Weather Intel</span>
+        <span>🪨 Soil Expert</span>
+        <span>🇮🇳 Kannada Output</span>
+      </div>
+      <!-- Live stats bar below pills -->
+      <div class="chb-stats">
+        <div class="chb-stat">
+          <span class="chb-stat-num">2200</span>
+          <span class="chb-stat-lbl">Training Samples</span>
         </div>
-    </nav>
+        <div class="chb-stat-div"></div>
+        <div class="chb-stat">
+          <span class="chb-stat-num">100</span>
+          <span class="chb-stat-lbl">RF Trees</span>
+        </div>
+        <div class="chb-stat-div"></div>
+        <div class="chb-stat">
+          <span class="chb-stat-num">4</span>
+          <span class="chb-stat-lbl">AI Agents</span>
+        </div>
+        <div class="chb-stat-div"></div>
+        <div class="chb-stat">
+          <span class="chb-stat-num">₹0</span>
+          <span class="chb-stat-lbl">Stack Cost</span>
+        </div>
+        <div class="chb-stat-div"></div>
+        <div class="chb-stat">
+          <span class="chb-stat-num">14</span>
+          <span class="chb-stat-lbl">Districts</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <main>
-        <section class="core-hero" id="core">
-            <div class="container">
-                <div class="section-heading reveal is-visible">
-                    <h1>Main Core Advisory Application</h1>
-                    <p>This page contains the primary project workflow: overview, advisory form, full-stack flow, and action plan.</p>
-                </div>
+  <!-- ── MAIN 3-COL ─────────────────────────── -->
+  <div class="core-main" id="advisory-form">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="farm-sidebar farm-sidebar-left">
+      <div class="fsb-section-title">Farm Tools</div>
+      <div class="fsb-tool"><span>💧</span><p>Irrigation</p></div>
+      <div class="fsb-tool"><span>🧪</span><p>Soil Test</p></div>
+      <div class="fsb-tool"><span>🌱</span><p>Seedling</p></div>
+      <div class="fsb-tool"><span>🌦️</span><p>Weather</p></div>
+      <div class="fsb-tool"><span>🌾</span><p>Harvest</p></div>
+      <div class="fsb-tool"><span>📊</span><p>Market</p></div>
+      <div class="fsb-divider"></div>
+      <div class="fsb-stat"><span class="fsb-stat-num">4</span><div class="fsb-stat-label">AI Agents</div></div>
+      <div class="fsb-stat"><span class="fsb-stat-num">100</span><div class="fsb-stat-label">RF Trees</div></div>
+      <div class="fsb-stat"><span class="fsb-stat-num">2200</span><div class="fsb-stat-label">Samples</div></div>
+    </aside>
+
+    <!-- CENTER CONTENT -->
+    <div class="core-center">
+
+      <!-- AGENT STRIP -->
+      <div class="agent-strip" id="agent-strip">
+        <div class="as-item"><span class="as-icon">🌱</span><div class="as-text"><strong>CropAdvisor</strong><span>RF + SHAP → top 3 crops</span></div></div>
+        <span class="as-arr">→</span>
+        <div class="as-item"><span class="as-icon">📈</span><div class="as-text"><strong>MarketAnalyst</strong><span>Agmarknet + profit</span></div></div>
+        <span class="as-arr">→</span>
+        <div class="as-item"><span class="as-icon">🌦️</span><div class="as-text"><strong>WeatherIntel</strong><span>OWM 7-day flag</span></div></div>
+        <span class="as-arr">→</span>
+        <div class="as-item"><span class="as-icon">🪨</span><div class="as-text"><strong>SoilExpert</strong><span>NPK alerts</span></div></div>
+        <span class="as-arr">→</span>
+        <div class="as-item as-last"><span class="as-icon">🇮🇳</span><div class="as-text"><strong>Bhashini</strong><span>Kannada output</span></div></div>
+      </div>
+
+      <!-- TABS -->
+      <section class="tabs-shell">
+        <div class="tab-list" role="tablist">
+          <button class="tab active" role="tab" data-tab="advisory" id="tab-btn-advisory">
+            <span class="tab-icon">🌾</span>Crop Advisory
+          </button>
+          <button class="tab" role="tab" data-tab="overview" id="tab-btn-overview">
+            <span class="tab-icon">📋</span>Overview
+          </button>
+          <button class="tab" role="tab" data-tab="pipeline" id="tab-btn-pipeline">
+            <span class="tab-icon">⚙️</span>AI Pipeline
+          </button>
+          <button class="tab" role="tab" data-tab="howto" id="tab-btn-howto">
+            <span class="tab-icon">📌</span>How To Use
+          </button>
+        </div>
+
+        <!-- ── ADVISORY TAB ──────────────────── -->
+        <div class="tab-panel active" id="tab-advisory">
+          <!-- Advisory header banner -->
+          <div class="advisory-banner">
+            <div class="adv-banner-icon">🌾</div>
+            <div class="adv-banner-text">
+              <h2>Enter Your Farm Details</h2>
+              <p>Fill in your current field conditions to get a full AI advisory — crop recommendation, profit estimate, weather flag, soil alerts, and Kannada summary.</p>
             </div>
-        </section>
+            <div class="adv-banner-badge">AI-Powered</div>
+          </div>
 
-        <section class="dashboard-section" id="advisory">
-            <div class="container">
-                <div class="tabs-shell">
-                    <div class="tab-list" role="tablist" aria-label="Core Tabs">
-                        <button class="tab active" role="tab" data-tab="overview">Overview</button>
-                        <button class="tab" role="tab" data-tab="advisory">Crop Advisory</button>
-                        <button class="tab" role="tab" data-tab="fullstack">Full Stack Flow</button>
-                        <button class="tab" role="tab" data-tab="action">Action Plan</button>
-                    </div>
-
-                    <div class="tab-panel active" id="tab-overview">
-                        <div class="overview-cards">
-                            <div class="mini-card"><h3>Personalized Advisory</h3><p>District and soil-aware recommendations for better field-level decisions.</p></div>
-                            <div class="mini-card"><h3>Explainability</h3><p>Model-backed guidance with practical reasoning for trust and clarity.</p></div>
-                            <div class="mini-card"><h3>Women First</h3><p>Designed for women farmers with clear and usable decision support.</p></div>
-                        </div>
-                    </div>
-
-                    <div class="tab-panel" id="tab-advisory">
-                        <form id="advisorForm" class="advisor-form">
-                            <div class="form-grid">
-                                <label>District
-                                    <select id="district" required>
-                                        <option value="">Select district</option>
-                                        <option value="Raichur">Raichur</option>
-                                        <option value="Belgaum">Belgaum</option>
-                                        <option value="Bagalkot">Bagalkot</option>
-                                        <option value="Kalaburagi">Kalaburagi</option>
-                                        <option value="Dharwad">Dharwad</option>
-                                        <option value="Hassan">Hassan</option>
-                                        <option value="Shimoga">Shimoga</option>
-                                        <option value="Tumkur">Tumkur</option>
-                                        <option value="Bangalore">Bangalore</option>
-                                    </select>
-                                </label>
-                                <label>Land Size (acres)
-                                    <input id="land" type="number" min="0.5" step="0.5" placeholder="2" required>
-                                </label>
-                                <label>Temperature (deg C)
-                                    <input id="temperature" type="number" step="0.1" placeholder="31.5" required>
-                                </label>
-                                <label>Humidity (%)
-                                    <input id="humidity" type="number" placeholder="62" required>
-                                </label>
-                                <label>Rainfall (mm)
-                                    <input id="rainfall" type="number" placeholder="92" required>
-                                </label>
-                                <label>Soil pH
-                                    <input id="ph" type="number" step="0.1" placeholder="6.7" required>
-                                </label>
-                                <label>Nitrogen (N)
-                                    <input id="N" type="number" placeholder="82" required>
-                                </label>
-                                <label>Phosphorus (P)
-                                    <input id="P" type="number" placeholder="42" required>
-                                </label>
-                                <label>Potassium (K)
-                                    <input id="K" type="number" placeholder="38" required>
-                                </label>
-                                <label>Input Budget (INR)
-                                    <input id="inputCosts" type="number" step="1000" placeholder="18000" required>
-                                </label>
-                            </div>
-                            <div class="form-actions">
-                                <button class="btn btn-gold" id="submitBtn" type="submit">Get Advisory</button>
-                            </div>
-                        </form>
-                        <div id="resultsContainer" class="results-container" style="display:none;">
-                            <h3>Advisory Results</h3>
-                            <div id="resultsContent"></div>
-                        </div>
-                    </div>
-
-                    <div class="tab-panel" id="tab-fullstack">
-                        <div class="flow-grid">
-                            <div class="flow-card"><h4>Frontend</h4><p>Input capture and UX for field data collection.</p></div>
-                            <div class="flow-card"><h4>Flask API</h4><p>Serves pages and handles recommendation requests.</p></div>
-                            <div class="flow-card"><h4>CrewAI Layer</h4><p>Multi-agent analysis combining weather and market context.</p></div>
-                            <div class="flow-card"><h4>Model Logic</h4><p>Crop suitability with explainable factors and confidence.</p></div>
-                            <div class="flow-card"><h4>Final Output</h4><p>Actionable advisory for crop, climate, and next steps.</p></div>
-                        </div>
-                    </div>
-
-                    <div class="tab-panel" id="tab-action">
-                        <div class="action-list">
-                            <p>1. Enter current farm and district condition.</p>
-                            <p>2. Run advisory and compare recommended crops.</p>
-                            <p>3. Verify cost and risk before final sowing decision.</p>
-                            <p>4. Re-run weekly as weather conditions update.</p>
-                        </div>
-                    </div>
-                </div>
+          <div class="quick-scenarios" id="quickScenarios">
+            <div class="qs-head">
+              <strong>Quick Demo Presets</strong>
+              <span>One-click realistic farm profiles for judge demos</span>
             </div>
-        </section>
-    </main>
+            <div class="qs-buttons">
+              <button type="button" class="scenario-btn" data-preset="raichur-dry">Raichur Dryland</button>
+              <button type="button" class="scenario-btn" data-preset="tumakuru-balanced">Tumakuru Balanced</button>
+              <button type="button" class="scenario-btn" data-preset="mysore-irrigated">Mysore Irrigated</button>
+            </div>
+          </div>
 
-    <script src="app.js"></script>
+          <!-- Enhancement 5: Kannada Voice Input (STT) -->
+          <div class="voice-input-section" id="voiceInputSection">
+            <div class="vis-header">
+              <span class="vis-icon">🎤</span>
+              <div>
+                <div class="vis-title">Kannada Voice Input</div>
+                <div class="vis-subtitle">Speak your farm conditions in Kannada · Auto-fill form fields</div>
+              </div>
+            </div>
+            <div class="vis-controls">
+              <button type="button" class="vis-record-btn" id="voiceRecordBtn" title="Record your farm conditions in Kannada">
+                🎙️ Start Recording
+              </button>
+              <button type="button" class="vis-stop-btn" id="voiceStopBtn" style="display:none;" title="Stop recording">
+                ⏹️ Stop Recording
+              </button>
+              <span class="vis-status" id="voiceStatus"></span>
+            </div>
+            <div class="vis-transcript" id="voiceTranscript" style="display:none;">
+              <div class="vis-trans-title">Recognized Text (Kannada):</div>
+              <div class="vis-trans-text" id="voiceTranscriptText"></div>
+            </div>
+          </div>
+
+          <form id="advisorForm" novalidate autocomplete="off">
+
+            <div class="form-section-label">📍 Location &amp; Land</div>
+            <div class="form-grid form-grid-2">
+              <label class="field-label" for="district">
+                <span class="fl-text">District <span class="fl-req">*</span></span>
+                <select id="district" required>
+                  <option value="">Select Karnataka district</option>
+                  <option value="Raichur">Raichur 🔴</option>
+                  <option value="Kalaburagi">Kalaburagi 🔴</option>
+                  <option value="Vijayapura">Vijayapura 🔴</option>
+                  <option value="Bidar">Bidar 🔴</option>
+                  <option value="Koppal">Koppal 🔴</option>
+                  <option value="Davanagere">Davanagere 🟡</option>
+                  <option value="Chitradurga">Chitradurga 🟡</option>
+                  <option value="Tumakuru">Tumakuru 🟡</option>
+                  <option value="Dharwad">Dharwad</option>
+                  <option value="Hassan">Hassan</option>
+                  <option value="Shimoga">Shimoga</option>
+                  <option value="Mysore">Mysore</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Belgaum">Belgaum</option>
+                </select>
+                <span class="field-hint">🔴 High drought risk · 🟡 Medium risk</span>
+              </label>
+              <label class="field-label" for="land">
+                <span class="fl-text">Land Size (acres) <span class="fl-req">*</span></span>
+                <input id="land" type="number" min="0.5" step="0.5" placeholder="e.g. 2.5" required>
+                <span class="field-hint">Total sowing area in acres</span>
+              </label>
+            </div>
+
+            <div class="form-grid form-grid-2">
+              <label class="field-label" for="gender">
+                <span class="fl-text">Farmer Gender <span class="fl-opt">(optional)</span></span>
+                <select id="gender">
+                  <option value="">Prefer not to say</option>
+                  <option value="female">Female</option>
+                  <option value="male">Male</option>
+                  <option value="other">Other</option>
+                </select>
+                <span class="field-hint">Used for targeted scheme eligibility</span>
+              </label>
+            </div>
+
+            <!-- Enhancement 1: Last Season Crop for Rotation Recommendation -->
+            <div class="form-grid form-grid-2">
+              <label class="field-label" for="lastCrop">
+                <span class="fl-text">Last Season Crop <span class="fl-opt">(optional)</span></span>
+                <select id="lastCrop">
+                  <option value="">No previous crop</option>
+                  <option value="Rice">Rice</option>
+                  <option value="Wheat">Wheat</option>
+                  <option value="Maize">Maize</option>
+                  <option value="Ragi">Ragi</option>
+                  <option value="Groundnut">Groundnut</option>
+                  <option value="Sugarcane">Sugarcane</option>
+                  <option value="Jowar">Jowar</option>
+                  <option value="Cotton">Cotton</option>
+                </select>
+                <span class="field-hint">Get crop rotation recommendation</span>
+              </label>
+            </div>
+
+            <div class="form-section-label">🌡️ Climate Conditions</div>
+            <div class="form-grid form-grid-3">
+              <label class="field-label" for="temperature">
+                <span class="fl-text">Temperature (°C) <span class="fl-req">*</span></span>
+                <input id="temperature" type="number" step="0.1" placeholder="e.g. 31.5" required>
+              </label>
+              <label class="field-label" for="humidity">
+                <span class="fl-text">Humidity (%) <span class="fl-req">*</span></span>
+                <input id="humidity" type="number" min="0" max="100" placeholder="e.g. 62" required>
+              </label>
+              <label class="field-label" for="rainfall">
+                <span class="fl-text">Rainfall (mm) <span class="fl-req">*</span></span>
+                <input id="rainfall" type="number" placeholder="e.g. 92" required>
+              </label>
+            </div>
+
+            <div class="form-section-label">🧪 Soil NPK &amp; Budget</div>
+            <div class="form-grid form-grid-4">
+              <label class="field-label" for="ph">
+                <span class="fl-text">Soil pH <span class="fl-req">*</span></span>
+                <input id="ph" type="number" step="0.1" min="3" max="10" placeholder="6.7" required>
+                <span class="field-hint">Ideal: 6.0–7.5</span>
+              </label>
+              <label class="field-label" for="N">
+                <span class="fl-text">Nitrogen (N) <span class="fl-req">*</span></span>
+                <input id="N" type="number" placeholder="82" required>
+                <span class="field-hint">kg/ha</span>
+              </label>
+              <label class="field-label" for="P">
+                <span class="fl-text">Phosphorus (P) <span class="fl-req">*</span></span>
+                <input id="P" type="number" placeholder="42" required>
+                <span class="field-hint">kg/ha</span>
+              </label>
+              <label class="field-label" for="K">
+                <span class="fl-text">Potassium (K) <span class="fl-req">*</span></span>
+                <input id="K" type="number" placeholder="38" required>
+                <span class="field-hint">kg/ha</span>
+              </label>
+            </div>
+            <div class="form-grid form-grid-2" style="max-width:460px">
+              <label class="field-label" for="inputCosts">
+                <span class="fl-text">Input Budget (₹) <span class="fl-req">*</span></span>
+                <input id="inputCosts" type="number" step="1000" placeholder="18000" required>
+                <span class="field-hint">Seeds + fertilizer + labour</span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-mint btn-submit" id="submitBtn" type="submit">
+                <span id="btnText">🌾 Get AI Advisory</span>
+                <span id="btnSpinner" class="spinner" style="display:none"></span>
+              </button>
+              <button class="btn-ghost-sm" type="reset" id="resetBtn">↺ Reset</button>
+              <p class="form-note">Results include crop recommendation, profit estimate, weather flag, soil alerts, SHAP reasons, and Kannada summary via Bhashini API.</p>
+            </div>
+          </form>
+
+          <!-- RESULTS -->
+          <div id="resultsContainer" class="results-container" style="display:none">
+            <div class="results-header">
+              <h3 id="resultsTitle">Advisory Results</h3>
+              <button class="copy-btn" id="copyBtn">📋 Copy JSON</button>
+            </div>
+            <div id="resultsContent"></div>
+          </div>
+        </div>
+
+        <!-- ── OVERVIEW TAB ──────────────────── -->
+        <div class="tab-panel" id="tab-overview">
+          <div class="ov-hero">
+            <div class="ov-hero-icon">🌍</div>
+            <h2>What RythaGelathi Does</h2>
+            <p>Six outputs for every woman farmer — powered entirely by free-tier APIs and open-source models at ₹0 cost.</p>
+          </div>
+          <div class="ov-grid">
+            <div class="ov-card ov-card-1">
+              <div class="ov-icon">🌱</div>
+              <h3>Crop Recommender</h3>
+              <p>Random Forest (100 trees) on N-P-K, weather, rainfall. SHAP explains the top 3 reasons per crop recommendation.</p>
+              <span class="ov-tag">RF · SHAP · 2200 samples</span>
+            </div>
+            <div class="ov-card ov-card-2">
+              <div class="ov-icon">📈</div>
+              <h3>Market Analyst</h3>
+              <p>Live Karnataka mandi prices via Agmarknet. Profit = yield × price − input costs per recommended crop.</p>
+              <span class="ov-tag">Agmarknet · 6hr cache</span>
+            </div>
+            <div class="ov-card ov-card-3">
+              <div class="ov-icon">🌦️</div>
+              <h3>Weather Intel</h3>
+              <p>7-day OpenWeatherMap forecast per district → GREEN / AMBER / RED compatibility per crop suitability band.</p>
+              <span class="ov-tag">OWM API · 7-day</span>
+            </div>
+            <div class="ov-card ov-card-4">
+              <div class="ov-icon">🪨</div>
+              <h3>Soil Expert</h3>
+              <p>Karnataka Soil Health Card JSON checked per district. Flags N, P, K deficiencies per recommended crop type.</p>
+              <span class="ov-tag">Soil Health Card · NPK</span>
+            </div>
+            <div class="ov-card ov-card-5">
+              <div class="ov-icon">🇮🇳</div>
+              <h3>Kannada Summary</h3>
+              <p>Full English advisory → natural Kannada via Bhashini API (Government of India). Clear for any farmer to read.</p>
+              <span class="ov-tag">Bhashini API · en→kn</span>
+            </div>
+            <div class="ov-card ov-card-6">
+              <div class="ov-icon">👩‍🌾</div>
+              <h3>Women-First Design</h3>
+              <p>Mobile-first, bilingual, designed for Karnataka's 62 lakh women farmers — no app install needed, works on any phone.</p>
+              <span class="ov-tag">Inclusive Design</span>
+            </div>
+          </div>
+          <!-- Impact bar -->
+          <div class="ov-impact-row">
+            <div class="ov-imp"><span class="ov-imp-num">287</span><span class="ov-imp-lbl">Farmer suicides — avoidable with better advisory</span></div>
+            <div class="ov-imp"><span class="ov-imp-num">62L</span><span class="ov-imp-lbl">Women farmers in Karnataka</span></div>
+            <div class="ov-imp"><span class="ov-imp-num">73%</span><span class="ov-imp-lbl">Receive zero personalised advice</span></div>
+            <div class="ov-imp"><span class="ov-imp-num">₹0</span><span class="ov-imp-lbl">Total stack cost</span></div>
+          </div>
+        </div>
+
+        <!-- ── PIPELINE TAB ──────────────────── -->
+        <div class="tab-panel" id="tab-pipeline">
+          <div class="pipe-hero">
+            <h2>AI Pipeline — How It Flows</h2>
+            <p>A POST request flows through 6 sequential stages before the Kannada result arrives in 10–20 seconds.</p>
+          </div>
+
+          <!-- Visual flow -->
+          <div class="pipe-visual">
+            <div class="pv-item pv-start">
+              <div class="pv-icon">📱</div>
+              <div class="pv-label">Browser</div>
+            </div>
+            <div class="pv-arrow">→</div>
+            <div class="pv-item">
+              <div class="pv-icon">⚙️</div>
+              <div class="pv-label">Flask API</div>
+            </div>
+            <div class="pv-arrow">→</div>
+            <div class="pv-item pv-agent">
+              <div class="pv-icon">🌱</div>
+              <div class="pv-label">CropAdvisor</div>
+            </div>
+            <div class="pv-arrow">→</div>
+            <div class="pv-item pv-agent">
+              <div class="pv-icon">📈</div>
+              <div class="pv-label">MarketAnalyst</div>
+            </div>
+            <div class="pv-arrow">→</div>
+            <div class="pv-item pv-agent">
+              <div class="pv-icon">🌦️</div>
+              <div class="pv-label">WeatherIntel</div>
+            </div>
+            <div class="pv-arrow">→</div>
+            <div class="pv-item pv-agent">
+              <div class="pv-icon">🪨</div>
+              <div class="pv-label">SoilExpert</div>
+            </div>
+            <div class="pv-arrow">→</div>
+            <div class="pv-item pv-end">
+              <div class="pv-icon">🇮🇳</div>
+              <div class="pv-label">Bhashini</div>
+            </div>
+          </div>
+
+          <div class="pipe-steps">
+            <div class="ps-item">
+              <div class="ps-num">01</div>
+              <div class="ps-body">
+                <h4>📱 Browser Input</h4>
+                <p>District, N/P/K, temperature, humidity, pH, rainfall, land size, budget. Enter once — results in 10–20 seconds.</p>
+                <span class="ps-file">frontend/index.html + core.html</span>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">02</div>
+              <div class="ps-body">
+                <h4>⚙️ Flask API</h4>
+                <p>POST /api/recommend validates JSON payload and triggers KrishiCrew.run(inputs). CORS-enabled for browser access.</p>
+                <span class="ps-file">api/server.py</span>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">03</div>
+              <div class="ps-body">
+                <h4>🌱 CropAdvisor Agent</h4>
+                <p>Random Forest predicts top 3 crops. SHAP TreeExplainer generates force_plot and top 3 feature importance reasons per crop.</p>
+                <span class="ps-file">crew/krishi_crew.py → CropAdvisorTool</span>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">04</div>
+              <div class="ps-body">
+                <h4>📈 MarketAnalyst Agent</h4>
+                <p>Agmarknet API (3s timeout, 6hr LRU cache, static JSON fallback). Profit = yield × price − input costs per district.</p>
+                <span class="ps-file">tools/market_price_tool.py</span>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">05</div>
+              <div class="ps-body">
+                <h4>🌦️ WeatherIntel Agent</h4>
+                <p>OWM Geo API → district lat/lon → 7-day one-call forecast → GREEN/AMBER/RED compatibility flag per crop suitability band.</p>
+                <span class="ps-file">crew/krishi_crew.py → WeatherIntelTool</span>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">06</div>
+              <div class="ps-body">
+                <h4>🪨 SoilExpert + 🇮🇳 Bhashini</h4>
+                <p>Soil Health Card NPK check → deficiency flags per district. Bhashini translates final structured output to natural Kannada.</p>
+                <span class="ps-file">crew/krishi_crew.py → _translate_to_kannada_bhashini</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- JSON output preview -->
+          <div class="pipe-output">
+            <div class="po-title">📎 Final JSON Output Fields</div>
+            <div class="po-grid">
+              <div class="po-field"><span class="po-k">top_crop</span><span class="po-v">Best crop for current conditions</span></div>
+              <div class="po-field"><span class="po-k">profit_estimate</span><span class="po-v">Expected ₹ profit based on mandi price</span></div>
+              <div class="po-field"><span class="po-k">weather_flag</span><span class="po-v">GREEN / AMBER / RED from 7-day OWM</span></div>
+              <div class="po-field"><span class="po-k">soil_alerts</span><span class="po-v">N / P / K deficiency flags by district</span></div>
+              <div class="po-field"><span class="po-k">shap_reasons</span><span class="po-v">Top 3 SHAP features that drove the pick</span></div>
+              <div class="po-field po-gold"><span class="po-k">kannada_summary</span><span class="po-v">Full advisory in Kannada via Bhashini</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── HOWTO TAB ─────────────────────── -->
+        <div class="tab-panel" id="tab-howto">
+          <div class="howto-hero">
+            <h2>How To Use RythaGelathi</h2>
+            <p>Four simple steps — works on mobile, no app install required, results delivered in Kannada.</p>
+          </div>
+
+          <div class="ht-items">
+            <div class="ht-card">
+              <div class="ht-num">1</div>
+              <div class="ht-body">
+                <h4>📍 Fill Your Farm Details</h4>
+                <p>Select district, enter land size, current temperature, humidity, rainfall, soil pH, N-P-K values, and input budget. All fields available on the Crop Advisory tab.</p>
+                <div class="ht-tip">💡 Use your Soil Health Card for accurate N, P, K values. Ask your KVK officer if needed.</div>
+              </div>
+            </div>
+            <div class="ht-card">
+              <div class="ht-num">2</div>
+              <div class="ht-body">
+                <h4>🤖 Click "Get AI Advisory"</h4>
+                <p>CrewAI runs all 4 agents in sequence: crop ML model, live mandi prices, 7-day weather forecast, soil NPK check. Processing typically takes 10–20 seconds.</p>
+                <div class="ht-tip">⏱️ Speed depends on Groq + OWM API response time. 🌐 Internet required.</div>
+              </div>
+            </div>
+            <div class="ht-card">
+              <div class="ht-num">3</div>
+              <div class="ht-body">
+                <h4>📊 Review Structured Results</h4>
+                <p>You get: top 3 crops, profit estimate per crop, weather flag (GREEN/AMBER/RED), soil deficiency alerts, SHAP explainability reasons, and a full Kannada summary.</p>
+                <div class="ht-tip">📋 Click "Copy JSON" to share results directly with your field advisor or extension officer.</div>
+              </div>
+            </div>
+            <div class="ht-card">
+              <div class="ht-num">4</div>
+              <div class="ht-body">
+                <h4>🔄 Re-Run Weekly During Sowing</h4>
+                <p>Mandi prices and weather data update daily. Re-run during your sowing window for the most current district-level recommendation.</p>
+                <div class="ht-tip">🌱 Your NPK and pH values rarely change — save them for next run.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API Keys box -->
+          <div class="keys-box">
+            <h4>⚙️ Required API Keys (.env)</h4>
+            <div class="keys-grid">
+              <div class="key-row">
+                <span class="key-name">GROQ_API_KEY</span>
+                <span class="key-desc">LLaMA 3.3 70B via Groq — agent reasoning engine</span>
+              </div>
+              <div class="key-row">
+                <span class="key-name">OPENWEATHER_API_KEY</span>
+                <span class="key-desc">7-day forecast per district (1000 free/day)</span>
+              </div>
+              <div class="key-row">
+                <span class="key-name">BHASHINI_API_KEY</span>
+                <span class="key-desc">Government of India Kannada translation pipeline</span>
+              </div>
+              <div class="key-row">
+                <span class="key-name">AGMARKNET_API_KEY</span>
+                <span class="key-desc">Optional — static JSON fallback included in repo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick start terminal -->
+          <div class="howto-cmd">
+            <div class="howto-cmd-title">🚀 Quick Start</div>
+            <div class="howto-cmd-body">
+              <div class="howto-cmd-line"><span class="howto-cmd-prompt">$</span> git clone https://github.com/Yashaswini-V21/Rytha_Gelathi.git</div>
+              <div class="howto-cmd-line"><span class="howto-cmd-prompt">$</span> pip install -r requirements.txt</div>
+              <div class="howto-cmd-line"><span class="howto-cmd-prompt">$</span> cp .env.example .env  <span class="howto-cmd-comment"># fill in your API keys</span></div>
+              <div class="howto-cmd-line"><span class="howto-cmd-prompt">$</span> python api/server.py</div>
+              <div class="howto-cmd-line howto-cmd-comment"># Open http://127.0.0.1:8000 in your browser</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="farm-sidebar farm-sidebar-right">
+      <div class="fsb-section-title">Seasonal Tips</div>
+      <div class="tip-card"><strong>Sowing Window</strong>Rabi: Oct–Nov · Kharif: Jun–Jul</div>
+      <div class="tip-card"><strong>Irrigation</strong>Water at 5–7 AM. Skip if rain forecast &gt;4mm.</div>
+      <div class="tip-card"><strong>Pest Check</strong>Inspect leaf undersides at dawn, weekly.</div>
+      <div class="tip-card"><strong>Market Tip</strong>Mandi prices peak 4–6 weeks post-harvest.</div>
+      <div class="tip-card"><strong>Certified Seeds</strong>Yield 15–22% higher vs unverified seeds.</div>
+      <div class="fsb-divider"></div>
+      <div class="fsb-kannada">ರೈತ ಗೆಳತಿ ನಿಮ್ಮ ಜೊತೆ ಇದ್ದಾಳೆ 🌿</div>
+    </aside>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────── -->
+  <footer class="core-footer">
+    <div class="core-foot-grass"></div>
+
+    <div class="container cf-grid">
+      <div class="cf-brand">
+        <div class="cf-logo">🌾 RythaGelathi</div>
+        <div class="cf-kn">ರೈತ ಗೆಳತಿ · harvest hex harvesters</div>
+        <p class="cf-desc">AI climate advisory for women farmers in Karnataka, powered by a 4-agent CrewAI pipeline with explainable crop intelligence and Kannada output.</p>
+        <div class="cf-badges">
+          <span>WitchHunt 2026</span>
+          <span>Climate Action</span>
+          <span>Stack Cost ₹0</span>
+        </div>
+      </div>
+
+      <div class="cf-col">
+        <h4>Product</h4>
+        <a href="#advisory-form">Crop Advisory</a>
+        <a href="#advisory-form" class="js-tab-link" data-target="overview">Overview</a>
+        <a href="#advisory-form" class="js-tab-link" data-target="pipeline">AI Pipeline</a>
+        <a href="#advisory-form" class="js-tab-link" data-target="howto">How To Use</a>
+      </div>
+
+      <div class="cf-col">
+        <h4>Resources</h4>
+        <a href="/health">API Health</a>
+        <a href="https://www.agmarknet.gov.in/" target="_blank" rel="noopener noreferrer">Agmarknet</a>
+        <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap</a>
+        <a href="https://bhashini.gov.in/" target="_blank" rel="noopener noreferrer">Bhashini</a>
+      </div>
+
+      <div class="cf-col">
+        <h4>Navigation</h4>
+        <a href="index.html">Back to Landing</a>
+        <a href="#agent-strip">AI Agents</a>
+        <a href="#advisory-form">Run Advisory</a>
+        <a href="#navbar">Top of Page</a>
+      </div>
+    </div>
+
+    <div class="container cf-bottom">
+      <p>© 2026 RythaGelathi. Built for Karnataka women farmers.</p>
+      <p class="cf-bottom-note">CrewAI · Groq LLaMA 3.3 · SHAP · Bhashini</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="core.js"></script>
 </body>
 </html>
