@@ -1,313 +1,256 @@
-document.addEventListener("DOMContentLoaded", () => {
-    initSplash();
-    initTyping();
-    initRevealObserver();
-    initTabs();
-    initNavigation();
-    initQuickStart();
-    initFormSubmission();
-    setSampleValues();
-});
+/* ═══════════════════════════════════════════════
+   RythaGelathi — app.js
+   Splash · Stars · Theme · Scroll · Counters · Tabs
+   ═══════════════════════════════════════════════ */
+(function () {
+  'use strict';
 
-function initSplash() {
-    const splash = document.getElementById("splashScreen");
-    const enterBtn = document.getElementById("enterExperience");
-    if (!splash || !enterBtn) {
-        return;
+  /* ── STARS (disabled for cleaner splash) ───── */
+
+  /* ── SPLASH ─────────────────────────────────── */
+  var splash  = document.getElementById('splash');
+  var spEnter = document.getElementById('spEnter');
+  if (splash) {
+    document.body.style.overflow = 'hidden';
+    function closeSplash() {
+      splash.classList.add('hide');
+      document.body.style.overflow = '';
     }
-    let finished = false;
+    if (spEnter) spEnter.addEventListener('click', closeSplash);
+    setTimeout(closeSplash, 6500);
+  }
 
-    const hideSplash = () => {
-        if (finished) {
-            return;
-        }
-        finished = true;
-        splash.classList.add("revealing");
-        setTimeout(() => {
-            splash.classList.add("hide");
-        }, 680);
-    };
+  /* ── THEME TOGGLE ───────────────────────────── */
+  var html = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
 
-    enterBtn.addEventListener("click", hideSplash);
-    setTimeout(hideSplash, 3200);
-}
+  function setTheme(t) {
+    html.setAttribute('data-theme', t);
+    if (themeBtn) themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('ryt-theme', t); } catch (e) {}
+  }
 
-function initTyping() {
-    const el = document.getElementById("typingText");
-    if (!el) {
-        return;
-    }
+  // Restore saved preference
+  try {
+    var saved = localStorage.getItem('ryt-theme');
+    if (saved === 'light' || saved === 'dark') setTheme(saved);
+    else if (themeBtn) setTheme(html.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  } catch (e) {}
 
-    const words = [
-        "climate awareness",
-        "AI crop confidence",
-        "market intelligence",
-        "women-first advisory"
-    ];
-    let wordIndex = 0;
-    let charIndex = 0;
-    let deleting = false;
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  }
 
-    function frame() {
-        const word = words[wordIndex];
-        el.textContent = deleting
-            ? word.slice(0, charIndex - 1)
-            : word.slice(0, charIndex + 1);
+  /* ── NAVBAR SCROLL ──────────────────────────── */
+  var navbar = document.getElementById('navbar');
+  if (navbar) {
+    window.addEventListener('scroll', function () {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  }
 
-        charIndex = deleting ? charIndex - 1 : charIndex + 1;
-
-        let delay = deleting ? 40 : 80;
-        if (!deleting && charIndex === word.length) {
-            deleting = true;
-            delay = 900;
-        }
-        if (deleting && charIndex === 0) {
-            deleting = false;
-            wordIndex = (wordIndex + 1) % words.length;
-            delay = 260;
-        }
-
-        setTimeout(frame, delay);
+  /* ── HAMBURGER ──────────────────────────────── */
+  var ham   = document.getElementById('navHam');
+  var links = document.getElementById('navLinks');
+  if (ham && links) {
+    function setMenuOpen(isOpen) {
+      links.classList.toggle('open', isOpen);
+      if (window.innerWidth <= 768) {
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+      }
     }
 
-    frame();
-}
+    ham.addEventListener('click', function () {
+      setMenuOpen(!links.classList.contains('open'));
+    });
 
-function initRevealObserver() {
-    const items = document.querySelectorAll(".reveal");
-    if (!items.length) {
-        return;
-    }
+    links.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { setMenuOpen(false); });
+    });
 
-    const observer = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("is-visible");
-                    observer.unobserve(entry.target);
-                }
-            });
-        },
-        { threshold: 0.15 }
-    );
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false);
+      }
+    });
+  }
 
-    items.forEach((item) => observer.observe(item));
-}
+  /* ── SMOOTH SCROLL ──────────────────────────── */
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href').slice(1);
+      if (!id) return;
+      var el = document.getElementById(id);
+      if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
 
-function initNavigation() {
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", (e) => {
-            const targetSelector = anchor.getAttribute("href");
-            if (!targetSelector || targetSelector === "#") {
-                return;
-            }
-            const target = document.querySelector(targetSelector);
-            if (!target) {
-                return;
-            }
-            e.preventDefault();
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
+  /* ── LANDING TAB HIGHLIGHT (NAV + FOOTER) ─── */
+  var sectionTabLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.nav-links a[href^="#"], .foot-tab[href^="#"]')
+  );
+
+  if (sectionTabLinks.length) {
+    var linkBySection = {};
+    var sections = [];
+
+    sectionTabLinks.forEach(function (link) {
+      var href = link.getAttribute('href') || '';
+      var id = href.slice(1);
+      var sectionEl = document.getElementById(id);
+      if (!id || !sectionEl) return;
+      if (!linkBySection[id]) linkBySection[id] = [];
+      linkBySection[id].push(link);
+      if (sections.indexOf(sectionEl) === -1) sections.push(sectionEl);
+      link.addEventListener('click', function () {
+        Object.keys(linkBySection).forEach(function (key) {
+          (linkBySection[key] || []).forEach(function (l) { l.classList.remove('is-active'); });
         });
-    });
-}
-
-function initTabs() {
-    const tabs = document.querySelectorAll(".tab");
-    if (!tabs.length) {
-        return;
-    }
-
-    tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-            activateTab(tab.dataset.tab);
-        });
-    });
-}
-
-function activateTab(name) {
-    document.querySelectorAll(".tab").forEach((tab) => {
-        tab.classList.toggle("active", tab.dataset.tab === name);
+        (linkBySection[id] || []).forEach(function (l) { l.classList.add('is-active'); });
+      });
     });
 
-    document.querySelectorAll(".tab-panel").forEach((panel) => {
-        panel.classList.remove("active");
-    });
-
-    const activePanel = document.getElementById(`tab-${name}`);
-    if (activePanel) {
-        activePanel.classList.add("active");
-    }
-}
-
-function initQuickStart() {
-    const startBtn = document.getElementById("gotoDashboard");
-    if (!startBtn) {
-        return;
-    }
-    startBtn.addEventListener("click", () => {
-        window.location.href = "core.html#advisory";
-    });
-}
-
-function setSampleValues() {
-    const district = document.getElementById("district");
-    if (!district) {
-        return;
-    }
-    document.getElementById("district").value = "Raichur";
-    document.getElementById("land").value = "2";
-    document.getElementById("temperature").value = "31.5";
-    document.getElementById("humidity").value = "62";
-    document.getElementById("rainfall").value = "92";
-    document.getElementById("ph").value = "6.7";
-    document.getElementById("N").value = "82";
-    document.getElementById("P").value = "42";
-    document.getElementById("K").value = "38";
-    document.getElementById("inputCosts").value = "18000";
-}
-
-function initFormSubmission() {
-    const form = document.getElementById("advisorForm");
-    const submitBtn = document.getElementById("submitBtn");
-    if (!form || !submitBtn) {
-        return;
-    }
-
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const payload = {
-            N: parseFloat(document.getElementById("N").value),
-            P: parseFloat(document.getElementById("P").value),
-            K: parseFloat(document.getElementById("K").value),
-            temperature: parseFloat(document.getElementById("temperature").value),
-            humidity: parseFloat(document.getElementById("humidity").value),
-            ph: parseFloat(document.getElementById("ph").value),
-            rainfall: parseFloat(document.getElementById("rainfall").value),
-            district: document.getElementById("district").value,
-            inputCosts: parseFloat(document.getElementById("inputCosts").value),
-            land: parseFloat(document.getElementById("land").value)
-        };
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Analyzing...";
-
-        try {
-            const response = await fetch("/api/recommend", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+    if (sections.length) {
+      var sectionIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          Object.keys(linkBySection).forEach(function (key) {
+            (linkBySection[key] || []).forEach(function (l) {
+              l.classList.toggle('is-active', key === id);
             });
-            const data = await response.json();
+          });
+        });
+      }, { rootMargin: '-28% 0px -58% 0px', threshold: 0.05 });
 
-            if (data.ok && data.result) {
-                displayResults(data.result, payload);
-            } else {
-                showError(data.error || "Unable to get advisory");
-            }
-        } catch (error) {
-            showError("Network issue. Please try again.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Get Advisory";
-        }
+      sections.forEach(function (section) { sectionIO.observe(section); });
+    }
+  }
+
+  /* ── SCROLL REVEAL ──────────────────────────── */
+  var revealIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('on'); revealIO.unobserve(e.target); }
     });
-}
+  }, { threshold: 0.08 });
 
-function displayResults(result, payload) {
-    const container = document.getElementById("resultsContainer");
-    const content = document.getElementById("resultsContent");
-    container.style.display = "block";
+  document.querySelectorAll('.rv,.rvr').forEach(function (el) { revealIO.observe(el); });
 
-    let safeResult = result;
-    if (typeof safeResult === "string") {
-        try {
-            safeResult = JSON.parse(safeResult);
-        } catch (_e) {
-            safeResult = { summary: safeResult };
-        }
+  /* ── COUNTER ANIMATION ──────────────────────── */
+  function animateCount(el) {
+    var target  = parseInt(el.getAttribute('data-target'), 10);
+    var suffix  = el.getAttribute('data-suffix') || '';
+    if (!target) return; // skip ₹0 static
+    var dur = 1800, start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.floor(ease * target) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target + suffix;
     }
+    requestAnimationFrame(step);
+  }
 
-    const cards = [];
-
-    cards.push(`
-        <div class="recommendation-card">
-            <div class="recommendation-title">Farm Snapshot</div>
-            <div class="recommendation-desc">
-                District: ${escapeHtml(payload.district)} | Land: ${payload.land} acres | Temp: ${payload.temperature} deg C | Rainfall: ${payload.rainfall} mm
-            </div>
-        </div>
-    `);
-
-    if (safeResult.crop_recommendations) {
-        const rec = Array.isArray(safeResult.crop_recommendations)
-            ? safeResult.crop_recommendations.join(", ")
-            : String(safeResult.crop_recommendations);
-        cards.push(`
-            <div class="recommendation-card">
-                <div class="recommendation-title">Top Crop Recommendations</div>
-                <div class="recommendation-desc">${escapeHtml(rec)}</div>
-            </div>
-        `);
+  var counterIO = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) {
+      document.querySelectorAll('.m-num[data-target]').forEach(animateCount);
+      counterIO.disconnect();
     }
+  }, { threshold: 0.25 });
 
-    if (safeResult.explanation) {
-        cards.push(`
-            <div class="recommendation-card">
-                <div class="recommendation-title">Why These Crops</div>
-                <div class="recommendation-desc">${escapeHtml(String(safeResult.explanation))}</div>
-            </div>
-        `);
+  var metricsEl = document.querySelector('.metrics');
+  if (metricsEl) counterIO.observe(metricsEl);
+
+  /* ── TABS (core.html) ───────────────────────── */
+  var tabs   = document.querySelectorAll('.tab[data-tab]');
+  var panels = document.querySelectorAll('.tab-panel');
+  if (tabs.length) {
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        tabs.forEach(function (x) { x.classList.remove('active'); });
+        panels.forEach(function (p) { p.classList.remove('active'); });
+        t.classList.add('active');
+        var panel = document.getElementById('tab-' + t.getAttribute('data-tab'));
+        if (panel) panel.classList.add('active');
+      });
+    });
+  }
+
+  /* ── HOW-STEP DOT FILL ON HOVER ─────────────── */
+  document.querySelectorAll('.hw').forEach(function (hw) {
+    var dot = hw.querySelector('.hw-n');
+    if (!dot) return;
+    hw.addEventListener('mouseenter', function () {
+      dot.style.background = 'var(--mint)';
+      dot.style.color = '#031a0d';
+    });
+    hw.addEventListener('mouseleave', function () {
+      dot.style.background = '';
+      dot.style.color = '';
+    });
+  });
+
+  /* ── PRODUCT GALLERY ROTATION ───────────────── */
+  var plGrid = document.querySelector('.pl-grid');
+  if (plGrid) {
+    var plCards = Array.prototype.slice.call(plGrid.querySelectorAll('.pl-card'));
+    var plDotsWrap = document.getElementById('plDots');
+    var plDots = [];
+    if (plCards.length > 1) {
+      var activeIndex = 0;
+      var rotateTimer = null;
+
+      if (plDotsWrap) {
+        plDots = plCards.map(function (_, i) {
+          var dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'pl-dot';
+          dot.setAttribute('aria-label', 'Show product card ' + (i + 1));
+          dot.addEventListener('click', function () {
+            activeIndex = i;
+            setActiveCard(activeIndex);
+          });
+          plDotsWrap.appendChild(dot);
+          return dot;
+        });
+      }
+
+      function setActiveCard(index) {
+        plCards.forEach(function (card, i) {
+          card.classList.toggle('is-active', i === index);
+        });
+        plDots.forEach(function (dot, i) {
+          dot.classList.toggle('is-active', i === index);
+        });
+      }
+
+      function startRotation() {
+        if (rotateTimer) return;
+        rotateTimer = setInterval(function () {
+          activeIndex = (activeIndex + 1) % plCards.length;
+          setActiveCard(activeIndex);
+        }, 2600);
+      }
+
+      function stopRotation() {
+        if (!rotateTimer) return;
+        clearInterval(rotateTimer);
+        rotateTimer = null;
+      }
+
+      plGrid.classList.add('rotating');
+      setActiveCard(activeIndex);
+      startRotation();
+
+      plGrid.addEventListener('mouseenter', stopRotation);
+      plGrid.addEventListener('mouseleave', startRotation);
+      plGrid.addEventListener('focusin', stopRotation);
+      plGrid.addEventListener('focusout', startRotation);
     }
+  }
 
-    if (safeResult.market_insights) {
-        cards.push(`
-            <div class="recommendation-card">
-                <div class="recommendation-title">Market Insights</div>
-                <div class="recommendation-desc">${escapeHtml(String(safeResult.market_insights))}</div>
-            </div>
-        `);
-    }
-
-    if (safeResult.climate_tips) {
-        cards.push(`
-            <div class="recommendation-card">
-                <div class="recommendation-title">Climate Tips</div>
-                <div class="recommendation-desc">${escapeHtml(String(safeResult.climate_tips))}</div>
-            </div>
-        `);
-    }
-
-    if (cards.length === 1 && safeResult.summary) {
-        cards.push(`
-            <div class="recommendation-card">
-                <div class="recommendation-title">Advisory Summary</div>
-                <div class="recommendation-desc">${escapeHtml(String(safeResult.summary))}</div>
-            </div>
-        `);
-    }
-
-    content.innerHTML = cards.join("\n");
-    container.scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
-function showError(message) {
-    const container = document.getElementById("resultsContainer");
-    const content = document.getElementById("resultsContent");
-    container.style.display = "block";
-    content.innerHTML = `
-        <div class="recommendation-card">
-            <div class="recommendation-title">Error</div>
-            <div class="recommendation-desc">${escapeHtml(message)}</div>
-        </div>
-    `;
-}
-
-function escapeHtml(value) {
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/\"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+})();

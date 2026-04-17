@@ -9,3 +9,4 @@ streamlit>=1.39.0
 python-dotenv>=1.0.1
 flask>=3.0.0
 flask-cors>=4.0.0
+reportlab>=4.1.0
