@@ -83,6 +83,46 @@ def recommend() -> Any:
         }), 500
 
 
+@app.post("/api/simulate")
+def simulate() -> Any:
+    """Fast simulation endpoint bypassing full CrewAI pipeline for real-time slider updates."""
+    payload = request.get_json(silent=True) or {}
+    inputs = _payload_to_inputs(payload)
+    try:
+        from crew.krishi_crew import CropAdvisorTool
+        tool = CropAdvisorTool()
+        # Direct tool run for sub-second latency
+        tool_output = tool._run(
+            N=inputs["N"],
+            P=inputs["P"],
+            K=inputs["K"],
+            temperature=inputs["temperature"],
+            humidity=inputs["humidity"],
+            ph=inputs["ph"],
+            rainfall=inputs["rainfall"]
+        )
+        import json
+        result_data = json.loads(tool_output)
+        
+        # Add basic profit estimation for simulation
+        top_crop = result_data["top_crops"][0]
+        # Basic heuristic for simulation speed
+        base_profit = 45000 * inputs["land_acres"]
+        if "rice" in top_crop.lower(): base_profit *= 1.2
+        
+        return jsonify({
+            "ok": True,
+            "inputs": inputs,
+            "top_crop": top_crop,
+            "probability": result_data["probabilities"][top_crop],
+            "profit_estimate": base_profit,
+            "contributions": result_data.get("contributions", {}).get(top_crop, {}),
+            "risk_score": "LOW" if result_data["probabilities"][top_crop] > 0.7 else "MEDIUM"
+        })
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
 if __name__ == "__main__":
     host = os.getenv("API_HOST", "127.0.0.1")
     port = int(os.getenv("API_PORT", "8000"))

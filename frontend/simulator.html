@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RythaGelathi — Agricultural Simulator | ರೈತ ಗೆಳತಿ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="core.css">
+  <style>
+    :root {
+      --mint: #34d399;
+      --gold: #f59e0b;
+      --accent: #34d399;
+    }
+    
+    body.core-page {
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.4s ease;
+    }
+
+    [data-theme="light"] body.core-page {
+      --bg: #f8faf9;
+      --text: #061c12;
+      --card: #ffffff;
+      --border: rgba(0, 70, 40, 0.1);
+      --muted: #4b6358;
+    }
+
+    [data-theme="dark"] body.core-page {
+      --bg: #050d0a;
+      --text: #e9f8ef;
+      --card: #0a1f16;
+      --border: rgba(255, 255, 255, 0.08);
+      --muted: #8db4a1;
+    }
+
+    .simulator-page {
+      padding: 4rem 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top right, var(--mint-dim), transparent);
+    }
+    .sim-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .sim-header h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+    }
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .sim-layout { grid-template-columns: 1fr; }
+    }
+    .sim-controls-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    }
+    .sim-display-panel {
+      position: sticky;
+      top: 100px;
+    }
+  </style>
+</head>
+<body class="core-page">
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; border: 1px solid var(--border); background: var(--card); cursor: pointer;">🌙</button>
+
+  <!-- ── NAVBAR ─────────────────────────────── -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-icon">🌾</span>
+        <span>RythaGelathi</span>
+        <span class="brand-kannada">ರೈತ ಗೆಳತಿ</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">← Landing</a>
+        <a href="core.html">Advisory Tool</a>
+        <a href="climate.html">🌍 Climate Dashboard</a>
+        <a href="simulator.html" class="active">Simulator</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="simulator-page">
+    <div class="container">
+      <header class="sim-header">
+        <div class="chb-badge">
+          <span class="hero-badge-dot"></span>
+          Real-Time Scenario Testing
+        </div>
+        <h1>Climate <span class="t-mint">Simulator</span></h1>
+        <p class="chb-sub">Adjust weather and soil parameters instantly. AI predicts the best crop and your profit in real time.</p>
+      </header>
+
+      <div class="sim-layout">
+        <!-- Controls -->
+        <div class="sim-controls-panel">
+          <h3 style="margin-bottom: 1.5rem; color: var(--accent);">Adjust Parameters</h3>
+          
+          <div class="sim-slider-group">
+            <label>Rainfall <span id="val-rainfall">150mm</span></label>
+            <input type="range" class="sim-slider" id="sim-rainfall" min="0" max="500" value="150" oninput="updateSim()">
+          </div>
+          
+          <div class="sim-slider-group">
+            <label>Temperature <span id="val-temp">28°C</span></label>
+            <input type="range" class="sim-slider" id="sim-temp" min="10" max="50" value="28" oninput="updateSim()">
+          </div>
+          
+          <div class="sim-slider-group">
+            <label>Soil pH <span id="val-ph">6.5</span></label>
+            <input type="range" class="sim-slider" id="sim-ph" min="3" max="10" step="0.1" value="6.5" oninput="updateSim()">
+          </div>
+          
+          <div class="sim-slider-group">
+            <label>Nitrogen (N) <span id="val-n">80</span></label>
+            <input type="range" class="sim-slider" id="sim-n" min="0" max="150" value="80" oninput="updateSim()">
+          </div>
+          
+          <div class="sim-slider-group">
+            <label>Phosphorus (P) <span id="val-p">40</span></label>
+            <input type="range" class="sim-slider" id="sim-p" min="0" max="150" value="40" oninput="updateSim()">
+          </div>
+          
+          <div class="sim-slider-group">
+            <label>Potassium (K) <span id="val-k">40</span></label>
+            <input type="range" class="sim-slider" id="sim-k" min="0" max="150" value="40" oninput="updateSim()">
+          </div>
+
+          <div class="sim-presets" style="margin-top: 2rem;">
+            <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem;">SCENARIO PRESETS</p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+               <button class="btn-ghost-sm" onclick="applyPreset(150, 28, 6.5, 80, 40, 40)">Normal</button>
+               <button class="btn-ghost-sm" onclick="applyPreset(20, 38, 7.2, 40, 20, 20)">Drought</button>
+               <button class="btn-ghost-sm" onclick="applyPreset(400, 24, 5.8, 100, 60, 50)">Flood</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="sim-display-panel">
+          <div class="glass-card sim-metric-card sim-hero-card" style="margin-bottom: 1.5rem;">
+            <div class="sim-pill-group">
+              <span class="sim-pill" id="sim-resilience-pill">Analysis Idle</span>
+              <span class="sim-pill pill-gold" id="sim-profit-pill">Processing...</span>
+            </div>
+            <div class="sim-lbl">AI PREDICTED CROP</div>
+            <div class="sim-main-val-wrap">
+              <div class="sim-val sim-val-large" id="sim-crop" style="font-size: 4rem;">...</div>
+              <div id="sim-prob" class="sim-confidence-tag">Match: 0%</div>
+            </div>
+            <div class="sim-tags" id="sim-tags-area">
+              <span>Waiting for input</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="glass-card sim-metric-card">
+              <div class="sim-card-icon">💰</div>
+              <div class="sim-lbl">Net Profit / Acre</div>
+              <div class="sim-val sim-val-large" id="sim-profit" style="color: var(--gold); font-size: 2.2rem;">₹0</div>
+              <div class="sim-mini-trend">real-time estimate</div>
+            </div>
+            <div class="glass-card sim-metric-card">
+              <div class="sim-card-icon" id="sim-risk-icon">🛡️</div>
+              <div class="sim-lbl">Climate Risk Index</div>
+              <div class="sim-val sim-val-large" id="sim-risk" style="font-size: 2.2rem;">LOW</div>
+              <div class="sim-risk-indicator-dot" id="sim-risk-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="core.js"></script>
+  <script>
+    function applyPreset(rain, temp, ph, n, p, k) {
+      document.getElementById('sim-rainfall').value = rain;
+      document.getElementById('sim-temp').value = temp;
+      document.getElementById('sim-ph').value = ph;
+      document.getElementById('sim-n').value = n;
+      document.getElementById('sim-p').value = p;
+      document.getElementById('sim-k').value = k;
+      window.updateSim();
+    }
+  </script>
+</body>
+</html>

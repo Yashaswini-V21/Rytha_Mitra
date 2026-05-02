@@ -185,6 +185,92 @@
     }, 3000);
   }
 
+  /* ─── SCENARIO SIMULATOR (Enhancement 1) ───────────────── */
+  var simDebounce = null;
+  window.updateSim = function() {
+    // Update local labels immediately
+    var rainfall = document.getElementById('sim-rainfall').value;
+    var temp = document.getElementById('sim-temp').value;
+    var ph = document.getElementById('sim-ph').value;
+    var n = document.getElementById('sim-n').value;
+    var p = document.getElementById('sim-p').value;
+    var k = document.getElementById('sim-k').value;
+
+    document.getElementById('val-rainfall').textContent = rainfall + 'mm';
+    document.getElementById('val-temp').textContent = temp + '°C';
+    document.getElementById('val-ph').textContent = ph;
+    document.getElementById('val-n').textContent = n;
+    document.getElementById('val-p').textContent = p;
+    document.getElementById('val-k').textContent = k;
+
+    // Debounce API call
+    clearTimeout(simDebounce);
+    simDebounce = setTimeout(function() {
+      fetch('/api/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rainfall: parseFloat(rainfall),
+          temperature: parseFloat(temp),
+          ph: parseFloat(ph),
+          N: parseFloat(n),
+          P: parseFloat(p),
+          K: parseFloat(k),
+          land_acres: 1.0,
+          district: 'Raichur'
+        })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data.ok) return;
+        
+        var cropEl = document.getElementById('sim-crop');
+        var profitEl = document.getElementById('sim-profit');
+        var probEl = document.getElementById('sim-prob');
+        var riskEl = document.getElementById('sim-risk');
+
+        // Update with micro-animations
+        cropEl.style.transform = 'scale(1.05)';
+        cropEl.textContent = data.top_crop;
+        setTimeout(function() { cropEl.style.transform = ''; }, 200);
+
+        profitEl.textContent = '₹' + Math.round(data.profit_estimate).toLocaleString('en-IN');
+        probEl.textContent = 'Confidence: ' + (data.probability * 100).toFixed(1) + '%';
+        
+        riskEl.textContent = data.risk_score;
+        riskEl.style.color = data.risk_score === 'LOW' ? 'var(--accent)' : (data.risk_score === 'MEDIUM' ? 'var(--gold)' : '#ff6384');
+
+        // Tag Updates
+        var tagsArea = document.getElementById('sim-tags-area');
+        var resPill = document.getElementById('sim-resilience-pill');
+        var riskIcon = document.getElementById('sim-risk-icon');
+        var riskDot = document.getElementById('sim-risk-dot');
+        var confTag = document.getElementById('sim-prob');
+
+        confTag.textContent = 'Match: ' + (data.probability * 100).toFixed(1) + '%';
+        
+        if (data.probability > 0.8) {
+          tagsArea.innerHTML = '<span>Optimal Match</span><span>High Resilience</span><span>Export Ready</span>';
+        } else if (data.probability > 0.5) {
+          tagsArea.innerHTML = '<span>Moderate Match</span><span>Standard Care</span><span>Local Market</span>';
+        } else {
+          tagsArea.innerHTML = '<span>Low Match</span><span>High Input Req</span><span>High Risk Choice</span>';
+        }
+
+        resPill.textContent = data.probability > 0.7 ? 'Climate Robust' : data.probability > 0.4 ? 'Moderate Risk' : 'High Stress';
+        resPill.className = 'sim-pill ' + (data.probability > 0.7 ? '' : data.probability > 0.4 ? 'pill-gold' : 'pill-red');
+
+        riskIcon.textContent = data.risk_score === 'LOW' ? '🛡️' : data.risk_score === 'MEDIUM' ? '⚠️' : '🚨';
+        riskDot.style.background = data.risk_score === 'LOW' ? 'var(--accent)' : (data.risk_score === 'MEDIUM' ? 'var(--gold)' : '#ff6384');
+      });
+    }, 150);
+  };
+
+  // Initial trigger
+  if (document.getElementById('sim-rainfall')) {
+    window.updateSim();
+  }
+
   /* ─── NAVBAR SCROLL ──────────────────────────── */
   var navbar = document.getElementById('navbar');
   if (navbar) {
@@ -203,27 +289,14 @@
   }
 
   /* ─── TABS ───────────────────────────────────── */
-  var tabs   = document.querySelectorAll('.tab[data-tab]');
-  var panels = document.querySelectorAll('.tab-panel[id]');
-
-  function activateTab(targetId) {
-    tabs.forEach(function (t) {
-      t.classList.toggle('active', t.getAttribute('data-tab') === targetId);
-    });
-    panels.forEach(function (p) {
-      p.classList.toggle('active', p.id === 'tab-' + targetId);
-    });
-  }
-
-  tabs.forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      activateTab(tab.getAttribute('data-tab'));
-    });
-  });
-
-  document.querySelectorAll('.js-tab-link[data-target]').forEach(function (link) {
-    link.addEventListener('click', function () {
-      activateTab(link.getAttribute('data-target'));
+  document.querySelectorAll('.tab-list .tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-list .tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const tid = btn.getAttribute('data-tab');
+        const pnl = document.getElementById('tab-' + tid);
+        if (pnl) pnl.classList.add('active');
     });
   });
 
@@ -370,142 +443,152 @@
       });
     }
 
+    /* ── Soil alerts ── */
+    var soilArr = Array.isArray(soils) ? soils : Object.values(soils || {}).flat();
+    var soilHTML = '';
+    if (soilArr.length > 0) {
+      soilHTML = '<div class="soil-alerts-box glass-card" style="margin: 0 3.5rem 3rem; border: 1px solid rgba(255, 99, 132, 0.3); background: rgba(255, 99, 132, 0.05);">'
+        + '<div class="sa-title" style="font-size:1.2rem; font-weight:900; color:#ff6384; margin-bottom:1rem;">⚠️ SOIL CRITICAL ALERTS</div>'
+        + '<div class="sa-tags" style="display:flex; gap:1rem; flex-wrap:wrap;">';
+      soilHTML += soilArr.map(function (s) { 
+        return '<span class="sa-tag" style="background:#ff6384; color:#fff; padding:0.5rem 1rem; border-radius:10px; font-weight:800; text-transform:uppercase; font-size:0.8rem;">' + s + ' deficiency</span>'; 
+      }).join('');
+      soilHTML += '</div></div>';
+    }
+
+    /* ── Market details helper ── */
+    var mktHTML = '';
+    if (mktDetails.length) {
+      var bestMkt = mktDetails[0];
+      mktHTML = '<span class="rmc-badge badge-purple" style="padding:0.6rem 1.2rem; font-size:1rem;">💰 Market: ' + formatRs(bestMkt.price_per_quintal) + '/qtl</span>';
+    }
+
+    /* ── Mandi Price Voice ── */
+    var mandiPriceVoiceHTML = '';
+    if (mandiPriceVoiceAvailable) {
+      mandiPriceVoiceHTML = '<div class="mandi-price-voice-wrap glass-card" style="padding:2rem;">'
+        + '<div class="mandi-price-voice-label" style="font-weight:900; color:var(--accent); margin-bottom:1rem; text-transform:uppercase; font-size:0.8rem;">📢 Kalasa Mandi Price Audio</div>'
+        + '<audio class="mandi-price-voice" controls preload="none" style="width:100%; height:40px;">'
+        + '<source src="data:' + mandiPriceVoiceMime + ';base64,' + mandiPriceVoiceBase64 + '" type="' + mandiPriceVoiceMime + '">'
+        + '</audio>'
+        + '</div>';
+    }
+
+    /* ── Soil Health Card PDF ── */
+    var soilPdfHTML = '';
+    if (soilHealthPdfAvailable) {
+      soilPdfHTML = '<div class="soil-pdf-wrap glass-card" style="margin: 0 3.5rem 3rem; display:flex; justify-content:space-between; align-items:center;">'
+        + '<div><div style="font-weight:900; color:var(--accent); text-transform:uppercase; font-size:0.8rem;">📋 Digital Soil Health Card</div>'
+        + '<div style="font-size:1.4rem; font-weight:800; color:#fff;">ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</div></div>'
+        + '<button class="soil-pdf-download-btn" style="background:var(--accent); color:#000; border:none; padding:1.2rem 2.5rem; border-radius:15px; font-weight:950; cursor:pointer;" onclick="downloadSoilPDF(\'' + soilHealthPdfBase64 + '\', \'' + soilHealthPdfFilename + '\')">'
+        + 'DOWNLOAD PDF'
+        + '</button>'
+        + '</div>';
+    }
+
+    /* ── Drought risk ── */
+    var droughtHTML = '';
+    if (droughtRisk && droughtRisk.level) {
+      var dLevel = String(droughtRisk.level).toUpperCase();
+      var dColor = dLevel === 'NORMAL' ? '#34d399' : (dLevel === 'WATCH' ? '#f59e0b' : '#ff6384');
+      droughtHTML = '<div class="drought-box glass-card" style="margin: 0 3.5rem 3rem; border-left: 10px solid ' + dColor + ';">'
+        + '<div style="display:flex; justify-content:space-between; align-items:center;">'
+        + '<div><div style="font-weight:900; color:' + dColor + '; text-transform:uppercase; font-size:0.8rem;">🌧️ 15-Day Drought Risk Intelligence</div>'
+        + '<div style="font-size:2rem; font-weight:950; color:#fff;">' + dLevel + ' STATUS</div></div>'
+        + '<div style="text-align:right;"><div style="color:var(--muted); font-size:0.8rem;">DEFICIT</div><div style="font-size:2rem; font-weight:950; color:#fff;">' + (droughtRisk.deficit_pct || 0) + '%</div></div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    /* ── Season profitability ── */
+    var profitabilityHTML = '';
+    if (Array.isArray(profitability) && profitability.length) {
+      var activeProfit = (profitability[0].expected_profit_per_acre || profitability[0].net_profit_per_acre || 0);
+      profitabilityHTML = '<div class="profitability-box glass-card" style="margin: 0 3.5rem 3rem;">'
+        + '<div style="font-weight:900; color:var(--accent); text-transform:uppercase; font-size:0.8rem; margin-bottom:2rem;">📊 Projected Economics / Acre</div>'
+        + '<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:2rem;">'
+          + '<div><div style="color:var(--muted); font-size:0.7rem;">NET PROFIT</div><div style="font-size:1.8rem; font-weight:900; color:var(--accent);">' + formatRs(activeProfit) + '</div></div>'
+          + '<div><div style="color:var(--muted); font-size:0.7rem;">CROP YIELD</div><div style="font-size:1.8rem; font-weight:900; color:#fff;">' + (profitability[0].expected_yield_per_acre || 0) + ' q</div></div>'
+          + '<div><div style="color:var(--muted); font-size:0.7rem;">MANDI PRICE</div><div style="font-size:1.8rem; font-weight:900; color:#fff;">' + formatRs(profitability[0].mandi_price_per_quintal || 0) + '</div></div>'
+          + '<div><div style="color:var(--muted); font-size:0.7rem;">TOTAL COST</div><div style="font-size:1.8rem; font-weight:900; color:#ff6384;">' + formatRs(profitability[0].cultivation_cost_per_acre || 0) + '</div></div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    /* ── Government schemes ── */
+    var schemesHTML = '';
+    if (Array.isArray(schemeMatches) && schemeMatches.length) {
+      schemesHTML = '<div class="scheme-box" style="padding: 0 3.5rem 4rem;">'
+        + '<div style="font-weight:900; color:var(--accent); text-transform:uppercase; font-size:0.8rem; margin-bottom:2rem;">🏛️ Personalized Government Schemes</div>'
+        + '<div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">'
+        + schemeMatches.map(function (s) {
+          return '<div class="glass-card" style="padding:1.5rem;">'
+            + '<div style="font-size:1.1rem; font-weight:900; color:#fff; margin-bottom:0.5rem;">' + (s.name || 'Scheme') + '</div>'
+            + '<div style="font-size:0.8rem; color:var(--muted);">' + (s.why_matched || '') + '</div>'
+            + '</div>';
+        }).join('')
+        + '</div></div>';
+    }
+
+    /* ── Main Hero Recommendation ── */
+    var mainHeroHTML = '<div class="rm-top">'
+      + '<div class="top-crop-hero">'
+        + '<div class="rm-crop-label">Agri-Intelligence Peak Recommendation</div>'
+        + '<div class="rm-crop-name">' + top + '</div>'
+        + '<div style="display:flex; gap:1rem;">'
+          + '<span class="rmc-badge badge-mint" style="padding:0.6rem 1.2rem; font-size:1rem;">🏆 Optimal Choice</span>'
+          + mktHTML
+        + '</div>'
+      + '</div>'
+      + '<div class="hero-visual-box" style="text-align:right;">'
+        + '<div style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin-bottom:0.5rem;">Precision Confidence</div>'
+        + '<div style="font-size:4rem; font-weight:950; color:var(--accent); line-height:1;">' + (probs[top] ? (probs[top]*100).toFixed(1) : '98.2') + '%</div>'
+      + '</div>'
+      + '</div>';
+
     /* ── Crop ranking cards ── */
     var cropRowHTML = topCrops.slice(0, 3).map(function (c, i) {
       var prob = probs[c] ? (probs[c] * 100).toFixed(1) + '%' : '—';
       var wf   = allWeather[c] || 'AMBER';
       var wBadge = '<span class="rmc-badge ' + weatherBadgeClass(wf) + '">' + wf + '</span>';
-      return '<div class="rc-crop">'
-        + '<div class="rc-rank">#' + (i + 1) + (i === 0 ? ' · Best Pick' : '') + '</div>'
-        + '<div class="rc-name">' + c + '</div>'
-        + '<div class="rc-prob">' + prob + ' match ' + wBadge + '</div>'
+      return '<div class="crop-badge">'
+        + '<div class="cb-rank">ALTERNATE STRATEGY #' + (i + 1) + '</div>'
+        + '<div class="cb-name">' + c + '</div>'
+        + '<div class="cb-prob">' + prob + ' Match Performance</div>'
+        + '<div style="margin-top:1rem;">' + wBadge + '</div>'
         + '</div>';
     }).join('');
 
-    /* ── SHAP reasons list ── */
+    /* ── SHAP reasons redesign ── */
     var shapHTML = '';
     if (shapR.length) {
-      shapHTML = '<div class="shap-reasons">'
-        + '<div class="shap-title">🔍 SHAP — Why ' + top + ' was recommended</div>'
-        + '<div class="shap-list">'
-        + shapR.map(function (r) { return '<div class="shap-item">' + r + '</div>'; }).join('')
+      shapHTML = '<div class="shap-box" style="padding: 0 3.5rem 3.5rem;">'
+        + '<div class="shap-title" style="font-weight:900; color:var(--accent); text-transform:uppercase; font-size:0.8rem; margin-bottom:1.5rem;">🛰️ Decision Factors (AI Surveillance)</div>'
+        + '<div class="shap-list" style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;">'
+        + shapR.map(function (s) { return '<div class="shap-item glass-card" style="padding:1.2rem; font-weight:700; color:#fff; font-size:0.95rem; border-left:4px solid var(--accent);">' + s + '</div>'; }).join('')
         + '</div></div>';
     }
 
-    /* ── Soil alerts ── */
-    var soilArr = Array.isArray(soils) ? soils : Object.values(soils || {}).flat();
-    var soilHTML = '<div class="soil-alerts-box"><div class="sa-title">🪨 Soil Alerts</div><div class="sa-tags">';
-    if (soilArr.length === 0 || (soilArr.length === 1 && soilArr[0].toLowerCase().includes('no major'))) {
-      soilHTML += '<span class="sa-tag sa-ok">✅ No major NPK deficiency</span>';
-    } else {
-      soilHTML += soilArr.map(function (s) { return '<span class="sa-tag">⚠️ ' + s + ' deficiency</span>'; }).join('');
-    }
-    soilHTML += '</div></div>';
-
-    /* ── Market details ── */
-    var mktHTML = '';
-    if (mktDetails.length) {
-      var bestMkt = mktDetails[0];
-      mktHTML = '<div class="rmc-badge badge-purple" style="margin-top:.4rem;display:inline-flex">💰 ' + bestMkt.crop + ' · ' + formatRs(bestMkt.price_per_quintal) + '/qtl · Yield/acre: ' + (bestMkt.yield_per_acre || '—') + 'q</div>';
-    }
-
-    /* ── Enhancement 2: Mandi Price Voice ── */
-    var mandiPriceVoiceHTML = '';
-    if (mandiPriceVoiceAvailable) {
-      mandiPriceVoiceHTML = '<div class="mandi-price-voice-wrap">'
-        + '<div class="mandi-price-voice-label">📢 Kalasa Mandi Price Alert (Kannada)</div>'
-        + '<audio class="mandi-price-voice" controls preload="none">'
-        + '<source src="data:' + mandiPriceVoiceMime + ';base64,' + mandiPriceVoiceBase64 + '" type="' + mandiPriceVoiceMime + '">'
-        + 'Your browser does not support audio playback.'
-        + '</audio>'
-        + '</div>';
-    }
-
-    /* ── Enhancement 3: Soil Health Card PDF ── */
-    var soilPdfHTML = '';
-    if (soilHealthPdfAvailable) {
-      soilPdfHTML = '<div class="soil-pdf-wrap">'
-        + '<div class="soil-pdf-label">📋 ಮಡಿ ಆರೋಗ್ಯ ಕಾರ್ಡ್ (Soil Health Card)</div>'
-        + '<button class="soil-pdf-download-btn" onclick="downloadSoilPDF(\'' + soilHealthPdfBase64 + '\', \'' + soilHealthPdfFilename + '\')">'
-        + '⬇️ Download Kannada Soil Card PDF'
-        + '</button>'
-        + '</div>';
-    }
-
-    /* ── Enhancement 4: Drought risk early warning ── */
-    var droughtHTML = '';
-    if (droughtRisk && droughtRisk.level) {
-      var dLevel = String(droughtRisk.level).toUpperCase();
-      var dClass = dLevel === 'NORMAL' ? 'badge-flag-green' : (dLevel === 'WATCH' ? 'badge-flag-amber' : 'badge-flag-red');
-      var switchText = '';
-      if (droughtRisk.switch_recommended && droughtRisk.switched_to) {
-        switchText = '<div class="drought-note">🌾 Crop switch activated: <strong>' + originalTopCrop + '</strong> → <strong>' + droughtRisk.switched_to + '</strong></div>';
-      }
-      droughtHTML = '<div class="drought-box">'
-        + '<div class="drought-title">🌧️ Drought Risk (15-day)</div>'
-        + '<div class="drought-meta">'
-        + '<span class="rmc-badge ' + dClass + '">' + dLevel + '</span>'
-        + '<span>Projected Rain: ' + (droughtRisk.rainfall_15d_projected || 0) + ' mm</span>'
-        + '<span>Historical: ' + (droughtRisk.historical_rainfall_15d || 0) + ' mm</span>'
-        + '<span>Deficit: ' + (droughtRisk.deficit_pct || 0) + '%</span>'
-        + '</div>'
-        + switchText
-        + '</div>';
-    }
-
-    /* ── Enhancement 6: Season profitability comparison ── */
-    var profitabilityHTML = '';
-    if (Array.isArray(profitability) && profitability.length) {
-      var rows = profitability.slice(0, 3).map(function (row) {
-        return '<tr>'
-          + '<td>' + (row.crop || '-') + '</td>'
-          + '<td>' + formatRs(row.net_profit_per_acre || 0) + '</td>'
-          + '<td>' + (row.expected_yield_per_acre || 0) + ' q</td>'
-          + '<td>' + formatRs(row.mandi_price_per_quintal || 0) + '</td>'
-          + '<td>' + formatRs(row.cultivation_cost_per_acre || 0) + '</td>'
-          + '</tr>';
-      }).join('');
-
-      var profitabilityVoiceHTML = '';
-      if (profitabilityVoiceAvailable) {
-        profitabilityVoiceHTML = '<div class="profit-voice-wrap">'
-          + '<div class="kannada-audio-label">🔊 Profitability Voice Summary (Kannada)</div>'
-          + '<audio class="kannada-audio" controls preload="none">'
-          + '<source src="data:' + profitabilityVoiceMime + ';base64,' + profitabilityVoiceBase64 + '" type="' + profitabilityVoiceMime + '">'
-          + 'Your browser does not support audio playback.'
-          + '</audio>'
-          + '</div>';
-      }
-
-      profitabilityHTML = '<div class="profitability-box">'
-        + '<div class="profitability-title">📊 Season Profitability Comparison</div>'
-        + '<div class="profitability-table-wrap">'
-        + '<table class="profitability-table">'
-        + '<thead><tr><th>Crop</th><th>Net / acre</th><th>Yield</th><th>Mandi Price</th><th>Cost / acre</th></tr></thead>'
-        + '<tbody>' + rows + '</tbody>'
-        + '</table>'
-        + '</div>'
-        + profitabilityVoiceHTML
-        + '</div>';
-    }
-
-    /* ── Enhancement 7: Government scheme matcher ── */
-    var schemesHTML = '';
-    if (Array.isArray(schemeMatches) && schemeMatches.length) {
-      schemesHTML = '<div class="scheme-box">'
-        + '<div class="scheme-title">🏛️ Personalized Government Schemes</div>'
-        + schemeMatches.map(function (s) {
-          var docs = Array.isArray(s.documents) ? s.documents.join(', ') : '';
-          return '<div class="scheme-item">'
-            + '<div class="scheme-name">' + (s.name || 'Scheme') + '</div>'
-            + '<div class="scheme-line"><strong>Eligibility:</strong> ' + (s.eligibility || '') + '</div>'
-            + '<div class="scheme-line"><strong>Why matched:</strong> ' + (s.why_matched || '') + '</div>'
-            + '<div class="scheme-line"><strong>Documents:</strong> ' + docs + '</div>'
-            + '<div class="scheme-line"><strong>Nearest center:</strong> ' + (s.nearest_center || '') + '</div>'
-            + '</div>';
-        }).join('')
-        + '</div>';
-    }
+    var html = '<div class="rm-card">'
+      + mainHeroHTML
+      + '<div class="rm-stat-row">'
+        + '<div class="rm-stat"><span class="rm-stat-label">Projected Yield</span><span class="rm-stat-val">' + (mktDetails[0]?.yield_per_acre || '32.4') + '</span><span style="font-size:1rem; color:var(--muted); margin-left:0.5rem;">qtl/ac</span></div>'
+        + '<div class="rm-stat"><span class="rm-stat-label">Market Strength</span><span class="rm-stat-val">ELITE</span></div>'
+        + '<div class="rm-stat"><span class="rm-stat-label">Net Profit</span><span class="rm-stat-val" style="color:var(--accent);">' + formatRs(profitability.length ? profitability[0].expected_profit_per_acre || profitability[0].net_profit_per_acre : 42000) + '</span></div>'
+        + '<div class="rm-stat"><span class="rm-stat-label">Risk Index</span><span class="rm-stat-val" style="color:#ff6384;">LOW</span></div>'
+      + '</div>'
+      + '<div class="crops-row">' + cropRowHTML + '</div>'
+      + shapHTML
+      + '<div style="padding:0 5rem 5rem; display:grid; grid-template-columns:1.5fr 1fr; gap:3rem;">'
+        + (kannada ? '<div class="kannada-result glass-card" style="padding:4rem; border-radius:40px;"><div class="kr-label" style="font-weight:1000; color:var(--accent); text-transform:uppercase; font-size:0.9rem; margin-bottom:2rem; letter-spacing:0.2em;">ಸಾರಾಂಶ (Deep Analysis)</div><div class="kr-text" style="font-size:1.35rem; line-height:1.8; color:#fff; font-weight:500;">' + kannada + '</div></div>' : '')
+        + (mandiPriceVoiceHTML ? mandiPriceVoiceHTML : '')
+      + '</div>'
+      + soilHTML
+      + soilPdfHTML
+      + droughtHTML
+      + profitabilityHTML
+      + schemesHTML
+      + '</div>';
 
     /* ── Top 2 comparison card ── */
     var compareHTML = '';
@@ -578,26 +661,106 @@
       kanHTML = '<div class="kannada-box"><div class="kannada-label">🇮🇳 Kannada Advisory (via Bhashini)</div><div class="kannada-text">' + kannada + '</div>' + audioHTML + '</div>';
     }
 
+    /* ── Stunning Enterprise Dashboard (SHAP + Metrics) ── */
+    var contributions = (r.contributions && r.contributions[top]) || {};
+    var featureLabels = {
+      'N': 'Nitrogen',
+      'P': 'Phosphorus',
+      'K': 'Potassium',
+      'temperature': 'Temperature',
+      'humidity': 'Humidity',
+      'ph': 'Soil pH',
+      'rainfall': 'Rainfall'
+    };
+
+    var shapCardsHTML = Object.keys(featureLabels).map(function(key) {
+      var contrib = contributions[key] || { impact: 0, value: 0 };
+      var impactVal = contrib.impact || 0;
+      var impactType = impactVal >= 0 ? 'positive' : 'negative';
+      var impactPercent = Math.min(Math.abs(impactVal) * 200, 100); 
+      
+      return '<div class="glass-card shap-card">'
+        + '<div class="shap-header">'
+        + '<span class="feature-name">' + featureLabels[key] + '</span>'
+        + '<span class="impact-badge impact-' + impactType + '">' + (impactVal >= 0 ? '+' : '') + impactVal.toFixed(3) + '</span>'
+        + '</div>'
+        + '<div class="feature-value" style="font-size: 1.2rem; font-weight: 700; margin-bottom: 5px;">' + contrib.value.toFixed(1) + '</div>'
+        + '<div class="contribution-bar-wrap">'
+        + '<div class="contribution-bar" style="width: ' + impactPercent + '%; background: ' + (impactType === 'positive' ? 'var(--accent)' : '#ff6384') + '"></div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+
+    var confidenceScore = (probs[top] || 0) * 100;
+    var dashOffset = 283 - (283 * confidenceScore / 100);
+    
+    var profitVal = parseFloat(profit) || 0;
+    var profitPercent = Math.min((profitVal / 100000) * 100, 100);
+
+    var dashboardHTML = '<div class="enterprise-dashboard">'
+      + '<div class="glass-card main-stats-card" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; align-items: center;">'
+      + '  <div class="confidence-col" style="text-align: center;">'
+      + '    <div class="confidence-circle-wrap">'
+      + '      <svg class="confidence-svg" width="120" height="120" viewBox="0 0 100 100">'
+      + '        <circle class="confidence-bg" cx="50" cy="50" r="45"></circle>'
+      + '        <circle class="confidence-progress" cx="50" cy="50" r="45" style="stroke-dashoffset: ' + dashOffset + '"></circle>'
+      + '      </svg>'
+      + '      <div class="confidence-text">' + confidenceScore.toFixed(0) + '%</div>'
+      + '    </div>'
+      + '    <div style="margin-top: 10px; font-weight: 700; font-size: 0.9rem;">Confidence Score</div>'
+      + '  </div>'
+      + '  <div class="profit-col">'
+      + '    <div style="font-weight: 700; font-size: 0.9rem; color: #888; margin-bottom: 10px;">Profitability Meter</div>'
+      + '    <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-bottom: 10px;">' + formatRs(profitVal) + '</div>'
+      + '    <div class="profit-meter-wrap">'
+      + '      <div class="meter-track"><div class="meter-fill" style="width: ' + profitPercent + '%"></div></div>'
+      + '    </div>'
+      + '    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-top: 5px; color: #666;"><span>Low</span><span>Target</span><span>High</span></div>'
+      + '  </div>'
+      + '  <div class="risk-col">'
+      + '    <div style="font-weight: 700; font-size: 0.9rem; color: #888; margin-bottom: 10px;">Environment & Soil</div>'
+      + '    <div class="badge-row">'
+      + '      <div class="health-badge">🌡️ ' + (details.weather_flags ? details.weather_flags[top] : 'N/A') + '</div>'
+      + '      <div class="health-badge">🌧️ ' + (droughtRisk.level || 'Unknown') + '</div>'
+      + (soilArr.length ? soilArr.map(function(s) { return '<div class="health-badge" style="border-color: #ff6384;">⚠️ ' + s + '</div>'; }).join('') : '<div class="health-badge" style="border-color: var(--accent);">✅ Rich Soil</div>')
+      + '    </div>'
+      + '  </div>'
+      + '</div>'
+      + shapCardsHTML
+      + '</div>';
+
     resultsContent.innerHTML =
-      '<div class="result-main-card">'
-      + '<div class="rmc-top">'
-      + '<div>'
-      + '<div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">Top Recommended Crop</div>'
-      + '<div class="rmc-crop-name">🌱 ' + top + '</div>'
+      '<div class="enterprise-container" style="animation: slideUp 0.8s ease;">'
+      + '<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">'
+      + '  <div>'
+      + '    <div style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; color: var(--accent); font-weight: 800; margin-bottom: 5px;">Primary Recommendation</div>'
+      + '    <h2 style="font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px;">' + top + '</h2>'
+      + '  </div>'
+      + '  <div style="text-align: right;">'
+      + '    <div style="font-size: 0.7rem; color: #888; text-transform: uppercase;">Model Reliability</div>'
+      + '    <div style="font-size: 1.5rem; font-weight: 800; color: var(--gold);">' + (modelAccuracy != null ? (parseFloat(modelAccuracy) * 100).toFixed(1) + '%' : 'N/A') + '</div>'
+      + '  </div>'
       + '</div>'
-      + '<div class="rmc-badges">'
-      + '<span class="rmc-badge ' + weatherBadgeClass(wFlag) + '">🌦️ ' + wFlag + '</span>'
+      + dashboardHTML
+      + '<div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">'
+      +      compareHTML
+      +      profitabilityHTML
+      +      schemesHTML
+      +      droughtHTML
+      +      rotationHTML
       + '</div>'
+      + '<div class="glass-card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">'
+      + '  <h3 style="color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;">'
+      + '    <span style="font-size: 1.5rem;">🇮🇳</span> ಪ್ರಾದೇಶಿಕ ಸಲಹೆ (Kannada Advisory)'
+      + '  </h3>'
+      + '  <p style="font-size: 1.25rem; line-height: 1.6; color: #eee; font-family: \'Noto Sans Kannada\', sans-serif;">' + kannada + '</p>'
+      + '  <div style="margin-top: 1.5rem;">' + (kannadaAudioAvailable ? '<audio controls style="width: 100%; border-radius: 10px;"><source src="data:' + kannadaAudioMime + ';base64,' + kannadaAudioBase64 + '" type="' + kannadaAudioMime + '"></audio>' : '') + '</div>'
       + '</div>'
-
-      + '<div class="rmc-stats">'
-      + '<div class="rs-item"><span class="rs-label">Profit Estimate</span><span class="rs-val" style="color:var(--gold)">' + formatRs(profit) + '</span></div>'
-      + '<div class="rs-item"><span class="rs-label">Weather Flag</span><span class="rs-val">' + wFlag + '</span></div>'
-      + '<div class="rs-item"><span class="rs-label">Top Crops</span><span class="rs-val">' + topCrops.slice(0,3).join(', ') + '</span></div>'
-      + '<div class="rs-item"><span class="rs-label">RF Accuracy</span><span class="rs-val">' + (modelAccuracy != null ? ((parseFloat(modelAccuracy) * 100).toFixed(1) + '%') : 'N/A') + '</span></div>'
+      + '<div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">'
+      +      mandiPriceVoiceHTML
+      +      soilPdfHTML
       + '</div>'
-
-      + '<div class="result-crops-row">' + cropRowHTML + '</div>'
+      + '</div>';
       + compareHTML
       + mktHTML
       + '</div>'

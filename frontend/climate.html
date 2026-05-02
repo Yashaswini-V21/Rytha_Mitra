@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RythaGelathi — Climate Intelligence Dashboard | ರೈತ ಗೆಳತಿ</title>
+  <meta name="description" content="Enterprise climate resilience platform for Karnataka farmers. Irrigation optimization, fertilizer intelligence, carbon footprint, sustainability scoring.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="climate.css">
+</head>
+<body class="climate-page">
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-emoji">🌾</span>
+        <span>RythaGelathi</span>
+        <span class="brand-kn">ರೈತ ಗೆಳತಿ</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">← Home</a>
+        <a href="core.html">Advisory Tool</a>
+        <a href="simulator.html">Agricultural Simulator</a>
+        <a href="#irrigation">Irrigation Engine</a>
+        <a href="#karnataka-map">District Map</a>
+      </div>
+      <button class="nav-ham" id="navHam" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+
+  <!-- HERO BANNER -->
+  <header class="cl-hero">
+    <div class="cl-hero-bg"></div>
+    <div class="cl-hero-overlay"></div>
+    <div class="cl-hero-particles" id="clParticles"></div>
+    <div class="container cl-hero-inner">
+      <div class="cl-hero-badge"><span class="cl-pulse"></span>Climate Resilience Platform · WitchHunt 2026</div>
+      <h1 class="cl-hero-title">Climate Intelligence<br><span class="t-mint">Dashboard</span></h1>
+      <p class="cl-hero-sub">Enterprise-grade decision intelligence for climate-resilient agriculture in Karnataka. Real logic. Explainable outputs. Zero cost.</p>
+      <div class="cl-hero-metrics">
+        <div class="cl-hm"><span class="cl-hm-num" id="heroWater">0</span><span class="cl-hm-lbl">Liters Water Saved/Acre</span></div>
+        <div class="cl-hm"><span class="cl-hm-num" id="heroCarbon">0</span><span class="cl-hm-lbl">kg CO₂ Reduced</span></div>
+        <div class="cl-hm"><span class="cl-hm-num" id="heroScore">0</span><span class="cl-hm-lbl">Sustainability Score</span></div>
+        <div class="cl-hm"><span class="cl-hm-num">14</span><span class="cl-hm-lbl">Districts Covered</span></div>
+      </div>
+      <div class="cl-hero-actions">
+        <a href="simulator.html" class="btn btn-green">Launch Simulator →</a>
+        <a href="#irrigation" class="btn btn-out">Irrigation Engine</a>
+        <a href="#karnataka-map" class="btn btn-out">District Map</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- TRUST STRIP -->
+  <section class="trust-strip">
+    <div class="container trust-inner">
+      <span class="trust-label">Platform Modules</span>
+      <span class="trust-item">🌊 Irrigation Engine</span>
+      <span class="trust-item">⚗️ Fertilizer AI</span>
+      <span class="trust-item">🌾 Climate Crops</span>
+      <span class="trust-item">🌍 Carbon Tracker</span>
+      <span class="trust-item">📊 Sustainability Score</span>
+      <span class="trust-item">🗺️ District Intel Map</span>
+    </div>
+  </section>
+
+  <main>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; border: 1px solid var(--border); background: var(--card); cursor: pointer;">🌙</button>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION 1: CLIMATE SCENARIO SIMULATOR
+  ═══════════════════════════════════════════ -->
+  <section class="section" id="simulator">
+    <div class="container">
+      <div class="sec-head rv">
+        <div class="sec-label">Quick Scenario Test</div>
+        <h2>Climate <span class="t-mint">Simulator</span></h2>
+        <p>Test drought, flood, heat, and water stress instantly. AI predicts crop suitability and profitability in real time.</p>
+      </div>
+
+      <div class="sim-enterprise rv d1">
+        <div class="sim-scenarios">
+          <div class="sim-scenario-title">Quick Scenarios</div>
+          <button class="sim-preset active" data-scenario="normal" id="scenNormal">☀️ Normal Season</button>
+          <button class="sim-preset" data-scenario="drought" id="scenDrought">🏜️ Drought</button>
+          <button class="sim-preset" data-scenario="flood" id="scenFlood">🌊 Flood Risk</button>
+          <button class="sim-preset" data-scenario="heatwave" id="scenHeat">🔥 Heatwave +3°C</button>
+          <button class="sim-preset" data-scenario="water-scarce" id="scenWater">💧 Water Scarcity</button>
+          <button class="sim-preset" data-scenario="fert-short" id="scenFert">⚗️ Fertilizer Shortage</button>
+        </div>
+
+        <div class="sim-controls-grid">
+          <div class="sim-ctrl">
+            <label>District</label>
+            <select id="simDistrict">
+              <option value="Raichur">Raichur</option>
+              <option value="Kalaburagi">Kalaburagi</option>
+              <option value="Vijayapura">Vijayapura</option>
+              <option value="Koppal">Koppal</option>
+              <option value="Bidar">Bidar</option>
+              <option value="Davanagere">Davanagere</option>
+              <option value="Chitradurga">Chitradurga</option>
+              <option value="Tumakuru">Tumakuru</option>
+            </select>
+          </div>
+          <div class="sim-ctrl">
+            <label>Rainfall <span id="simRainVal">150mm</span></label>
+            <input type="range" id="simRain" min="0" max="500" value="150" class="sim-range">
+            <div class="sim-range-labels"><span>0mm</span><span>500mm</span></div>
+          </div>
+          <div class="sim-ctrl">
+            <label>Temperature <span id="simTempVal">28°C</span></label>
+            <input type="range" id="simTemp" min="10" max="50" value="28" class="sim-range">
+            <div class="sim-range-labels"><span>10°C</span><span>50°C</span></div>
+          </div>
+          <div class="sim-ctrl">
+            <label>Humidity <span id="simHumVal">60%</span></label>
+            <input type="range" id="simHum" min="10" max="100" value="60" class="sim-range">
+            <div class="sim-range-labels"><span>10%</span><span>100%</span></div>
+          </div>
+          <div class="sim-ctrl">
+            <label>Soil pH <span id="simPhVal">6.5</span></label>
+            <input type="range" id="simPh" min="3" max="10" step="0.1" value="6.5" class="sim-range">
+            <div class="sim-range-labels"><span>3.0</span><span>10.0</span></div>
+          </div>
+          <div class="sim-ctrl">
+            <label>N-P-K <span id="simNpkVal">80-40-40</span></label>
+            <input type="range" id="simN" min="0" max="150" value="80" class="sim-range">
+            <input type="range" id="simP" min="0" max="150" value="40" class="sim-range">
+            <input type="range" id="simK" min="0" max="150" value="40" class="sim-range">
+          </div>
+        </div>
+
+        <div class="sim-results-grid">
+          <div class="sim-result-card sim-primary">
+            <div class="sim-result-label">Recommended Crop</div>
+            <div class="sim-result-value" id="simCropOut">Toor Dal</div>
+            <div class="sim-result-sub" id="simCropConf">Confidence: 74%</div>
+          </div>
+          <div class="sim-result-card">
+            <div class="sim-result-label">Expected Yield</div>
+            <div class="sim-result-value" id="simYieldOut">8.2 qtl/ac</div>
+          </div>
+          <div class="sim-result-card">
+            <div class="sim-result-label">Expected Profit</div>
+            <div class="sim-result-value sim-gold" id="simProfitOut">₹42,300</div>
+          </div>
+          <div class="sim-result-card">
+            <div class="sim-result-label">Irrigation Need</div>
+            <div class="sim-result-value" id="simIrrigOut">3,200 L/ac</div>
+          </div>
+          <div class="sim-result-card">
+            <div class="sim-result-label">Sustainability Score</div>
+            <div class="sim-result-value sim-score" id="simSustOut">72/100</div>
+            <div class="sim-score-bar"><div class="sim-score-fill" id="simSustBar" style="width:72%"></div></div>
+          </div>
+          <div class="sim-result-card">
+            <div class="sim-result-label">Climate Risk</div>
+            <div class="sim-result-value" id="simRiskOut">LOW</div>
+            <div class="sim-risk-indicator" id="simRiskDot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION 2: IRRIGATION OPTIMIZATION ENGINE
+  ═══════════════════════════════════════════ -->
+  <section class="section section-alt" id="irrigation">
+    <div class="container">
+      <div class="sec-head rv">
+        <div class="sec-label">Smart Water</div>
+        <h2>Irrigation <span class="t-mint">Engine</span></h2>
+        <p>Real-time scheduling based on crop, soil, and weather. Maximize yield while minimizing water waste.</p>
+      </div>
+
+      <div class="irr-engine rv d1">
+        <div class="irr-inputs">
+          <h3>Input Parameters</h3>
+          <div class="irr-form-grid">
+            <label>District
+              <select id="irrDistrict">
+                <option value="Raichur">Raichur</option><option value="Kalaburagi">Kalaburagi</option>
+                <option value="Vijayapura">Vijayapura</option><option value="Koppal">Koppal</option>
+                <option value="Davanagere">Davanagere</option><option value="Tumakuru">Tumakuru</option>
+              </select>
+            </label>
+            <label>Crop Type
+              <select id="irrCrop">
+                <option value="Rice">Rice (Paddy)</option><option value="Jowar">Jowar</option>
+                <option value="Ragi">Ragi</option><option value="Maize">Maize</option>
+                <option value="Toor">Toor Dal</option><option value="Groundnut">Groundnut</option>
+                <option value="Cotton">Cotton</option><option value="Sugarcane">Sugarcane</option>
+              </select>
+            </label>
+            <label>Soil Type
+              <select id="irrSoil">
+                <option value="black">Black Cotton Soil</option><option value="red">Red Soil</option>
+                <option value="laterite">Laterite</option><option value="alluvial">Alluvial</option>
+                <option value="sandy">Sandy Loam</option>
+              </select>
+            </label>
+            <label>Land Size (acres)
+              <input type="number" id="irrLand" value="2" min="0.5" step="0.5">
+            </label>
+            <label>Rainfall (mm) <input type="number" id="irrRain" value="92" min="0"></label>
+            <label>Temperature (°C) <input type="number" id="irrTemp" value="31" min="10" max="50"></label>
+            <label>Humidity (%) <input type="number" id="irrHum" value="55" min="10" max="100"></label>
+          </div>
+          <button class="btn btn-green irr-calc-btn" id="irrCalcBtn">💧 Calculate Irrigation Plan</button>
+        </div>
+
+        <div class="irr-outputs" id="irrOutputs">
+          <div class="irr-gauges">
+            <div class="irr-gauge-card">
+              <div class="irr-gauge" id="irrGaugeWater">
+                <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="gauge-bg"/><circle cx="60" cy="60" r="52" class="gauge-fill" id="irrGaugeFill1"/></svg>
+                <div class="gauge-center"><span id="irrWaterVal">0</span><small>L/acre</small></div>
+              </div>
+              <div class="irr-gauge-label">Daily Water Need</div>
+            </div>
+            <div class="irr-gauge-card">
+              <div class="irr-gauge" id="irrGaugeFreq">
+                <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="gauge-bg"/><circle cx="60" cy="60" r="52" class="gauge-fill gauge-blue" id="irrGaugeFill2"/></svg>
+                <div class="gauge-center"><span id="irrFreqVal">0</span><small>times/wk</small></div>
+              </div>
+              <div class="irr-gauge-label">Irrigation Frequency</div>
+            </div>
+            <div class="irr-gauge-card">
+              <div class="irr-gauge" id="irrGaugeSave">
+                <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="gauge-bg"/><circle cx="60" cy="60" r="52" class="gauge-fill gauge-gold" id="irrGaugeFill3"/></svg>
+                <div class="gauge-center"><span id="irrSaveVal">0</span><small>%</small></div>
+              </div>
+              <div class="irr-gauge-label">Water Savings</div>
+            </div>
+          </div>
+
+          <div class="irr-alerts" id="irrAlerts"></div>
+
+          <div class="irr-schedule">
+            <h4>📅 Weekly Irrigation Schedule</h4>
+            <div class="irr-week" id="irrWeek"></div>
+          </div>
+
+          <div class="irr-alt-crops" id="irrAltCrops"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION 3: FERTILIZER OPTIMIZATION
+  ═══════════════════════════════════════════ -->
+  <section class="section" id="fertilizer">
+    <div class="container">
+      <div class="sec-head rv">
+        <div class="sec-label">Fertilizer Intelligence</div>
+        <h2>Fertilizer Optimization Engine</h2>
+        <p>Analyze NPK values, detect excess usage, recommend optimized dosage, predict environmental impact, suggest eco-friendly alternatives.</p>
+      </div>
+
+      <div class="fert-engine rv d1">
+        <div class="fert-inputs">
+          <div class="fert-form-grid">
+            <label>Nitrogen (N kg/ha) <input type="number" id="fertN" value="82" min="0" max="200"></label>
+            <label>Phosphorus (P kg/ha) <input type="number" id="fertP" value="42" min="0" max="200"></label>
+            <label>Potassium (K kg/ha) <input type="number" id="fertK" value="38" min="0" max="200"></label>
+            <label>Soil pH <input type="number" id="fertPh" value="6.7" min="3" max="10" step="0.1"></label>
+            <label>Crop Type
+              <select id="fertCrop">
+                <option value="Rice">Rice</option><option value="Jowar">Jowar</option>
+                <option value="Ragi">Ragi</option><option value="Maize">Maize</option>
+                <option value="Toor">Toor Dal</option><option value="Cotton">Cotton</option>
+              </select>
+            </label>
+            <label>Previous Crop
+              <select id="fertPrev">
+                <option value="">None</option><option value="Rice">Rice</option>
+                <option value="Groundnut">Groundnut (Legume)</option><option value="Jowar">Jowar</option>
+              </select>
+            </label>
+          </div>
+          <button class="btn btn-green" id="fertCalcBtn">⚗️ Analyze Fertilizer</button>
+        </div>
+
+        <div class="fert-outputs" id="fertOutputs">
+          <div class="fert-reco-grid" id="fertRecoGrid"></div>
+          <div class="fert-impact" id="fertImpact"></div>
+          <div class="fert-eco" id="fertEco"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION 4: CLIMATE RESILIENT CROPS + CARBON + SUSTAINABILITY
+  ═══════════════════════════════════════════ -->
+  <section class="section section-alt" id="climate-crops">
+    <div class="container">
+      <div class="sec-head rv">
+        <div class="sec-label">Climate Resilience</div>
+        <h2>Climate-Resilient Crop Intelligence</h2>
+        <p>Drought-resistant, flood-resistant, heat-resistant crop recommendations with carbon footprint analysis and sustainability scoring.</p>
+      </div>
+
+      <div class="climate-intel rv d1">
+        <div class="ci-select-row">
+          <label>District
+            <select id="ciDistrict">
+              <option value="Raichur">Raichur</option><option value="Kalaburagi">Kalaburagi</option>
+              <option value="Vijayapura">Vijayapura</option><option value="Koppal">Koppal</option>
+              <option value="Davanagere">Davanagere</option><option value="Tumakuru">Tumakuru</option>
+              <option value="Chitradurga">Chitradurga</option><option value="Hassan">Hassan</option>
+            </select>
+          </label>
+          <label>Season
+            <select id="ciSeason">
+              <option value="kharif">Kharif (Jun–Oct)</option>
+              <option value="rabi">Rabi (Oct–Feb)</option>
+              <option value="summer">Summer (Mar–May)</option>
+            </select>
+          </label>
+          <button class="btn btn-green" id="ciCalcBtn">🌾 Generate Intelligence</button>
+        </div>
+
+        <div class="ci-grid" id="ciGrid"></div>
+
+        <!-- Carbon Impact -->
+        <div class="carbon-section" id="carbonSection">
+          <h3>🌍 Carbon Impact Analysis</h3>
+          <div class="carbon-grid" id="carbonGrid"></div>
+        </div>
+
+        <!-- Sustainability Score -->
+        <div class="sust-section" id="sustSection">
+          <h3>📊 Sustainability Scorecard</h3>
+          <div class="sust-score-wrap" id="sustScoreWrap"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SECTION 5: KARNATAKA DISTRICT MAP
+  ═══════════════════════════════════════════ -->
+  <section class="section" id="karnataka-map">
+    <div class="container">
+      <div class="sec-head rv">
+        <div class="sec-label">District Intelligence</div>
+        <h2>Karnataka Climate Intelligence Map</h2>
+        <p>District-level drought risk, flood risk, crop suitability, irrigation stress, market profitability, and sustainability score at a glance.</p>
+      </div>
+
+      <div class="kmap-wrap rv d1">
+        <div class="kmap-legend">
+          <div class="kmap-legend-item"><span class="kmap-dot kmap-critical"></span>Critical Risk</div>
+          <div class="kmap-legend-item"><span class="kmap-dot kmap-high"></span>High Risk</div>
+          <div class="kmap-legend-item"><span class="kmap-dot kmap-medium"></span>Medium Risk</div>
+          <div class="kmap-legend-item"><span class="kmap-dot kmap-low"></span>Low Risk</div>
+        </div>
+        <div class="kmap-grid" id="kmapGrid"></div>
+        <div class="kmap-detail" id="kmapDetail"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-sec">
+    <div class="container">
+      <div class="cta-box rv">
+        <div class="cta-glow"></div>
+        <h2>Climate-Resilient Farming Starts Here</h2>
+        <p>From water optimization to carbon tracking — every tool a farmer needs to adapt to climate change, in one platform, at zero cost.</p>
+        <div class="cta-btns">
+          <a href="core.html" class="btn btn-green">Get AI Advisory →</a>
+          <a href="#simulator" class="btn btn-out">Run Simulator</a>
+        </div>
+        <p class="cta-note">Built with 💚 for 62 lakh women farmers of Karnataka · ರೈತ ಗೆಳತಿ · Climate Action Track</p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="foot-grass"></div>
+    <div class="container">
+      <div class="foot-bottom">
+        <p>© 2026 RythaGelathi · harvest hex harvesters · Climate Action Platform</p>
+        <div class="foot-leg"><a href="index.html">Home</a><a href="core.html">Advisory</a><a href="#simulator">Simulator</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="climate.js"></script>
+</body>
+</html>

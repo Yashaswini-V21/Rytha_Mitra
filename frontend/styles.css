@@ -25,8 +25,8 @@
   --font-display:'Bricolage Grotesque', 'Sora', sans-serif;
   --font-accent: 'Outfit', 'Manrope', sans-serif;
   --font-kn:     'Noto Sans Kannada', 'Outfit', sans-serif;
-  --space-section: clamp(4.5rem, 7.5vw, 7rem);
-  --space-block: clamp(2.6rem, 4.4vw, 4.2rem);
+  --space-section: clamp(3rem, 5vw, 5rem);
+  --space-block: clamp(1.8rem, 3.5vw, 3.2rem);
   --r:           14px;
   --r-s:         9px;
   --sh:          0 8px 40px rgba(0,0,0,0.50);
@@ -63,7 +63,7 @@ body {
 }
 a { text-decoration: none; color: inherit; }
 h1,h2,h3,h4 { font-family: var(--font-display); line-height: 1.12; }
-.container { width: min(1160px, 92vw); margin: 0 auto; }
+.container { width: min(1140px, 92vw); margin: 0 auto; }
 
 /* ══════════════════════════════════════════════════
    SPLASH SCREEN
@@ -176,60 +176,111 @@ h1,h2,h3,h4 { font-family: var(--font-display); line-height: 1.12; }
 /* ── THEME BTN ───────────────────────────────────── */
 .theme-btn {
   position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 8500;
-  width: 46px; height: 46px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   background: var(--surface); border: 1px solid var(--border-g);
-  box-shadow: var(--sh); font-size: 1.2rem;
+  box-shadow: var(--sh); font-size: 1.15rem;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: transform .22s, box-shadow .22s;
 }
 .theme-btn:hover { transform: scale(1.13) rotate(18deg); box-shadow: var(--sh-lg); }
 
 /* ══════════════════════════════════════════════════
-   NAVBAR
+   NAVBAR  —  Premium Redesign 2026
 ══════════════════════════════════════════════════ */
 .navbar {
   position: sticky; top: 0; z-index: 999;
-  background: rgba(3,14,8,.85);
-  backdrop-filter: blur(18px) saturate(1.6);
-  border-bottom: 1px solid var(--border);
-  transition: box-shadow .3s, background .4s;
+  background: rgba(3,14,8,.72);
+  backdrop-filter: blur(22px) saturate(1.8);
+  -webkit-backdrop-filter: blur(22px) saturate(1.8);
+  border-bottom: 1px solid rgba(52,211,153,.10);
+  transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-[data-theme="light"] .navbar { background: rgba(240,250,244,.88); }
-.navbar.scrolled { box-shadow: 0 4px 28px rgba(0,0,0,.25); }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; min-height: 66px; }
+[data-theme="light"] .navbar { background: rgba(245,253,249,.82); }
+.navbar.scrolled {
+  background: rgba(3,12,7,.94);
+  border-bottom-color: rgba(52,211,153,.18);
+  box-shadow: 0 1px 0 rgba(52,211,153,.12), 0 8px 32px rgba(0,0,0,.32);
+}
+[data-theme="light"] .navbar.scrolled {
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 1px 0 rgba(16,150,80,.1), 0 4px 18px rgba(0,60,30,.08);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 62px;
+  gap: 1.2rem;
+}
 
-.brand { display: flex; align-items: center; gap: .55rem; font-weight: 700; font-size: 1.02rem; }
-.brand-emoji { font-size: 1.25rem; }
-.brand-kn { font-size: .7rem; color: var(--mint); font-weight: 600; opacity: .8; }
+/* Brand */
+.brand {
+  display: flex; align-items: center; gap: .5rem;
+  font-weight: 800; font-size: .98rem;
+  letter-spacing: -.01em;
+  flex-shrink: 0;
+}
+.brand-emoji { font-size: 1.2rem; }
+.brand-kn {
+  font-size: .65rem; color: var(--mint); font-weight: 600;
+  opacity: .85; margin-left: .1rem;
+}
 
-.nav-links { display: flex; align-items: center; gap: .55rem; }
+/* Nav links */
+.nav-links {
+  display: flex; align-items: center; gap: .22rem;
+  flex: 1; justify-content: center;
+}
 .nav-links a {
-  font-size: .84rem;
-  font-weight: 700;
+  font-size: .82rem;
+  font-weight: 600;
   color: var(--muted);
-  border-radius: 999px;
-  padding: .32rem .72rem;
+  border-radius: 8px;
+  padding: .36rem .8rem;
   border: 1px solid transparent;
-  transition: color .2s ease, border-color .2s ease, background .2s ease, transform .2s ease;
+  transition: color .18s, background .18s, border-color .18s, transform .18s;
+  white-space: nowrap;
 }
 .nav-links a:hover {
   color: var(--text);
-  border-color: var(--border);
-  background: rgba(255,255,255,.03);
+  background: rgba(255,255,255,.055);
+  border-color: rgba(52,211,153,.15);
   transform: translateY(-1px);
 }
+[data-theme="light"] .nav-links a:hover {
+  background: rgba(0,60,30,.04);
+}
 .nav-links a.is-active {
-  color: var(--text);
+  color: #c6f7e4;
+  background: rgba(52,211,153,.12);
   border-color: rgba(52,211,153,.28);
-  background: rgba(52,211,153,.1);
 }
-.nav-cta {
-  background: var(--mint) !important; color: #031a0d !important;
-  border-radius: 8px; padding: .42rem 1rem !important;
-  font-weight: 700 !important; transition: opacity .2s;
+[data-theme="light"] .nav-links a.is-active {
+  color: #0f5235;
+  background: rgba(16,150,80,.09);
+  border-color: rgba(16,150,80,.2);
 }
-.nav-cta:hover { opacity: .88; }
 
+/* CTA button */
+.nav-cta {
+  background: linear-gradient(135deg, var(--mint), #22c55e) !important;
+  color: #031a0d !important;
+  border-radius: 9px !important;
+  padding: .4rem 1.1rem !important;
+  font-weight: 800 !important;
+  font-size: .82rem !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 16px rgba(52,211,153,.28);
+  transition: transform .18s, box-shadow .18s, opacity .18s !important;
+  letter-spacing: .005em;
+}
+.nav-cta:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(52,211,153,.42) !important;
+  opacity: 1 !important;
+}
+
+/* Float CTA on scroll */
 .nav-float-cta {
   opacity: 0;
   pointer-events: none;
@@ -238,21 +289,22 @@ h1,h2,h3,h4 { font-family: var(--font-display); line-height: 1.12; }
   background: linear-gradient(135deg, var(--mint), #22c55e);
   color: #032013;
   border-radius: 999px;
-  padding: .34rem .82rem;
-  font-size: .78rem;
+  padding: .3rem .78rem;
+  font-size: .76rem;
   font-weight: 800;
   letter-spacing: .01em;
   border: 1px solid rgba(255,255,255,.14);
+  flex-shrink: 0;
 }
-
 .navbar.scrolled .nav-float-cta {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
 }
 
-.nav-ham { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: .4rem; }
-.nav-ham span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: .3s; }
+/* Hamburger */
+.nav-ham { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: .4rem; }
+.nav-ham span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; transition: .3s; }
 
 /* ══════════════════════════════════════════════════
    HERO  —  Full redesign 2026
@@ -813,7 +865,6 @@ h1,h2,h3,h4 { font-family: var(--font-display); line-height: 1.12; }
 /* ══════════════════════════════════════════════════
    SECTIONS
 ══════════════════════════════════════════════════ */
-.section { padding: 7rem 0; }
 .section {
   position: relative;
   padding: var(--space-section) 0;
