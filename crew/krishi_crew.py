@@ -884,10 +884,27 @@ class CropAdvisorTool(BaseTool):
 
             reasons_by_crop[crop] = _top_feature_reasons(sample_values, FEATURE_COLUMNS, top_n=3)
 
+            # Enterprise Enhancement: Feature Contribution Map (SHAP)
+            contribution_map = {}
+            for i, feat in enumerate(FEATURE_COLUMNS):
+                contribution_map[feat] = {
+                    "value": float(sample_df.iloc[0][feat]),
+                    "impact": float(sample_values[i]),
+                    "percentage": 0.0 # Will calculate in frontend or here
+                }
+            
             base_value = self.explainer.expected_value
             if isinstance(base_value, list):
                 base_value = base_value[idx]
+            
+            # Sum of impacts + base_value approx = probability in logit space or directly if tree
+            # For simplicity, we'll provide the raw impacts for the stunning UI
+            
             force_plot_by_crop[crop] = _force_plot_html(base_value, sample_values, sample_df)
+            
+            # Store full contribution for the dashboard
+            if idx == top_indices[0]:
+                top_crop_contribution = contribution_map
 
         result = {
             "top_crops": top_crops,
@@ -897,6 +914,7 @@ class CropAdvisorTool(BaseTool):
             },
             "shap_reasons": reasons_by_crop,
             "shap_force_plot_html": force_plot_by_crop,
+            "contributions": {top_crops[0]: top_crop_contribution} if top_crops else {},
             "input_features": {
                 "N": N,
                 "P": P,
