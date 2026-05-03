@@ -750,6 +750,18 @@
       +      rotationHTML
       + '</div>'
       + '<div class="glass-card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">'
+      + '  <div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '    <div>'
+      + '      <h3 style="color: var(--accent); margin-bottom: 0.5rem;">🌍 Sustainability Status</h3>'
+      + '      <p style="opacity: 0.8; margin: 0;">This farm profile aligns with ' + (inputs.rainfall < 100 ? 'water-scarce' : 'climate-safe') + ' practices.</p>'
+      + '    </div>'
+      + '    <div style="text-align: right;">'
+      + '      <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">' + (inputs.ph > 6 && inputs.ph < 7.5 ? 'EXCELLENT' : 'GOOD') + '</div>'
+      + '      <div style="font-size: 0.75rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px;">Eco-Compliance</div>'
+      + '    </div>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="glass-card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">'
       + '  <h3 style="color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;">'
       + '    <span style="font-size: 1.5rem;">🇮🇳</span> ಪ್ರಾದೇಶಿಕ ಸಲಹೆ (Kannada Advisory)'
       + '  </h3>'
@@ -761,19 +773,6 @@
       +      soilPdfHTML
       + '</div>'
       + '</div>';
-      + compareHTML
-      + mktHTML
-      + '</div>'
-
-      + shapHTML
-      + droughtHTML
-      + mandiPriceVoiceHTML
-      + profitabilityHTML
-      + schemesHTML
-      + rotationHTML
-      + soilHTML
-      + soilPdfHTML
-      + kanHTML;
 
     resultsBox.style.display = 'block';
     resultsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
