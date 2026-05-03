@@ -10,6 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="core.css">
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed', err));
+      });
+    }
+  </script>
 </head>
 <body class="core-page">
 
@@ -25,7 +33,7 @@
         <a href="index.html">← Landing</a>
         <a href="core.html" class="active">Advisory Tool</a>
         <a href="climate.html">🌍 Climate Dashboard</a>
-        <a href="simulator.html">Simulator</a>
+        <a href="climate.html#simulator">Simulator</a>
       </div>
       <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">
         <span></span><span></span><span></span>

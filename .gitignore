@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+model/
+*.pdf
+node_modules/
+.DS_Store
+.venv/
+venv/
+*.pkl

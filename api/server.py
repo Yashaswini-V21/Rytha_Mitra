@@ -124,6 +124,7 @@ def simulate() -> Any:
 
 
 if __name__ == "__main__":
-    host = os.getenv("API_HOST", "127.0.0.1")
-    port = int(os.getenv("API_PORT", "8000"))
-    app.run(host=host, port=port, debug=False, use_reloader=False)
+    # Use environment variables for Render/Vercel deployment compatibility
+    host = os.getenv("API_HOST", "0.0.0.0")
+    port = int(os.environ.get("PORT", os.getenv("API_PORT", "8000")))
+    app.run(host=host, port=port, debug=False)

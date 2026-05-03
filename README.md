@@ -1,4 +1,4 @@
-﻿<!-- FARMING STYLE HEADER -->
+<!-- FARMING STYLE HEADER -->
 <div align="center">
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,6,11,20&height=280&section=header&text=RythaGelathi&fontSize=64&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Climate%20Resilience%20Platform%20for%20Women%20Farmers%20of%20Karnataka&descAlignY=62&descSize=18" width="100%"/>
@@ -67,6 +67,8 @@ It is not just a crop recommender — it is a **complete climate adaptation tool
 | 🇮🇳 **Kannada Output** | Bhashini government API → text translation + text-to-speech |
 | 📈 **Market Intelligence** | Agmarknet mandi prices → profit estimation with offline fallback |
 | 🐛 **Pest Risk Alerts** | Temperature + humidity patterns → weekly pest probability + organic interventions |
+| 🛡️ **Sustainability Status** | Real-time eco-compliance badge (EXCELLENT/GOOD) based on farm profile |
+| 📱 **PWA Offline Support** | Installable mobile app + service worker caching for connectivity-dead zones |
 
 Every number on screen is **computed from real formulas**, not hardcoded.
 
@@ -303,16 +305,21 @@ Rytha_Gelathi/
 │   └── server.py              # Flask API (recommend + simulate endpoints)
 ├── crew/
 │   └── krishi_crew.py         # 4-agent CrewAI pipeline (61KB)
+├── data/
+│   ├── crop_dataset.csv       # Training data for Random Forest
+│   └── karnataka_soil_health.json # Localized soil health records
+├── model/
+│   └── crop_model.pkl         # Trained model artifact (auto-generated)
 ├── frontend/
-│   ├── index.html             # Landing page (splash + features + metrics)
+│   ├── index.html             # Landing page
 │   ├── core.html              # Core advisory tool
-│   ├── climate.html           # Climate Intelligence Dashboard (NEW)
-│   ├── styles.css             # Landing + shared styles (52KB)
+│   ├── climate.html           # Climate Intelligence Dashboard + Simulator
+│   ├── styles.css             # Landing + shared styles
 │   ├── core.css               # Advisory-specific styles
-│   ├── climate.css            # Climate dashboard styles (NEW)
+│   ├── climate.css            # Climate dashboard styles
 │   ├── app.js                 # Landing page logic
-│   ├── core.js                # Advisory logic + simulator
-│   └── climate.js             # Climate engines (NEW — irrigation, fertilizer, carbon, etc.)
+│   ├── core.js                # Advisory logic
+│   └── climate.js             # Climate engines
 ├── tools/
 │   ├── market_price_tool.py   # Agmarknet integration
 │   └── Karnataka_mandi_prices.json
@@ -382,7 +389,9 @@ python serve.py
 **Required:**
 - `GROQ_API_KEY` — Groq LLaMA 3.3 70B
 - `OPENWEATHER_API_KEY` — OpenWeatherMap
-- `BHASHINI_API_KEY` — Kannada translation + TTS
+- `BHASHINI_API_KEY` — MeitY Bhashini API Key
+- `BHASHINI_USER_ID` — MeitY Bhashini User ID
+- `BHASHINI_API_URL` — Bhashini endpoint (defaults to ULCACore)
 
 **Optional:**
 - `AGMARKNET_API_KEY`, `AGMARKNET_API_URL` — Live mandi prices
@@ -417,6 +426,36 @@ The Climate Dashboard (`climate.html`) runs **entirely client-side** — no API 
 ## License
 
 Open-source under MIT License. See LICENSE for complete terms.
+
+---
+
+## 🚀 Future Roadmap
+
+*   **Sentinel-2 Satellite Integration**: Real-time crop health monitoring (NDVI) and flood damage assessment.
+*   **Proactive WhatsApp Alerts**: Push notifications for sudden weather shifts and localized pest risks.
+*   **Vernacular AI Chatbot**: 24/7 Kannada-speaking voice assistant for instant troubleshooting.
+*   **LSTM Market Forecasting**: Predictive price trends for the next 3–6 months to guide sowing decisions.
+*   **Community Pest Mapping**: Crowdsourced reporting to visualize pest migration across districts.
+
+---
+
+## 🌐 Hosting & Deployment (In Progress)
+
+| Layer | Platform | Status |
+|-------|----------|--------|
+| **Frontend** | [Vercel](https://vercel.com/) | ⏳ Deployment Pending |
+| **Backend API** | [Render](https://render.com/) | ⏳ Deployment Pending |
+| **PWA** | Service Worker | ✅ Functional (Offline Ready) |
+
+---
+
+## 🏆 Winning Demo Strategy (Top 1%)
+
+**During your 5-minute presentation, emphasize these 3 pillars:**
+
+1. **The "Glass Box" AI**: Don't just say "it recommends Rice." Explain that you use **SHAP explainability** to tell the farmer *why* (e.g., "High Phosphorus drove this pick"). This builds trust.
+2. **Connectivity-First**: Show the **PWA** feature. Mention that *"Our app works offline for farmers in dead zones via service worker caching."*
+3. **Localized Intelligence**: Click the district cards on the **Climate Dashboard**. Show that you aren't using generic data, but district-specific soil health records from your integrated JSON database.
 
 ---
 

@@ -10,6 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="climate.css">
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed', err));
+      });
+    }
+  </script>
 </head>
 <body class="climate-page">
 
@@ -24,7 +32,7 @@
       <div class="nav-links" id="navLinks">
         <a href="index.html">← Home</a>
         <a href="core.html">Advisory Tool</a>
-        <a href="simulator.html">Agricultural Simulator</a>
+        <a href="#simulator">Agricultural Simulator</a>
         <a href="#irrigation">Irrigation Engine</a>
         <a href="#karnataka-map">District Map</a>
       </div>
@@ -51,7 +59,7 @@
         <div class="cl-hm"><span class="cl-hm-num">14</span><span class="cl-hm-lbl">Districts Covered</span></div>
       </div>
       <div class="cl-hero-actions">
-        <a href="simulator.html" class="btn btn-green">Launch Simulator →</a>
+        <a href="#simulator" class="btn btn-green">Launch Simulator →</a>
         <a href="#irrigation" class="btn btn-out">Irrigation Engine</a>
         <a href="#karnataka-map" class="btn btn-out">District Map</a>
       </div>
