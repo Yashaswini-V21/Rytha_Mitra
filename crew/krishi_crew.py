@@ -551,7 +551,22 @@ def _build_or_load_model() -> Tuple[RandomForestClassifier, shap.TreeExplainer, 
     if shap is None:
         raise RuntimeError("shap is required for SHAP explanations.")
 
-    # Train from dataset each run to keep this file self-contained without requiring joblib artifacts.
+    model_path = Path(os.getenv("MODEL_PATH", str(DEFAULT_MODEL_PATH)))
+
+    # Try loading pre-trained model first (fast path: <200ms)
+    try:
+        import joblib
+        if model_path.exists():
+            cached = joblib.load(model_path)
+            model = cached["model"]
+            model_accuracy = cached.get("accuracy")
+            explainer = shap.TreeExplainer(model)
+            classes = [str(c) for c in model.classes_]
+            return model, explainer, classes, model_accuracy
+    except Exception:
+        pass  # Fall through to training
+
+    # Train from dataset (cold start — first request only)
     df = _load_crop_dataframe()
     X = df[FEATURE_COLUMNS]
     y = df["label"]
@@ -577,6 +592,14 @@ def _build_or_load_model() -> Tuple[RandomForestClassifier, shap.TreeExplainer, 
     else:
         model.fit(X, y)
         model_accuracy = float(model.score(X, y))
+
+    # Persist trained model for fast subsequent loads
+    try:
+        import joblib
+        model_path.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump({"model": model, "accuracy": model_accuracy}, str(model_path))
+    except Exception:
+        pass  # Non-critical — training will repeat next time
 
     explainer = shap.TreeExplainer(model)
     classes = [str(c) for c in model.classes_]

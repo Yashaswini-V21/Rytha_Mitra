@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="core.css">
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="/public/9ryta.webp" type="image/webp">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -20,6 +21,8 @@
   </script>
 </head>
 <body class="core-page">
+  <!-- Toast notification container -->
+  <div id="toastContainer" class="toast-container"></div>
 
   <!-- ── NAVBAR ─────────────────────────────── -->
   <nav class="navbar" id="navbar">
@@ -49,10 +52,10 @@
     <div class="chb-inner container">
       <div class="chb-badge">
         <span class="hero-badge-dot"></span>
-        4-Agent CrewAI · Groq LLaMA 3.3 · SHAP · Bhashini
+        Enterprise AI Platform · Groq LLaMA 3.3 · SHAP · Bhashini
       </div>
-      <h1 class="chb-title">Core Advisory Application</h1>
-      <p class="chb-sub">Enter your district, soil data, and climate conditions. Get AI-powered crop recommendations with live mandi prices, 7-day weather flag, soil alerts, and a full Kannada summary.</p>
+      <h1 class="chb-title">Agricultural Intelligence Center</h1>
+      <p class="chb-sub">Real-time climate resilience engine for Karnataka's agrarian future.</p>
       <div class="chb-pills">
         <span>🌱 Crop Advisor</span>
         <span>📈 Market Analyst</span>
@@ -93,6 +96,16 @@
     <div class="container core-layout-wrapper" style="margin-top: 2rem;">
       <!-- LEFT SIDEBAR -->
       <aside class="farm-sidebar farm-sidebar-left">
+      <div class="fsb-section-title">System Intel</div>
+      <div class="system-log-status">
+        <span class="status-dot"></span>
+        <span id="system-status-text">SYSTEM ONLINE</span>
+      </div>
+      <div class="system-log-container" id="system-log">
+        <div class="log-entry">Initializing KrishiCrew...</div>
+        <div class="log-entry">Waiting for input...</div>
+      </div>
+      <div class="fsb-divider"></div>
       <div class="fsb-section-title">Farm Tools</div>
       <div class="fsb-tool"><span>💧</span><p>Irrigation</p></div>
       <div class="fsb-tool"><span>🧪</span><p>Soil Test</p></div>
@@ -153,49 +166,6 @@
             </div>
             <div class="adv-banner-badge">AI-Powered</div>
           </div>
-          <!-- Form continues below as it already does -->
-        </div>
-
-        <!-- ── KANNADA TAB ──────────────────── -->
-        <div class="tab-panel" id="tab-kannada">
-          <div class="glass-card" style="padding: 2rem; border-left: 4px solid var(--gold);">
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-               <div style="font-size: 2.5rem;">🇮🇳</div>
-               <div>
-                 <h2 style="margin:0;">ಕನ್ನಡ ಯೋಜನೆ</h2>
-                 <p style="margin:0; opacity: 0.8;">Bhashini Powered Kannada Translation</p>
-               </div>
-            </div>
-            <div id="kannada-output-area" class="results-container" style="display:block; min-height: 200px; background: rgba(0,0,0,0.2);">
-              <div style="text-align: center; padding: 4rem; color: var(--muted);">
-                <p>ಕನ್ನಡ ವರದಿಯನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಮೊದಲು ಸಮಾಲೋಚನೆಯನ್ನು ಚಲಾಯಿಸಿ.</p>
-                <p>(Please run advisory first to see the Kannada report here)</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── SHAP TAB ──────────────────── -->
-        <div class="tab-panel" id="tab-shap">
-          <div class="glass-card" style="padding: 2rem; border-left: 4px solid var(--accent);">
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-               <div style="font-size: 2.5rem;">🧬</div>
-               <div>
-                 <h2 style="margin:0;">Soil Analytics</h2>
-                 <p style="margin:0; opacity: 0.8;">SHAP Explanability Platform</p>
-               </div>
-            </div>
-            <div id="shap-output-area" class="results-container" style="display:block; min-height: 200px; background: rgba(0,0,0,0.2);">
-               <div style="text-align: center; padding: 4rem; color: var(--muted);">
-                <p>SHAP visualizations and soil intelligence will appear here after the AI finishes its analysis.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Advisory Tab already contains the form and results... wait, I need to wrap the existing form? -->
-        <!-- Actually I will just insert these as placeholders for now -->
-
 
           <div class="quick-scenarios" id="quickScenarios">
             <div class="qs-head">
@@ -276,10 +246,6 @@
                 </select>
                 <span class="field-hint">Used for targeted scheme eligibility</span>
               </label>
-            </div>
-
-            <!-- Enhancement 1: Last Season Crop for Rotation Recommendation -->
-            <div class="form-grid form-grid-2">
               <label class="field-label" for="lastCrop">
                 <span class="fl-text">Last Season Crop <span class="fl-opt">(optional)</span></span>
                 <select id="lastCrop">
@@ -354,18 +320,89 @@
             </div>
           </form>
 
+          <!-- LOADING SKELETON -->
+          <div id="loadingSkeleton" class="loading-skeleton" style="display:none">
+            <div class="skeleton-header">
+              <div class="skeleton-bar sk-title"></div>
+              <div class="skeleton-bar sk-badge"></div>
+            </div>
+            <div class="skeleton-grid">
+              <div class="skeleton-card"><div class="skeleton-bar sk-num"></div><div class="skeleton-bar sk-label"></div></div>
+              <div class="skeleton-card"><div class="skeleton-bar sk-num"></div><div class="skeleton-bar sk-label"></div></div>
+              <div class="skeleton-card"><div class="skeleton-bar sk-num"></div><div class="skeleton-bar sk-label"></div></div>
+              <div class="skeleton-card"><div class="skeleton-bar sk-num"></div><div class="skeleton-bar sk-label"></div></div>
+            </div>
+          </div>
+
           <!-- RESULTS -->
           <div id="resultsContainer" class="results-container" style="display:none">
             <div class="results-header">
               <h3 id="resultsTitle">Advisory Results</h3>
-              <button class="copy-btn" id="copyBtn">📋 Copy JSON</button>
+              <div class="res-header-actions">
+                <span class="model-accuracy-badge" id="accuracyBadge">97.4% Accuracy</span>
+                <button class="copy-btn" id="copyBtn">📋 Copy JSON</button>
+              </div>
             </div>
+            
+            <div class="dashboard-grid">
+               <!-- Left: Main Crop Card -->
+               <div id="mainCropArea"></div>
+               <!-- Right: Visual Gauges -->
+               <div class="visual-gauges">
+                  <div class="gauge-card">
+                    <div class="gauge-title">Sustainability Score</div>
+                    <div class="gauge-wrap" id="sustainabilityGauge"></div>
+                  </div>
+                  <div class="gauge-card">
+                    <div class="gauge-title">AI Confidence</div>
+                    <div class="gauge-wrap" id="confidenceGauge"></div>
+                  </div>
+               </div>
+            </div>
+
             <div id="resultsContent"></div>
+          </div>
+        </div><!-- /tab-advisory -->
+
+        <!-- ── KANNADA TAB ──────────────────── -->
+        <div class="tab-panel" id="tab-kannada">
+          <div class="glass-card" style="padding: 2rem; border-left: 4px solid var(--gold);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+               <div style="font-size: 2.5rem;">🇮🇳</div>
+               <div>
+                 <h2 style="margin:0;">ಕನ್ನಡ ಯೋಜನೆ</h2>
+                 <p style="margin:0; opacity: 0.8;">Bhashini Powered Kannada Translation</p>
+               </div>
+            </div>
+            <div id="kannada-output-area" class="results-container" style="display:block; min-height: 200px; background: rgba(0,0,0,0.2); border-radius: var(--radius);">
+              <div style="text-align: center; padding: 4rem; color: var(--muted);">
+                <p>ಕನ್ನಡ ವರದಿಯನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಮೊದಲು ಸಮಾಲೋಚನೆಯನ್ನು ಚಲಾಯಿಸಿ.</p>
+                <p>(Please run advisory first to see the Kannada report here)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SHAP TAB ──────────────────── -->
+        <div class="tab-panel" id="tab-shap">
+          <div class="glass-card" style="padding: 2rem; border-left: 4px solid var(--accent);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+               <div style="font-size: 2.5rem;">🧬</div>
+               <div>
+                 <h2 style="margin:0;">Soil Analytics</h2>
+                 <p style="margin:0; opacity: 0.8;">SHAP Explainability Platform</p>
+               </div>
+            </div>
+            <div id="shap-output-area" class="results-container" style="display:block; min-height: 200px; background: rgba(0,0,0,0.2); border-radius: var(--radius);">
+               <div style="text-align: center; padding: 4rem; color: var(--muted);">
+                <p>SHAP visualizations and soil intelligence will appear here after the AI finishes its analysis.</p>
+              </div>
+            </div>
           </div>
         </div>
 
       </section>
-    </div>
+    </div><!-- /core-center -->
 
     <!-- RIGHT SIDEBAR -->
     <aside class="farm-sidebar farm-sidebar-right">

@@ -1,0 +1,32 @@
+name: RythaGelathi CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest tests/ -v --tb=short
+      - name: Validate CSS syntax
+        run: |
+          python -c "
+          css = open('frontend/core.css').read()
+          assert css.count('{') == css.count('}'), 'CSS braces unbalanced!'
+          print('✅ CSS syntax valid')
+          "
+      - name: Validate HTML div balance
+        run: |
+          python -c "
+          import re
+          html = open('frontend/core.html').read()
+          opens = len(re.findall(r'<div[\s>]', html))
+          closes = html.count('</div>')
+          assert opens == closes, f'DIV mismatch: {opens} opens, {closes} closes'
+          print('✅ HTML structure valid')
+          "

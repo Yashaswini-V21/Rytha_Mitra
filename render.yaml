@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: rythagelathi
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python api/server.py
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: BHASHINI_API_KEY
+        sync: false
+      - key: BHASHINI_USER_ID
+        sync: false
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: PORT
+        value: 8000
