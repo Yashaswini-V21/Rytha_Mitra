@@ -1,0 +1,1 @@
+# RythaGelathi API Schemas Package

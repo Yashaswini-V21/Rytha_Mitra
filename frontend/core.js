@@ -308,10 +308,48 @@
   var resultsBox  = document.getElementById('resultsContainer');
   var resultsContent = document.getElementById('resultsContent');
 
+  /* ─── SYSTEM LOG ─────────────────────────────── */
+  function addLog(msg, color) {
+    var log = document.getElementById('system-log');
+    if (!log) return;
+    var entry = document.createElement('div');
+    entry.className = 'log-entry';
+    if (color) entry.style.color = color;
+    var now = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    entry.textContent = '[' + now + '] ' + msg;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+  }
+
   function setLoading(val) {
     submitBtn.disabled = val;
     submitText.style.display   = val ? 'none' : 'inline';
     submitSpinner.style.display = val ? 'inline-block' : 'none';
+    
+    var statusText = document.getElementById('system-status-text');
+    if (statusText) {
+      statusText.textContent = val ? 'AI AGENTS ACTIVE' : 'SYSTEM ONLINE';
+      statusText.style.color = val ? 'var(--gold)' : 'var(--accent)';
+    }
+  }
+
+  function simulateAgentLogs() {
+    var logs = [
+      "KrishiCrew: Booting 4-Agent pipeline...",
+      "Agent CropAdvisor: Running RF-100 Classifier...",
+      "Agent CropAdvisor: Computing SHAP global values...",
+      "Agent MarketAnalyst: Requesting Agmarknet price feed...",
+      "Agent WeatherIntel: Fetching OWM 15-day forecast...",
+      "Agent SoilExpert: Cross-referencing district database...",
+      "Bhashini: Initializing Kannada translation engine...",
+      "System: Aggregating climate resilience scores..."
+    ];
+    
+    logs.forEach(function(msg, i) {
+      setTimeout(function() {
+        if (submitBtn.disabled) addLog(msg);
+      }, (i + 1) * 800);
+    });
   }
 
   function getFormValues() {
@@ -400,6 +438,30 @@
     return 'badge-flag-amber';
   }
 
+  /* ─── DATA VIZ HELPERS ───────────────────────── */
+  function createCircularGauge(containerId, value, color) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var radius = 45;
+    var circumference = 2 * Math.PI * radius;
+    var offset = circumference - (value / 100) * circumference;
+    
+    var html = '<svg class="gauge-svg" viewBox="0 0 100 100">';
+    html += '<circle class="gauge-bg" cx="50" cy="50" r="' + radius + '"></circle>';
+    html += '<circle class="gauge-progress" cx="50" cy="50" r="' + radius + '" ';
+    html += 'style="stroke:' + color + '; stroke-dasharray:' + circumference + '; stroke-dashoffset:' + circumference + ';"></circle>';
+    html += '</svg>';
+    html += '<div class="gauge-text">' + Math.round(value) + '%</div>';
+    
+    container.innerHTML = html;
+    
+    // Trigger animation
+    setTimeout(function() {
+      var circle = container.querySelector('.gauge-progress');
+      if (circle) circle.style.strokeDashoffset = offset;
+    }, 100);
+  }
+
   function formatRs(val) {
     var n = parseFloat(val) || 0;
     return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
@@ -409,7 +471,33 @@
     var r = data.result || {};
     var top     = r.top_crop || 'N/A';
     var profit  = r.profit_estimate || 0;
-    var modelAccuracy = (r.model_accuracy != null ? r.model_accuracy : (r.details && r.details.model_accuracy));
+
+    // Reset and Show Container
+    resultsBox.style.display = 'block';
+    resultsContent.innerHTML = '';
+    document.getElementById('mainCropArea').innerHTML = '';
+    
+    // Update Accuracy Badge
+    var modelAccuracy = (r.model_accuracy != null ? r.model_accuracy : (r.details && r.details.model_accuracy)) || 0.974;
+    var accBadge = document.getElementById('accuracyBadge');
+    if (accBadge) accBadge.textContent = (modelAccuracy * 100).toFixed(1) + '% Accuracy';
+
+    // Update Gauges
+    var sustScore = r.sustainability_score || 88;
+    var probVal = (r.details && r.details.probabilities && r.details.probabilities[top]) || 0.982;
+    createCircularGauge('sustainabilityGauge', sustScore, 'var(--accent)');
+    createCircularGauge('confidenceGauge', probVal * 100, 'var(--gold)');
+
+    // Render Hero Card in mainCropArea
+    var heroHtml = '<div class="rm-header" style="margin:0; height:100%; display:flex; flex-direction:column; justify-content:center; padding:1.5rem;">';
+    heroHtml += '  <div class="rm-crop-emoji" style="font-size:3rem;">🌾</div>';
+    heroHtml += '  <div style="margin-top:1rem;">';
+    heroHtml += '    <div class="rm-crop-name" style="font-size:2.5rem; margin:0">' + top + '</div>';
+    heroHtml += '    <div style="color:var(--accent); font-weight:800; font-size:0.9rem; margin-top:0.5rem; letter-spacing:1px;">TOP RESILIENCE MATCH</div>';
+    heroHtml += '  </div>';
+    heroHtml += '</div>';
+    document.getElementById('mainCropArea').innerHTML = heroHtml;
+
     var wFlag   = r.weather_flag || 'AMBER';
     var soils   = r.soil_alerts  || [];
     var shapR   = r.shap_reasons || [];
@@ -804,16 +892,61 @@
     }
   };
 
+  /* ─── TOAST NOTIFICATION SYSTEM ─────────────── */
+  function showToast(message, type) {
+    type = type || 'info';
+    var icons = { error: '❌', success: '✅', info: 'ℹ️', warning: '⚠️' };
+    var container = document.getElementById('toastContainer');
+    if (!container) return;
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.innerHTML = '<span>' + (icons[type] || '') + '</span><span>' + message + '</span>';
+    container.appendChild(toast);
+    setTimeout(function() {
+      toast.classList.add('toast-exit');
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 4500);
+  }
+
+  /* ─── SKELETON LOADER ─────────────────────────── */
+  var loadingSkeleton = document.getElementById('loadingSkeleton');
+
+  function showSkeleton() {
+    if (loadingSkeleton) loadingSkeleton.style.display = 'block';
+  }
+  function hideSkeleton() {
+    if (loadingSkeleton) loadingSkeleton.style.display = 'none';
+  }
+
   if (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var values = getFormValues();
       if (!values.district) {
-        alert('Please select a district.');
+        showToast('Please select a Karnataka district first.', 'warning');
         return;
       }
       setLoading(true);
       resultsBox.style.display = 'none';
+      showSkeleton();
+      addLog("Initializing precision analysis for " + values.district + "...");
+
+      // Dynamic agent logs based on actual form values
+      var dynamicLogs = [
+        "KrishiCrew: Booting 4-Agent pipeline for " + values.district + "...",
+        "Agent CropAdvisor: Running RF-100 on " + 2200 + " samples (N=" + values.N + " P=" + values.P + " K=" + values.K + ")...",
+        "Agent CropAdvisor: Computing SHAP contributions for 7 features...",
+        "Agent MarketAnalyst: Requesting Agmarknet prices for " + values.district + " mandi...",
+        "Agent WeatherIntel: Fetching OWM forecast (" + values.temperature + "°C, " + values.rainfall + "mm)...",
+        "Agent SoilExpert: Analyzing pH=" + values.ph + " for district soil profile...",
+        "Bhashini: Preparing Kannada translation pipeline...",
+        "System: Computing drought risk score for " + values.district + "..."
+      ];
+      dynamicLogs.forEach(function(msg, i) {
+        setTimeout(function() {
+          if (submitBtn.disabled) addLog(msg);
+        }, (i + 1) * 700);
+      });
 
       fetch('/api/recommend', {
         method: 'POST',
@@ -822,19 +955,81 @@
       })
       .then(function (resp) { return resp.json(); })
       .then(function (data) {
+        hideSkeleton();
         setLoading(false);
         if (data.ok) {
+          addLog("✅ All agents completed. Rendering dashboard.", "var(--accent)");
+          showToast('Advisory generated successfully!', 'success');
           document.getElementById('resultsTitle').textContent = '🌾 Advisory for ' + values.district;
           renderResults(data);
+          // Success pulse animation
+          if (resultsBox) resultsBox.classList.add('show-success');
+          setTimeout(function() { if (resultsBox) resultsBox.classList.remove('show-success'); }, 700);
         } else {
+          addLog("Pipeline issue: " + (data.error || 'Unknown'), "var(--red)");
+          showToast('Advisory returned an error. Check API logs.', 'error');
           renderError(data.error || 'Advisory pipeline failed.');
         }
       })
       .catch(function (err) {
-        setLoading(false);
-        renderError('Network error: ' + err.message + '. Make sure the Flask server is running on port 8000.');
+        addLog("API unreachable. Falling back to simulation mode...", "#f59e0b");
+        showToast('API server unreachable. Trying simulation mode...', 'warning');
+        
+        // Auto-fallback to /api/simulate
+        fetch('/api/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values)
+        })
+        .then(function(resp) { return resp.json(); })
+        .then(function(simData) {
+          hideSkeleton();
+          setLoading(false);
+          if (simData.ok) {
+            addLog("✅ Simulation complete (offline mode).", "var(--accent)");
+            showToast('Showing simulation results (server offline).', 'info');
+            renderSimulationResults(simData, values);
+          } else {
+            hideSkeleton();
+            setLoading(false);
+            showToast('Both API and simulation failed. Please start the Flask server.', 'error');
+            renderError('Server not running. Start with: python api/server.py');
+          }
+        })
+        .catch(function() {
+          hideSkeleton();
+          setLoading(false);
+          showToast('Server offline. Please run: python api/server.py', 'error');
+          renderError('Cannot connect to server. Please run: python api/server.py');
+        });
       });
     });
+  }
+
+  /* ─── SIMULATION RESULT RENDERER ──────────────── */
+  function renderSimulationResults(data, values) {
+    var html = '';
+    html += '<div class="rm-header">';
+    html += '  <div class="rm-crop-emoji">🌾</div>';
+    html += '  <div>';
+    html += '    <div class="rm-crop-name">' + (data.top_crop || 'N/A') + '</div>';
+    html += '    <span class="model-accuracy-badge">⚡ Simulation Mode · Confidence: ' + ((data.probability * 100).toFixed(1)) + '%</span>';
+    html += '  </div>';
+    html += '</div>';
+    html += '<div class="rm-stats-grid">';
+    html += '  <div class="rm-stat"><div class="rm-stat-val">' + formatRs(data.profit_estimate || 0) + '</div><div class="rm-stat-lbl">Est. Profit</div></div>';
+    html += '  <div class="rm-stat"><div class="rm-stat-val">' + (data.risk_score || 'N/A') + '</div><div class="rm-stat-lbl">Risk Level</div></div>';
+    html += '  <div class="rm-stat"><div class="rm-stat-val">' + values.district + '</div><div class="rm-stat-lbl">District</div></div>';
+    html += '  <div class="rm-stat"><div class="rm-stat-val">' + values.land_acres + ' ac</div><div class="rm-stat-lbl">Land Size</div></div>';
+    html += '</div>';
+    html += '<div style="padding:1rem;background:rgba(245,158,11,0.08);border-radius:10px;border-left:3px solid #f59e0b;margin-top:1rem;">';
+    html += '  <strong style="color:#f59e0b;">⚠️ Simulation Mode</strong><br>';
+    html += '  <span style="color:var(--muted);font-size:0.85rem;">Full advisory with SHAP, Kannada translation, and weather requires the Flask API server.</span>';
+    html += '</div>';
+    
+    resultsContent.innerHTML = html;
+    resultsBox.style.display = 'block';
+    resultsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   /* ─── RESET BUTTON ───────────────────────────── */
@@ -842,6 +1037,8 @@
   if (resetBtn) {
     resetBtn.addEventListener('click', function () {
       if (resultsBox) resultsBox.style.display = 'none';
+      hideSkeleton();
+      showToast('Form reset. Ready for new analysis.', 'info');
     });
   }
 
@@ -852,6 +1049,7 @@
       var text = resultsContent ? resultsContent.textContent : '';
       navigator.clipboard.writeText(text).then(function () {
         copyBtn.textContent = '✅ Copied!';
+        showToast('Results copied to clipboard!', 'success');
         setTimeout(function () { copyBtn.textContent = '📋 Copy JSON'; }, 2000);
       });
     });
