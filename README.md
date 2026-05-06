@@ -16,6 +16,16 @@
 [![Status](https://img.shields.io/badge/Status-Production_Ready-22c55e?style=for-the-badge)](.)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-2563eb?style=for-the-badge&logo=python&logoColor=white)](.)
 
+---
+
+### ⚡ Quick Links for Judges
+- **Advisory Dashboard**: [Advisory Center](frontend/core.html)
+- **Climate Simulator**: [Simulator Mode](frontend/climate.html)
+- **API Health**: [/health](http://localhost:5000/health)
+- **Technical Bible**: [BIBLE.md](./BIBLE.md)
+
+---
+
 [![CrewAI](https://img.shields.io/badge/CrewAI-Orchestration-7c3aed?style=flat-square)](https://www.crewai.com/)
 [![Groq](https://img.shields.io/badge/Groq-LLaMA_3.3_70B-111827?style=flat-square)](https://console.groq.com/)
 [![SHAP](https://img.shields.io/badge/SHAP-Explainability-ef4444?style=flat-square)](https://shap.readthedocs.io/)
