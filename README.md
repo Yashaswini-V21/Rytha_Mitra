@@ -538,3 +538,5 @@ To scale RythaGelathi to a nation-wide platform, we have planned the following e
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=110&section=footer&animation=fadeIn" width="100%"/>
 
 </div>
+
+
