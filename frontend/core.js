@@ -962,6 +962,9 @@
           showToast('Advisory generated successfully!', 'success');
           document.getElementById('resultsTitle').textContent = '🌾 Advisory for ' + values.district;
           renderResults(data);
+          if (window._renderPremiumFeatures) {
+            window._renderPremiumFeatures(data, values);
+          }
           // Success pulse animation
           if (resultsBox) resultsBox.classList.add('show-success');
           setTimeout(function() { if (resultsBox) resultsBox.classList.remove('show-success'); }, 700);

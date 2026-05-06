@@ -416,9 +416,9 @@ python serve.py
 ## Environment Variables
 
 **Required:**
-- `GROQ_API_KEY` — Groq LLaMA 3.3 70B
-- `OPENWEATHER_API_KEY` — OpenWeatherMap
-- `BHASHINI_API_KEY` — MeitY Bhashini API Key
+- `GROQ_API_KEY` — Groq LLaMA 3.3 70B (Free tier: 30 RPM)
+- `OPENWEATHER_API_KEY` — OpenWeatherMap One Call API 3.0
+- `BHASHINI_API_KEY` — MeitY Bhashini API Key ([Get it here](https://bhashini.gov.in/ulca/model/explore-models))
 - `BHASHINI_USER_ID` — MeitY Bhashini User ID
 - `BHASHINI_API_URL` — Bhashini endpoint (defaults to ULCACore)
 
@@ -434,9 +434,11 @@ python serve.py
 | Service | What | How |
 |---------|------|-----|
 | **Vercel** | Frontend (3 HTML pages + CSS + JS) | Deploy `frontend/` directory |
-| **Render** | Flask API backend | Deploy with `python api/server.py` |
+| **Render** | Flask API backend | Deploy with `gunicorn api.server:app --workers 2` |
 
 The Climate Dashboard (`climate.html`) runs **entirely client-side** — no API keys needed. Only the Core Advisory requires the Flask backend.
+
+> **Production Note:** The `render.yaml` and `Dockerfile` both use `gunicorn` (production WSGI server) instead of the Flask dev server for proper concurrency and reliability.
 
 ---
 
@@ -472,13 +474,15 @@ To scale RythaGelathi to a nation-wide platform, we have planned the following e
 
 ---
 
-## 🌐 Hosting & Deployment (In Progress)
+## 🌐 Hosting & Deployment
 
 | Layer | Platform | Status |
 |-------|----------|--------|
-| **Frontend** | [Vercel](https://vercel.com/) | ⏳ Deployment Pending |
-| **Backend API** | [Render](https://render.com/) | ⏳ Deployment Pending |
+| **Frontend** | [Vercel](https://vercel.com/) | ✅ Infrastructure Ready |
+| **Backend API** | [Render](https://render.com/) | ✅ Infrastructure Ready (`render.yaml` + `Dockerfile`) |
 | **PWA** | Service Worker | ✅ Functional (Offline Ready) |
+| **WSGI Server** | Gunicorn | ✅ Production-grade (2 workers, 120s timeout) |
+| **CI/CD** | GitHub Actions | ✅ Tests + CSS + HTML + Python validation |
 
 ---
 

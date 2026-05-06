@@ -13,20 +13,35 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         run: pytest tests/ -v --tb=short
-      - name: Validate CSS syntax
+      - name: Validate CSS syntax (all files)
         run: |
           python -c "
-          css = open('frontend/core.css').read()
-          assert css.count('{') == css.count('}'), 'CSS braces unbalanced!'
-          print('✅ CSS syntax valid')
+          import glob
+          for f in glob.glob('frontend/*.css'):
+              css = open(f, encoding='utf-8').read()
+              o, c = css.count('{'), css.count('}')
+              assert o == c, f'{f}: CSS braces unbalanced ({o} opens, {c} closes)'
+              print(f'✅ {f}: {o} rules validated')
           "
-      - name: Validate HTML div balance
+      - name: Validate HTML div balance (all pages)
         run: |
           python -c "
-          import re
-          html = open('frontend/core.html').read()
-          opens = len(re.findall(r'<div[\s>]', html))
-          closes = html.count('</div>')
-          assert opens == closes, f'DIV mismatch: {opens} opens, {closes} closes'
-          print('✅ HTML structure valid')
+          import re, glob
+          for f in glob.glob('frontend/*.html'):
+              html = open(f, encoding='utf-8').read()
+              opens = len(re.findall(r'<div[\s>]', html))
+              closes = html.count('</div>')
+              assert opens == closes, f'{f}: DIV mismatch ({opens} opens, {closes} closes)'
+              print(f'✅ {f}: {opens} divs balanced')
+          "
+      - name: Validate Python syntax
+        run: |
+          python -c "
+          import py_compile, glob
+          for f in glob.glob('**/*.py', recursive=True):
+              if '__pycache__' in f or '.venv' in f:
+                  continue
+              py_compile.compile(f, doraise=True)
+              print(f'✅ {f}')
+          print('All Python files compile clean')
           "
