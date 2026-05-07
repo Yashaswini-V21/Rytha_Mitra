@@ -1326,6 +1326,135 @@ h1,h2,h3,h4 { font-family: var(--font-display); line-height: 1.12; }
 }
 
 .foot-tab.is-active {
+  color: var(--text);
+  border-color: var(--gold);
+}
+
+/* ════════════════════════════════════════════════
+   IMPACT COUNTERS
+════════════════════════════════════════════════ */
+.impact-counters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.ic-stat {
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.ic-num {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #f59e0b;
+  line-height: 1;
+}
+
+.ic-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 6px;
+}
+
+.ic-div {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 8px 0;
+}
+
+@media (max-width: 500px) {
+  .ic-stat {
+    padding: 1rem;
+  }
+  .ic-div {
+    display: none;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   BEFORE/AFTER COMPARISON
+════════════════════════════════════════════════ */
+.before-after-section {
+  padding: 4rem 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ba-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #14532d;
+  margin-bottom: 2rem;
+}
+
+.ba-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .ba-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ba-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ba-header {
+  padding: 14px 20px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.ba-before .ba-header {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.ba-after .ba-header {
+  background: #14532d;
+  color: #f59e0b;
+}
+
+.ba-list {
+  list-style: none;
+  padding: 16px 20px;
+  margin: 0;
+}
+
+.ba-before {
+  border: 1px solid #f87171;
+  background: #fff7f7;
+}
+
+.ba-after {
+  border: 1px solid #16a34a;
+  background: #f0fdf4;
+}
+
+.ba-list li {
+  padding: 7px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.ba-before .ba-list li {
+  color: #991b1b;
+}
+
+.ba-after .ba-list li {
+  color: #166534;
+}
   color: #d6fee9;
   border-color: rgba(52,211,153,.38);
   background: rgba(52,211,153,.14);

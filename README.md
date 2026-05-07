@@ -1,6 +1,12 @@
 <!-- FARMING STYLE HEADER -->
 <div align="center">
 
+[![Live Demo](https://img.shields.io/badge/🌾_Live_Demo-Vercel-black?style=for-the-badge)](https://rytha-gelathi.vercel.app)
+[![Backend API](https://img.shields.io/badge/API-Render_Live-22c55e?style=for-the-badge)](https://rytha-gelathi.onrender.com/health)
+[![Release](https://img.shields.io/github/v/release/Yashaswini-V21/Rytha_Gelathi?style=for-the-badge&color=f59e0b)](https://github.com/Yashaswini-V21/Rytha_Gelathi/releases)
+
+**▶ [Watch 90-second demo video](https://loom.com/share/your-loom-url-here)** ← replace with real Loom URL
+
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,6,11,20&height=280&section=header&text=RythaGelathi&fontSize=64&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Climate%20Resilience%20Platform%20for%20Women%20Farmers%20of%20Karnataka&descAlignY=62&descSize=18" width="100%"/>
 
 <h3>ರೈತ ಗೆಳತಿ · Climate-resilient, explainable, Kannada-ready agricultural intelligence</h3>
@@ -21,7 +27,7 @@
 ### ⚡ Quick Links for Judges
 - **Advisory Dashboard**: [Advisory Center](frontend/core.html)
 - **Climate Simulator**: [Simulator Mode](frontend/climate.html)
-- **API Health**: [/health](http://localhost:5000/health)
+- **API Health**: https://rytha-gelathi.onrender.com/health
 - **Technical Bible**: [BIBLE.md](./BIBLE.md)
 
 ---
@@ -353,33 +359,23 @@ Fast simulation endpoint — bypasses full CrewAI pipeline for real-time slider 
 
 ```text
 Rytha_Gelathi/
-├── api/
-│   └── server.py              # Flask API (recommend + simulate endpoints)
-├── crew/
-│   └── krishi_crew.py         # 4-agent CrewAI pipeline (61KB)
+├── api/server.py              # Flask API (recommend + simulate + season-plan)
+├── crew/krishi_crew.py        # 4-agent CrewAI pipeline
 ├── data/
-│   ├── crop_dataset.csv       # Training data for Random Forest
-│   └── karnataka_soil_health.json # Localized soil health records
-├── model/
-│   └── crop_model.pkl         # Trained model artifact (auto-generated)
+│   ├── crop_dataset.csv       # 2,200-row training data
+│   └── karnataka_soil_health.json
 ├── frontend/
 │   ├── index.html             # Landing page
-│   ├── core.html              # Core advisory tool
-│   ├── climate.html           # Climate Intelligence Dashboard + Simulator
-│   ├── styles.css             # Landing + shared styles
-│   ├── core.css               # Advisory-specific styles
-│   ├── climate.css            # Climate dashboard styles
-│   ├── app.js                 # Landing page logic
-│   ├── core.js                # Advisory logic
-│   └── climate.js             # Climate engines
-├── tools/
-│   ├── market_price_tool.py   # Agmarknet integration
-│   └── Karnataka_mandi_prices.json
-├── public/                    # Image assets
-├── serve.py                   # Dev server with /public/ routing
-├── requirements.txt
-├── PROJECT_PLAN.md
-└── README.md
+│   ├── core.html              # Advisory tool
+│   ├── climate.html           # Climate dashboard
+│   ├── core.js                # Advisory logic + offline engine
+│   └── premium.js             # Premium features
+├── tools/market_price_tool.py
+├── tests/                     # 17 pytest tests
+├── .github/workflows/         # CI/CD
+├── Dockerfile
+├── render.yaml
+└── requirements.txt
 ```
 
 ---
@@ -474,6 +470,24 @@ The Climate Dashboard (`climate.html`) runs **entirely client-side** — no API 
 
 **Team:** harvest hex harvesters
 **Hackathon:** WitchHunt 2026 · Climate Action Track
+
+---
+
+## ✅ Submission Checklist
+
+- [x] Frontend live on Vercel
+- [x] Backend API live on Render  
+- [x] Offline JS engine — works without backend
+- [x] 10 climate AI modules functional
+- [x] Bhashini Kannada voice output
+- [x] SHAP explainability on every recommendation
+- [x] PDF season plan downloadable
+- [x] Farmer persona presets for instant demo
+- [x] Animated AI thinking log
+- [x] 17 pytest unit tests passing
+- [x] CI/CD via GitHub Actions
+- [x] Docker + gunicorn production-ready
+- [x] PWA installable offline
 
 ---
 

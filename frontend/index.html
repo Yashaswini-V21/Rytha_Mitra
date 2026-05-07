@@ -99,6 +99,28 @@
           A complete climate adaptation platform — irrigation optimization, fertilizer intelligence,
           carbon tracking, and sustainability scoring for daily farm decisions.
         </p>
+        <!-- IMPACT COUNTERS -->
+        <div class="impact-counters" id="impactCounters">
+          <div class="ic-stat">
+            <div class="ic-num" data-target="6200000" data-prefix="" data-suffix="+">0</div>
+            <div class="ic-label">Women farmers targeted</div>
+          </div>
+          <div class="ic-div"></div>
+          <div class="ic-stat">
+            <div class="ic-num" data-target="0" data-prefix="₹" data-suffix="">₹0</div>
+            <div class="ic-label">Total stack cost</div>
+          </div>
+          <div class="ic-div"></div>
+          <div class="ic-stat">
+            <div class="ic-num" data-target="10" data-prefix="" data-suffix="">0</div>
+            <div class="ic-label">Climate AI modules</div>
+          </div>
+          <div class="ic-div"></div>
+          <div class="ic-stat">
+            <div class="ic-num" data-target="9" data-prefix="" data-suffix="">0</div>
+            <div class="ic-label">Karnataka districts</div>
+          </div>
+        </div>
         <div class="hero-mini-stats rv d3">
           <div class="hms"><span class="hms-n">74%</span><span class="hms-l">Crop confidence</span></div>
           <div class="hms"><span class="hms-n">6</span><span class="hms-l">Climate modules</span></div>
@@ -322,6 +344,37 @@
 </section>
 
 <!-- ════════════════════════════════════════════════
+     BEFORE/AFTER COMPARISON
+════════════════════════════════════════════════ -->
+<section class="before-after-section">
+  <h2 class="ba-title">The Difference We Make</h2>
+  <div class="ba-grid">
+    <div class="ba-card ba-before">
+      <div class="ba-header">❌ Without RythaGelathi</div>
+      <ul class="ba-list">
+        <li>Generic "Ragi for everyone" advisory</li>
+        <li>Zero water optimization — crops fail in drought</li>
+        <li>No fertilizer guidance — ₹2,400/acre wasted</li>
+        <li>Advisory in English — rural farmers can't use it</li>
+        <li>No climate risk warning — no time to adapt</li>
+        <li>Works only with internet connection</li>
+      </ul>
+    </div>
+    <div class="ba-card ba-after">
+      <div class="ba-header">✓ With RythaGelathi</div>
+      <ul class="ba-list">
+        <li>SHAP-backed Toor Dal — district-specific intelligence</li>
+        <li>43% water saved — drought-optimized schedule</li>
+        <li>NPK gap analysis — ₹1,840/acre savings</li>
+        <li>Full Kannada voice output via Bhashini</li>
+        <li>7-day climate risk score — act before crop fails</li>
+        <li>Offline JS engine — works in dead zones</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
      FEATURES
 ════════════════════════════════════════════════ -->
 <section class="section" id="features">
@@ -532,5 +585,59 @@
 </footer>
 
 <script src="app.js"></script>
+
+<!-- Counter Animation -->
+<script>
+(function() {
+  function formatIndian(n) {
+    if (n >= 10000000) return (n / 10000000).toFixed(1) + 'Cr';
+    if (n >= 100000) return Math.round(n / 100000) + 'L';
+    if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+    return n.toString();
+  }
+
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+
+    if (target === 0) {
+      el.textContent = prefix + '0' + suffix;
+      return;
+    }
+
+    let start = null;
+    const dur = 2000;
+
+    function step(ts) {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const cur = Math.round(ease * target);
+      el.textContent = prefix + formatIndian(cur) + suffix;
+
+      if (p < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = prefix + formatIndian(target) + suffix;
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.ic-num').forEach(animateCounter);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const counters = document.getElementById('impactCounters');
+  if (counters) obs.observe(counters);
+})();
+</script>
 </body>
 </html>

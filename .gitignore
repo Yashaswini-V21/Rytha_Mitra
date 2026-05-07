@@ -8,3 +8,10 @@ node_modules/
 .venv/
 venv/
 *.pkl
+
+# Cleanup
+scratch/
+*.pkl.bak
+__pycache__/
+.DS_Store
+.env
