@@ -13,8 +13,14 @@ import os
 import sys
 from pathlib import Path
 
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, send_file, request, jsonify
 from flask_cors import CORS
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.units import cm
+import io, datetime
 
 # ── Path Setup ──────────────────────────────────
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -44,6 +50,50 @@ def get_krishi_crew():
 def get_crop_advisor_tool():
     from crew.krishi_crew import CropAdvisorTool
     return CropAdvisorTool
+
+
+# ── Season Plan Data ────────────────────────────
+CROP_CALENDAR = {
+  "Rice":      ("Jun–Jul", "Aug–Oct",  "Nov–Dec"),
+  "Wheat":     ("Oct–Nov", "Dec–Feb",  "Mar–Apr"),
+  "Maize":     ("Jun–Jul", "Aug–Sep",  "Oct–Nov"),
+  "Ragi":      ("Jun–Jul", "Aug–Sep",  "Oct"),
+  "Cotton":    ("May–Jun", "Jul–Oct",  "Nov–Jan"),
+  "Toor Dal":  ("Jun–Jul", "Aug–Nov",  "Dec–Jan"),
+  "Sugarcane": ("Jan–Feb", "Mar–Nov",  "Dec–Jan"),
+  "Groundnut": ("Jun–Jul", "Aug–Sep",  "Oct–Nov"),
+  "Soybean":   ("Jun",     "Jul–Sep",  "Oct"),
+  "Sunflower": ("Oct–Nov", "Dec–Feb",  "Mar–Apr"),
+}
+
+GOVT_SCHEMES = {
+  "Raichur":   ["PM-KISAN (₹6000/yr)", "PMFBY Crop Insurance", "Rythu Bandhu Dryland Scheme"],
+  "Tumakuru":  ["PM-KISAN", "Karnataka Raitha Suraksha", "Soil Health Card Scheme"],
+  "Mysore":    ["PM-KISAN", "PMFBY", "PM Krishi Sinchai Yojana"],
+  "Dharwad":   ["PM-KISAN", "KFSC Seed Subsidy", "Drip Irrigation Subsidy 90%"],
+  "default":   ["PM-KISAN (₹6000/yr)", "PMFBY Crop Insurance", "Soil Health Card Scheme"]
+}
+
+
+# ── Pydantic Input Validation ───────────────────
+from pydantic import BaseModel, Field
+from typing import Optional
+
+class FarmInput(BaseModel):
+    district: str
+    land_acres: float = Field(ge=0.1, le=1000, alias="land")
+    temperature: float = Field(ge=10.0, le=50.0)
+    humidity: float = Field(ge=0.0, le=100.0)
+    rainfall: float = Field(ge=0.0, le=500.0)
+    ph: float = Field(ge=3.5, le=10.0)
+    N: int = Field(ge=0, le=300)
+    P: int = Field(ge=0, le=300)
+    K: int = Field(ge=0, le=300)
+    input_costs: float = Field(ge=0, alias="inputCosts")
+    last_crop: Optional[str] = Field(default="", alias="lastCrop")
+    gender: Optional[str] = Field(default="female")
+
+    model_config = {"populate_by_name": True}
 
 
 # ── App Factory ─────────────────────────────────
@@ -123,6 +173,120 @@ def create_app():
             },
         }, 200 if all_ok else 503
 
+    @app.route('/api/season-plan')
+    def season_plan():
+        """Download PDF season plan for crop advisory"""
+        crop = request.args.get('crop', 'Rice')
+        district = request.args.get('district', 'Karnataka')
+        land = float(request.args.get('land_acres', 1))
+        daily_water = float(request.args.get('daily_water', 70))
+        sust = int(request.args.get('sustainability_score', 75))
+        saving = int(request.args.get('fertilizer_saving', 1500))
+        farmer = request.args.get('farmer_name', 'Karnataka Farmer')
+
+        buf = io.BytesIO()
+        doc = SimpleDocTemplate(buf, pagesize=A4,
+              topMargin=1.5*cm, bottomMargin=1.5*cm,
+              leftMargin=2*cm, rightMargin=2*cm)
+        styles = getSampleStyleSheet()
+        GREEN = colors.HexColor('#14532d')
+        GOLD  = colors.HexColor('#f59e0b')
+        LGREY = colors.HexColor('#f0fdf4')
+        story = []
+
+        # Header
+        header_data = [[
+          Paragraph(f"<font color='white' size=18><b>ರೈತ ಗೆಳತಿ · Season Advisory Plan</b></font>", styles['Normal']),
+          Paragraph(f"<font color='#fef3c7' size=10>{farmer} · {district} · {land} acres<br/>Generated: {datetime.date.today()}</font>", styles['Normal'])
+        ]]
+        ht = Table(header_data, colWidths=[11*cm, 6*cm])
+        ht.setStyle(TableStyle([
+          ('BACKGROUND',(0,0),(-1,-1), GREEN),
+          ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+          ('LEFTPADDING',(0,0),(-1,-1),12),
+          ('RIGHTPADDING',(0,0),(-1,-1),12),
+          ('TOPPADDING',(0,0),(-1,-1),14),
+          ('BOTTOMPADDING',(0,0),(-1,-1),14),
+        ]))
+        story.extend([ht, Spacer(1,0.4*cm)])
+
+        # Summary metrics
+        metrics = [[
+          Paragraph(f"<b>Recommended Crop</b><br/><font size=14 color='#14532d'><b>{crop}</b></font>", styles['Normal']),
+          Paragraph(f"<b>Sustainability</b><br/><font size=14 color='#14532d'><b>{sust}/100</b></font>", styles['Normal']),
+          Paragraph(f"<b>Water Saving</b><br/><font size=14 color='#14532d'><b>Up to 43%</b></font>", styles['Normal']),
+          Paragraph(f"<b>Fertilizer Saving</b><br/><font size=14 color='#14532d'><b>₹{saving}/acre</b></font>", styles['Normal']),
+        ]]
+        mt = Table(metrics, colWidths=[4.25*cm]*4)
+        mt.setStyle(TableStyle([
+          ('BACKGROUND',(0,0),(-1,-1), LGREY),
+          ('BOX',(0,0),(-1,-1),1,GREEN),
+          ('INNERGRID',(0,0),(-1,-1),0.5,colors.HexColor('#bbf7d0')),
+          ('TOPPADDING',(0,0),(-1,-1),8),
+          ('BOTTOMPADDING',(0,0),(-1,-1),8),
+          ('LEFTPADDING',(0,0),(-1,-1),8),
+        ]))
+        story.extend([mt, Spacer(1,0.4*cm)])
+
+        # Crop calendar
+        cal = CROP_CALENDAR.get(crop, ("Jun","Jul-Oct","Nov"))
+        story.append(Paragraph("<b>12-Month Crop Calendar</b>", styles['Heading3']))
+        cal_data = [
+          ["Phase", "Months", "Key Action"],
+          ["Sowing", cal[0], "Prepare soil, certified seeds"],
+          ["Growing", cal[1], "Irrigation, pest monitoring"],
+          ["Harvest", cal[2], "Dry, store, check mandi price"],
+        ]
+        ct = Table(cal_data, colWidths=[4*cm, 5*cm, 8*cm])
+        ct.setStyle(TableStyle([
+          ('BACKGROUND',(0,0),(-1,0),GREEN),
+          ('TEXTCOLOR',(0,0),(-1,0),colors.white),
+          ('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),
+          ('ROWBACKGROUNDS',(0,1),(-1,-1),[LGREY, colors.white]),
+          ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#bbf7d0')),
+          ('TOPPADDING',(0,0),(-1,-1),6),
+          ('BOTTOMPADDING',(0,0),(-1,-1),6),
+          ('LEFTPADDING',(0,0),(-1,-1),8),
+        ]))
+        story.extend([ct, Spacer(1,0.4*cm)])
+
+        # Water schedule
+        story.append(Paragraph("<b>Weekly Water Schedule</b>", styles['Heading3']))
+        wk_data = [["Week","Daily (L/acre)","Action"]]
+        actions = ["Morning irrigation before 7AM","Skip if rainfall >15mm","Monitor for drought stress","Check soil moisture depth"]
+        for i in range(4):
+          wk_data.append([f"Week {i+1}", str(round(daily_water*(1+i*0.05))), actions[i]])
+        wt = Table(wk_data, colWidths=[3*cm, 5*cm, 9*cm])
+        wt.setStyle(TableStyle([
+          ('BACKGROUND',(0,0),(-1,0),GREEN),
+          ('TEXTCOLOR',(0,0),(-1,0),colors.white),
+          ('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),
+          ('ROWBACKGROUNDS',(0,1),(-1,-1),[LGREY, colors.white]),
+          ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#bbf7d0')),
+          ('TOPPADDING',(0,0),(-1,-1),6),
+          ('BOTTOMPADDING',(0,0),(-1,-1),6),
+          ('LEFTPADDING',(0,0),(-1,-1),8),
+        ]))
+        story.extend([wt, Spacer(1,0.4*cm)])
+
+        # Govt schemes
+        schemes = GOVT_SCHEMES.get(district, GOVT_SCHEMES['default'])
+        story.append(Paragraph("<b>Applicable Government Schemes</b>", styles['Heading3']))
+        for s in schemes:
+          story.append(Paragraph(f"• {s}", styles['Normal']))
+        story.append(Spacer(1,0.4*cm))
+
+        # Footer
+        story.append(Paragraph(
+          "<font size=9 color='#6b7280'>Generated by RythaGelathi · WitchHunt 2026 · Climate Action Track · ₹0 Stack Cost</font>",
+          styles['Normal']))
+
+        doc.build(story)
+        buf.seek(0)
+        return send_file(buf, mimetype='application/pdf',
+                         as_attachment=True,
+                         download_name=f'RythaGelathi_{crop}_{district}.pdf')
+
     @app.post("/api/recommend")
     def recommend():
         """
@@ -154,7 +318,18 @@ def create_app():
             description: Internal server error
         """
         from flask import request, jsonify
-        payload = request.get_json(silent=True) or {}
+        raw = request.get_json(force=True, silent=True)
+        if not raw:
+            return jsonify({"error": "No JSON body received"}), 400
+        try:
+            farm = FarmInput(**raw)
+            payload = farm.model_dump(by_alias=False)
+        except Exception as e:
+            return jsonify({
+                "error": "Invalid input data",
+                "details": str(e),
+                "hint": "Check field names and value ranges"
+            }), 422
         inputs = _payload_to_inputs(payload)
 
         try:

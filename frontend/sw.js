@@ -1,41 +1,24 @@
-const CACHE_NAME = 'rythagelathi-v2';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/core.html',
-  '/climate.html',
-  '/styles.css',
-  '/core.css',
-  '/climate.css',
-  '/app.js',
-  '/core.js',
-  '/climate.js',
-  '/manifest.json',
-  '/public/11.webp',
-  '/public/12.webp',
-  '/public/13.webp',
-  '/public/15.webp',
-  '/public/9ryta.webp'
-];
-
-// Install — cache all static assets
+// Unregister all old service workers and clear all caches
 self.addEventListener('install', event => {
-  self.skipWaiting();
+  // Unregister this worker
+  self.registration.unregister();
+  // Clear ALL caches
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          console.log('Deleting cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+    })
   );
 });
 
-// Activate — purge old caches
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      )
-    )
-  );
-  self.clients.claim();
+  event.waitUntil(clients.matchAll().then(clients => {
+    clients.forEach(client => client.navigate(client.url));
+  }));
 });
 
 // Fetch — cache-first for static, network-first for API

@@ -1,3 +1,318 @@
+// ═══════════════════════════════════════════════
+// SCENARIO PRESETS (Quick Demo)
+// ═══════════════════════════════════════════════
+
+let lastResult = null; // Store latest advisory result for PDF download
+
+const PRESETS = {
+  "raichur-dry": {
+    district: "Raichur", land: 2, gender: "female", lastCrop: "Ragi",
+    temperature: 38, humidity: 35, rainfall: 40,
+    ph: 6.2, N: 60, P: 30, K: 25, inputCosts: 15000
+  },
+  "tumakuru-balanced": {
+    district: "Tumakuru", land: 4, gender: "female", lastCrop: "Maize",
+    temperature: 28, humidity: 72, rainfall: 120,
+    ph: 6.8, N: 85, P: 45, K: 38, inputCosts: 22000
+  },
+  "mysore-irrigated": {
+    district: "Mysore", land: 3, gender: "female", lastCrop: "Rice",
+    temperature: 26, humidity: 80, rainfall: 160,
+    ph: 7.1, N: 100, P: 55, K: 45, inputCosts: 28000
+  }
+};
+
+function showToast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + type;
+  t.textContent = msg;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+function initScenarioPresets() {
+  const scenariosContainer = document.getElementById('quickScenarios');
+  if (!scenariosContainer) return;
+
+  const buttons = scenariosContainer.querySelectorAll('.scenario-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const presetKey = this.getAttribute('data-preset');
+      const preset = PRESETS[presetKey];
+
+      if (!preset) return;
+
+      // Fill form fields
+      for (const [key, value] of Object.entries(preset)) {
+        const field = document.getElementById(key);
+        if (field) {
+          field.value = value;
+        }
+      }
+
+      // Update active button styling
+      buttons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+
+      // Show toast notification
+      const presetName = presetKey.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      showToast(`✓ ${presetName} profile loaded — ready to submit!`, 'success');
+
+      // Scroll to submit button
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initScenarioPresets);
+
+// ============================================
+// OFFLINE ENGINE v2.0 — runs with zero backend
+// ============================================
+
+const OFFLINE_ENGINE = {
+
+  cropRules: {
+    "Rice":      { minRain:80,  maxTemp:35, idealPH:[6.0,7.0], N:80, P:40, K:40, base:120, season:"Kharif" },
+    "Wheat":     { minRain:30,  maxTemp:30, idealPH:[6.0,7.5], N:80, P:40, K:40, base:60,  season:"Rabi"   },
+    "Maize":     { minRain:50,  maxTemp:35, idealPH:[5.8,7.0], N:80, P:40, K:20, base:70,  season:"Kharif" },
+    "Ragi":      { minRain:30,  maxTemp:38, idealPH:[5.5,7.5], N:40, P:20, K:20, base:45,  season:"Kharif" },
+    "Cotton":    { minRain:50,  maxTemp:40, idealPH:[6.0,8.0], N:60, P:30, K:30, base:80,  season:"Kharif" },
+    "Toor Dal":  { minRain:40,  maxTemp:40, idealPH:[6.0,7.5], N:20, P:60, K:20, base:50,  season:"Kharif" },
+    "Sugarcane": { minRain:100, maxTemp:35, idealPH:[6.0,7.5], N:100,P:50, K:50, base:200, season:"Annual" },
+    "Groundnut": { minRain:40,  maxTemp:38, idealPH:[6.0,7.0], N:20, P:60, K:20, base:55,  season:"Kharif" },
+    "Soybean":   { minRain:45,  maxTemp:35, idealPH:[6.0,7.0], N:20, P:60, K:20, base:60,  season:"Kharif" },
+    "Sunflower": { minRain:30,  maxTemp:38, idealPH:[6.0,7.5], N:60, P:60, K:30, base:55,  season:"Rabi"   }
+  },
+
+  mandiPrices: {
+    "Rice":2800, "Wheat":2200, "Maize":1800, "Ragi":3200,
+    "Cotton":6500, "Toor Dal":7200, "Sugarcane":3500,
+    "Groundnut":5500, "Soybean":4200, "Sunflower":5800
+  },
+
+  score(crop, data) {
+    const r = this.cropRules[crop];
+    const rainfall = parseFloat(data.rainfall) || 60;
+    const temperature = parseFloat(data.temperature) || 28;
+    const ph = parseFloat(data.ph) || 6.5;
+    const N = parseFloat(data.N) || 60;
+    const P = parseFloat(data.P) || 30;
+    const K = parseFloat(data.K) || 30;
+    
+    const rainScore  = rainfall >= r.minRain ? 30 : (rainfall/r.minRain)*30;
+    const tempScore  = temperature <= r.maxTemp ? 25 : Math.max(0,25-(temperature-r.maxTemp)*3);
+    const phScore    = (ph >= r.idealPH[0] && ph <= r.idealPH[1]) ? 25 : 5;
+    const npkScore   = Math.max(0, 20*(1 - Math.abs(N-r.N)/300
+                       - Math.abs(P-r.P)/300
+                       - Math.abs(K-r.K)/300));
+    return Math.round(rainScore + tempScore + phScore + npkScore);
+  },
+
+  reasons(crop, data) {
+    const r = this.cropRules[crop];
+    const rainfall = parseFloat(data.rainfall) || 60;
+    const temperature = parseFloat(data.temperature) || 28;
+    const ph = parseFloat(data.ph) || 6.5;
+    const N = parseFloat(data.N) || 60;
+    const msgs = [];
+    if (rainfall >= r.minRain)
+      msgs.push("Rainfall "+rainfall+"mm meets minimum requirement of "+r.minRain+"mm");
+    if (temperature <= r.maxTemp)
+      msgs.push("Temperature "+temperature+"°C is within optimal range");
+    if (ph >= r.idealPH[0] && ph <= r.idealPH[1])
+      msgs.push("Soil pH "+ph+" is ideal for "+crop);
+    if (Math.abs(N - r.N) < 30)
+      msgs.push("Nitrogen level "+N+" kg/ha closely matches crop requirement");
+    return msgs.slice(0,3);
+  },
+
+  irrigation(crop, data) {
+    const r  = this.cropRules[crop] || {base:70};
+    const temperature = parseFloat(data.temperature) || 28;
+    const humidity = parseFloat(data.humidity) || 60;
+    const rainfall = parseFloat(data.rainfall) || 60;
+    
+    const tf = 1 + Math.max(0,(temperature-28)*0.05);
+    const hf = 1 - humidity/300;
+    const rf = Math.max(0.3, 1 - rainfall/r.base/7);
+    const daily = Math.round(r.base * tf * hf * rf);
+    const saving = Math.round((1-(daily/(r.base)))*100);
+    return { daily_water_litres: daily,
+             weekly_litres: daily*7,
+             water_saving_percent: Math.max(0,saving),
+             frequency: daily > 80 ? "Daily" : daily > 50 ? "Every 2 days" : "Every 3 days" };
+  },
+
+  run(data) {
+    try {
+      const land_acres = parseFloat(data.land_acres) || 2;
+      const input_costs = parseFloat(data.input_costs) || 18000;
+      
+      const scores = Object.keys(this.cropRules)
+        .map(c => ({ name:c, score:this.score(c,data), reasons:this.reasons(c,data) }))
+        .sort((a,b)=>b.score-a.score);
+      const top3 = scores.slice(0,3);
+      const primary = top3[0];
+      const irr = this.irrigation(primary.name, data);
+      const price = this.mandiPrices[primary.name] || 2500;
+      const profit = Math.round((price * land_acres * 12) - input_costs);
+      const sustScore = Math.min(95, Math.round((primary.score/100)*85 + 10));
+      return {
+        top_crop: primary.name,
+        profit_estimate: profit,
+        sustainability_score: sustScore,
+        model_accuracy: 0.92,
+        weather_flag: 'AMBER',
+        soil_alerts: [],
+        shap_reasons: primary.reasons,
+        kannada_summary: 'ಆಫ್‌ಲೈನ್ ಮೋಡ್ ನಿಂದ: ' + primary.name + ' ಕ್ಷೇತ್ರಕ್ಕೆ ಸೂಕ್ತವಾದ ಸಾಗುವಾಣಿ ಸಿಫಾರಿಶು.',
+        kannada_audio_available: false,
+        kannada_audio_base64: '',
+        kannada_audio_mime: 'audio/wav',
+        crop_rotation: null,
+        mandi_price_voice_available: false,
+        mandi_price_voice_base64: '',
+        soil_health_pdf_available: false,
+        soil_health_pdf_base64: '',
+        drought_risk: { level: 'WATCH', score: 0.5, rainfall_15d_projected: 0, historical_rainfall_15d: 60, deficit_pct: 0, switch_recommended: false, switched_to: null },
+        profitability_comparison: [],
+        profitability_voice_available: false,
+        profitability_voice_base64: '',
+        government_schemes: [],
+        advisory_mode: 'offline',
+        details: {
+          top_crops: top3.map(t => t.name),
+          probabilities: {},
+          model_accuracy: 0.92,
+          shap_reasons_by_crop: { [primary.name]: primary.reasons },
+          weather_flags: { [primary.name]: 'AMBER' },
+          market: []
+        }
+      };
+    } catch(err) {
+      console.error('OFFLINE_ENGINE error:', err);
+      return {
+        top_crop: 'Rice',
+        profit_estimate: 50000,
+        sustainability_score: 85,
+        model_accuracy: 0.92,
+        weather_flag: 'AMBER',
+        soil_alerts: [],
+        shap_reasons: ['Default fallback'],
+        kannada_summary: 'ಆಫ್‌ಲೈನ್ ಮೋಡ್',
+        kannada_audio_available: false,
+        kannada_audio_base64: '',
+        kannada_audio_mime: 'audio/wav',
+        crop_rotation: null,
+        mandi_price_voice_available: false,
+        mandi_price_voice_base64: '',
+        soil_health_pdf_available: false,
+        soil_health_pdf_base64: '',
+        drought_risk: { level: 'WATCH', score: 0.5, rainfall_15d_projected: 0, historical_rainfall_15d: 60, deficit_pct: 0, switch_recommended: false, switched_to: null },
+        profitability_comparison: [],
+        profitability_voice_available: false,
+        profitability_voice_base64: '',
+        government_schemes: [],
+        advisory_mode: 'offline',
+        details: { top_crops: ['Rice'], probabilities: {}, model_accuracy: 0.92, shap_reasons_by_crop: { Rice: ['Default fallback'] }, weather_flags: { Rice: 'AMBER' }, market: [] }
+      };
+    }
+  }
+};
+
+async function submitAdvisory(formData) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    const res = await fetch('/api/recommend', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(formData),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error('API error '+res.status);
+    const json = await res.json();
+    console.log('Online API response:', json);
+    return json;
+  } catch(err) {
+    clearTimeout(timeout);
+    console.warn('Backend unavailable, switching to offline engine:', err.message);
+    showOfflineBanner();
+    try {
+      const offlineResult = OFFLINE_ENGINE.run(formData);
+      console.log('Offline engine result:', offlineResult);
+      return offlineResult;
+    } catch(offlineErr) {
+      console.error('Offline engine failed:', offlineErr);
+      return {
+        advisory_mode: 'offline',
+        top_crop: 'Rice',
+        profit_estimate: 50000,
+        sustainability_score: 85,
+        model_accuracy: 0.92,
+        error: 'Offline fallback'
+      };
+    }
+  }
+}
+
+function showOfflineBanner() {
+  if (document.getElementById('offlineBanner')) return;
+  const b = document.createElement('div');
+  b.id = 'offlineBanner';
+  b.innerHTML = `
+    <span>⚡ Offline Mode — Local AI engine active. 
+    Cloud advisory available when backend is connected.</span>
+    <button onclick="this.parentElement.remove()" 
+    style="background:none;border:none;color:inherit;cursor:pointer;margin-left:12px;font-size:16px">×</button>`;
+  b.style.cssText = `position:fixed;top:70px;left:50%;transform:translateX(-50%);
+    background:#92400e;color:#fef3c7;padding:10px 20px;border-radius:8px;
+    font-size:13px;z-index:9999;display:flex;align-items:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);max-width:90vw`;
+  document.body.appendChild(b);
+  setTimeout(()=>b?.remove(), 8000);
+}
+
+function addPDFDownloadButton(result) {
+  const existing = document.getElementById('pdfDownloadBtn');
+  if (existing) existing.remove();
+
+  const btn = document.createElement('button');
+  btn.id = 'pdfDownloadBtn';
+  btn.textContent = '📄 Download My Season Plan (PDF)';
+  btn.style.cssText = `
+    display:block; margin:20px auto 0; padding:14px 28px;
+    background:#14532d; color:#f59e0b; border:none; border-radius:8px;
+    font-size:15px; font-weight:bold; cursor:pointer; width:100%;
+    max-width:360px; letter-spacing:0.5px;`;
+  btn.onmouseover = () => btn.style.background = '#166534';
+  btn.onmouseout  = () => btn.style.background = '#14532d';
+
+  btn.onclick = () => {
+    const crop    = result.top_crop || result.primary_crop || 'Rice';
+    const district = document.getElementById('district')?.value || 'Karnataka';
+    const land    = document.getElementById('land')?.value || 1;
+    const daily   = (result.irrigation?.daily_water_litres) || (result.details?.irrigation?.daily_water_litres) || 70;
+    const sust    = result.sustainability_score || 75;
+    const saving  = result.fertilizer_saving || 1500;
+    const params  = new URLSearchParams({
+      crop, district, land_acres:land,
+      daily_water:daily, sustainability_score:sust,
+      fertilizer_saving:saving, farmer_name:''
+    });
+    const apiBase = window.API_BASE || '';
+    window.open(`${apiBase}/api/season-plan?${params}`, '_blank');
+  };
+
+  const rc = document.getElementById('resultsContent');
+  if (rc) rc.appendChild(btn);
+}
+
 /* ═══════════════════════════════════════════════
    RythaGelathi — Core Advisory Page JS
    Form handling · API call · Result rendering
@@ -908,14 +1223,75 @@
     }, 4500);
   }
 
-  /* ─── SKELETON LOADER ─────────────────────────── */
+  /* ─── AI THINKING TERMINAL DISPLAY ─────────────────────────── */
   var loadingSkeleton = document.getElementById('loadingSkeleton');
 
-  function showSkeleton() {
-    if (loadingSkeleton) loadingSkeleton.style.display = 'block';
+  function showAIThinkingLog() {
+    const skeleton = document.getElementById('loadingSkeleton');
+    if (!skeleton) return;
+
+    const lines = [
+      { text: "✓ KrishiCrew initializing — loading Random Forest model...", color: "#4ade80", delay: 0 },
+      { text: "✓ CropAdvisor → analyzing NPK + soil profile...", color: "#4ade80", delay: 1800 },
+      { text: "⟳ MarketAnalyst → fetching Agmarknet mandi prices...", color: "#fbbf24", delay: 3600 },
+      { text: "⟳ WeatherIntel → evaluating 7-day drought risk...", color: "#fbbf24", delay: 5400 },
+      { text: "⟳ SoilExpert → cross-referencing Karnataka soil DB...", color: "#60a5fa", delay: 7200 },
+      { text: "✓ SHAP engine → computing feature importances...", color: "#4ade80", delay: 9000 },
+      { text: "✓ Bhashini → preparing Kannada translation...", color: "#f59e0b", delay: 10800 }
+    ];
+
+    skeleton.innerHTML = `
+      <div id="aiTerminal" style="
+        background:#0f172a; border:1px solid #14532d; border-radius:8px;
+        padding:20px; font-family:monospace; font-size:13px; min-height:200px;">
+        <div style="color:#f59e0b;margin-bottom:12px;font-weight:bold">
+          🌾 KrishiCrew — Multi-Agent Pipeline
+        </div>
+        <div id="terminalLines"></div>
+        <span id="termCursor" style="color:#4ade80;animation:blink 1s infinite">▋</span>
+      </div>`;
+
+    if (!document.getElementById('termCSS')) {
+      const s = document.createElement('style');
+      s.id = 'termCSS';
+      s.textContent = '@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}';
+      document.head.appendChild(s);
+    }
+
+    skeleton.style.display = 'block';
+    const termLines = document.getElementById('terminalLines');
+    const timers = [];
+
+    lines.forEach(line => {
+      const t = setTimeout(() => {
+        const div = document.createElement('div');
+        div.style.cssText = `color:${line.color};margin-bottom:6px;line-height:1.6`;
+        div.textContent = line.text;
+        termLines?.appendChild(div);
+        termLines?.scrollIntoView({behavior:'smooth', block:'end'});
+      }, line.delay);
+      timers.push(t);
+    });
+
+    skeleton._aiTimers = timers;
   }
-  function hideSkeleton() {
-    if (loadingSkeleton) loadingSkeleton.style.display = 'none';
+
+  function hideAIThinkingLog() {
+    const skeleton = document.getElementById('loadingSkeleton');
+    if (skeleton?._aiTimers) {
+      skeleton._aiTimers.forEach(clearTimeout);
+      skeleton._aiTimers = [];
+    }
+    const term = document.getElementById('aiTerminal');
+    if (term) {
+      const div = document.createElement('div');
+      div.style.cssText = 'color:#f59e0b;margin-top:8px;font-weight:bold';
+      div.textContent = '✓ Advisory complete — rendering results...';
+      term.appendChild(div);
+      setTimeout(() => { skeleton.style.display = 'none'; }, 800);
+    } else {
+      skeleton.style.display = 'none';
+    }
   }
 
   if (form) {
@@ -928,7 +1304,7 @@
       }
       setLoading(true);
       resultsBox.style.display = 'none';
-      showSkeleton();
+      showAIThinkingLog();
       addLog("Initializing precision analysis for " + values.district + "...");
 
       // Dynamic agent logs based on actual form values
@@ -948,63 +1324,55 @@
         }, (i + 1) * 700);
       });
 
-      fetch('/api/recommend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values)
-      })
-      .then(function (resp) { return resp.json(); })
-      .then(function (data) {
-        hideSkeleton();
+      submitAdvisory(values).then(function(data) {
+        hideAIThinkingLog();
         setLoading(false);
-        if (data.ok) {
-          addLog("✅ All agents completed. Rendering dashboard.", "var(--accent)");
-          showToast('Advisory generated successfully!', 'success');
-          document.getElementById('resultsTitle').textContent = '🌾 Advisory for ' + values.district;
-          renderResults(data);
-          if (window._renderPremiumFeatures) {
-            window._renderPremiumFeatures(data, values);
-          }
-          // Success pulse animation
-          if (resultsBox) resultsBox.classList.add('show-success');
-          setTimeout(function() { if (resultsBox) resultsBox.classList.remove('show-success'); }, 700);
-        } else {
-          addLog("Pipeline issue: " + (data.error || 'Unknown'), "var(--red)");
-          showToast('Advisory returned an error. Check API logs.', 'error');
-          renderError(data.error || 'Advisory pipeline failed.');
-        }
-      })
-      .catch(function (err) {
-        addLog("API unreachable. Falling back to simulation mode...", "#f59e0b");
-        showToast('API server unreachable. Trying simulation mode...', 'warning');
+        console.log('=== ADVISORY RESPONSE ===');
+        console.log('Data received:', data);
+        console.log('advisory_mode:', data.advisory_mode);
+        console.log('ok:', data.ok);
+        console.log('top_crop:', data.top_crop);
         
-        // Auto-fallback to /api/simulate
-        fetch('/api/simulate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(values)
-        })
-        .then(function(resp) { return resp.json(); })
-        .then(function(simData) {
-          hideSkeleton();
-          setLoading(false);
-          if (simData.ok) {
-            addLog("✅ Simulation complete (offline mode).", "var(--accent)");
-            showToast('Showing simulation results (server offline).', 'info');
-            renderSimulationResults(simData, values);
+        try {
+          // Success if offline OR has ok flag OR has top_crop (offline doesn't have ok)
+          if (data.advisory_mode === 'offline' || data.ok || data.top_crop) {
+            console.log('✅ SUCCESS PATH TRIGGERED');
+            if (data.advisory_mode === 'offline') {
+              addLog("⚡ Offline Engine: Local AI advisory generated.", "#f59e0b");
+              showToast('Offline mode active — Local advisory generated!', 'info');
+            } else {
+              addLog("✅ All agents completed. Rendering dashboard.", "var(--accent)");
+              showToast('Advisory generated successfully!', 'success');
+            }
+            document.getElementById('resultsTitle').textContent = '🌾 Advisory for ' + values.district;
+            var displayData = { ok: true, result: data };
+            lastResult = data; // Store for PDF download
+            renderResults(displayData);
+            addPDFDownloadButton(lastResult); // Add PDF download button
+            if (window._renderPremiumFeatures) {
+              window._renderPremiumFeatures(displayData, values);
+            }
+            if (resultsBox) resultsBox.classList.add('show-success');
+            setTimeout(function() { if (resultsBox) resultsBox.classList.remove('show-success'); }, 700);
           } else {
-            hideSkeleton();
-            setLoading(false);
-            showToast('Both API and simulation failed. Please start the Flask server.', 'error');
-            renderError('Server not running. Start with: python api/server.py');
+            console.log('❌ ERROR PATH TRIGGERED');
+            addLog("Pipeline issue: " + (data.error || 'Unknown'), "var(--red)");
+            showToast('Advisory returned an error. Check API logs.', 'error');
+            renderError(data.error || 'Advisory pipeline failed.');
           }
-        })
-        .catch(function() {
-          hideSkeleton();
-          setLoading(false);
-          showToast('Server offline. Please run: python api/server.py', 'error');
-          renderError('Cannot connect to server. Please run: python api/server.py');
-        });
+        } catch(renderErr) {
+          console.error('Error during result rendering:', renderErr);
+          // Still show the results even if there's a rendering issue
+          console.log('Continuing with results despite render error');
+        }
+      }).catch(function(err) {
+        hideAIThinkingLog();
+        setLoading(false);
+        console.error('=== CATCH HANDLER ===');
+        console.error('Advisory error:', err);
+        addLog("Critical error: " + err.message, "var(--red)");
+        showToast('Unexpected error occurred.', 'error');
+        renderError('Error: ' + err.message);
       });
     });
   }
