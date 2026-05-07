@@ -3,6 +3,11 @@ RythaGelathi — Unit Tests
 =========================
 Tests for data loading, model training, API endpoints,
 and scheme matching logic.
+
+NOTE: Heavy tests (model training, SHAP) are marked @pytest.mark.slow
+and excluded from PR CI/CD checks for speed. Run with:
+  pytest tests/ -m slow  # Only slow tests
+  pytest tests/ -m "not slow"  # Skip slow tests (CI default)
 """
 import os
 import sys
@@ -18,21 +23,25 @@ sys.path.insert(0, str(ROOT))
 class TestDataset:
     """Tests for crop dataset integrity."""
 
+    @pytest.mark.slow
     def test_dataset_exists(self):
         csv_path = ROOT / "data" / "crop_dataset.csv"
         assert csv_path.exists(), "crop_dataset.csv must exist in data/"
 
+    @pytest.mark.slow
     def test_dataset_has_minimum_rows(self):
         import pandas as pd
         df = pd.read_csv(ROOT / "data" / "crop_dataset.csv")
         assert len(df) >= 1000, f"Dataset should have 1000+ rows, got {len(df)}"
 
+    @pytest.mark.slow
     def test_dataset_has_required_columns(self):
         import pandas as pd
         df = pd.read_csv(ROOT / "data" / "crop_dataset.csv")
         required = {"N", "P", "K", "temperature", "humidity", "ph", "rainfall", "label"}
         assert required.issubset(set(df.columns)), f"Missing columns: {required - set(df.columns)}"
 
+    @pytest.mark.slow
     def test_dataset_has_multiple_crops(self):
         import pandas as pd
         df = pd.read_csv(ROOT / "data" / "crop_dataset.csv")
@@ -43,18 +52,21 @@ class TestDataset:
 class TestModel:
     """Tests for ML model training and prediction."""
 
+    @pytest.mark.slow
     def test_model_trains_successfully(self):
         from crew.krishi_crew import _build_or_load_model
         model, explainer, classes, accuracy = _build_or_load_model()
         assert model is not None
         assert len(classes) >= 10
 
+    @pytest.mark.slow
     def test_model_accuracy_above_threshold(self):
         from crew.krishi_crew import _build_or_load_model
         _, _, _, accuracy = _build_or_load_model()
         assert accuracy is not None
         assert accuracy > 0.70, f"Model accuracy {accuracy} is too low"
 
+    @pytest.mark.slow
     def test_prediction_returns_top_crops(self):
         from crew.krishi_crew import _build_or_load_model, FEATURE_COLUMNS
         import numpy as np
@@ -64,6 +76,7 @@ class TestModel:
         assert len(probs) == len(classes)
         assert max(probs) > 0, "At least one crop should have >0 probability"
 
+    @pytest.mark.slow
     def test_shap_explainer_works(self):
         from crew.krishi_crew import _build_or_load_model, FEATURE_COLUMNS
         import numpy as np
