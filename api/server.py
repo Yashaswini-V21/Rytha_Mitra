@@ -455,6 +455,9 @@ def create_app():
     return app
 
 
+app = create_app()
+
+
 def _payload_to_inputs(payload):
     return {
         "N": payload.get("N", 82),
@@ -474,7 +477,6 @@ def _payload_to_inputs(payload):
 
 # ── Entry Point ─────────────────────────────────
 if __name__ == "__main__":
-    app = create_app()
     host = os.getenv("API_HOST", "0.0.0.0")
     port = int(os.environ.get("PORT", os.getenv("API_PORT", "8000")))
 
