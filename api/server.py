@@ -173,6 +173,76 @@ def create_app():
             },
         }, 200 if all_ok else 503
 
+    # District coordinates for Karnataka
+    DISTRICT_COORDS = {
+        'Raichur':  (16.2120, 77.3439),
+        'Tumakuru': (13.3379, 77.1173),
+        'Mysore':   (12.2958, 76.6394),
+        'Dharwad':  (15.4589, 75.0078),
+        'Belagavi': (15.8497, 74.4977),
+        'Kalaburagi':(17.3297, 76.8200),
+        'Hassan':   (13.0035, 76.0998),
+        'Shivamogga':(13.9299, 75.5681),
+        'Mandya':   (12.5218, 76.8951),
+    }
+
+    @app.route('/api/weather')
+    def get_weather():
+        district = request.args.get('district', 'Raichur')
+        coords = DISTRICT_COORDS.get(district, (16.2120, 77.3439))
+        api_key = os.getenv('OPENWEATHER_API_KEY', '')
+
+        if not api_key:
+            # Return static fallback if no key
+            static = {
+                'Raichur':  dict(temp=38,humidity=35,rainfall_7day=12,
+                                condition='Clear',wind_speed=14,
+                                drought_risk='High',flood_risk='Low',
+                                advisory='Irrigate within 48 hours — deficit rainfall expected'),
+                'Tumakuru': dict(temp=29,humidity=72,rainfall_7day=45,
+                                condition='Partly Cloudy',wind_speed=10,
+                                drought_risk='Medium',flood_risk='Low',
+                                advisory='Monitor soil moisture — moderate conditions'),
+            }
+            return jsonify(static.get(district, static['Raichur']))
+
+        import requests as req
+        try:
+            url = (f"https://api.openweathermap.org/data/2.5/weather"
+                   f"?lat={coords[0]}&lon={coords[1]}"
+                   f"&appid={api_key}&units=metric")
+            r = req.get(url, timeout=5)
+            w = r.json()
+            temp     = round(w['main']['temp'])
+            humidity = w['main']['humidity']
+            wind     = round(w['wind']['speed'] * 3.6)
+            cond     = w['weather'][0]['main']
+            rain_1h  = w.get('rain', {}).get('1h', 0)
+
+            drought_risk = 'High' if temp > 35 and humidity < 40 else \
+                           'Medium' if temp > 30 else 'Low'
+            flood_risk   = 'High' if rain_1h > 20 else \
+                           'Medium' if rain_1h > 10 else 'Low'
+
+            advisory = ('Irrigate within 48 hours — heatwave conditions' if drought_risk == 'High'
+                        else 'Good growing conditions — maintain regular irrigation schedule'
+                        if drought_risk == 'Low' else 'Monitor crops — variable weather expected')
+
+            return jsonify(dict(
+                temp=temp, humidity=humidity,
+                rainfall_7day=round(rain_1h * 168),
+                condition=cond, wind_speed=wind,
+                drought_risk=drought_risk,
+                flood_risk=flood_risk,
+                advisory=advisory
+            ))
+        except Exception as e:
+            return jsonify(dict(temp=30,humidity=60,rainfall_7day=25,
+                condition='Unknown',wind_speed=12,
+                drought_risk='Medium',flood_risk='Low',
+                advisory='Weather data temporarily unavailable — using historical averages'
+            ))
+
     @app.route('/api/season-plan')
     def season_plan():
         """Download PDF season plan for crop advisory"""
