@@ -21,6 +21,9 @@
   </script>
 </head>
 <body class="core-page">
+  <!-- Skip to main content link -->
+  <a href="#advisorForm" class="skip-link">Skip to advisory form</a>
+  
   <!-- Toast notification container -->
   <div id="toastContainer" class="toast-container"></div>
 
@@ -30,7 +33,7 @@
       <a href="index.html" class="brand">
         <span class="brand-icon">🌾</span>
         <span>RythaGelathi</span>
-        <span class="brand-kannada">ರೈತ ಗೆಳತಿ</span>
+        <span class="brand-kannada" lang="kn">ರೈತ ಗೆಳತಿ</span>
       </a>
       <div class="nav-links" id="navLinks">
         <a href="index.html">← Landing</a>
@@ -101,7 +104,7 @@
         <span class="status-dot"></span>
         <span id="system-status-text">SYSTEM ONLINE</span>
       </div>
-      <div class="system-log-container" id="system-log">
+      <div class="system-log-container" id="system-log" role="log" aria-live="polite" aria-label="AI processing status">
         <div class="log-entry">Initializing KrishiCrew...</div>
         <div class="log-entry">Waiting for input...</div>
       </div>
@@ -173,9 +176,9 @@
               <span>One-click realistic farm profiles for judge demos</span>
             </div>
             <div class="qs-buttons">
-              <button type="button" class="scenario-btn" data-preset="raichur-dry">Raichur Dryland</button>
-              <button type="button" class="scenario-btn" data-preset="tumakuru-balanced">Tumakuru Balanced</button>
-              <button type="button" class="scenario-btn" data-preset="mysore-irrigated">Mysore Irrigated</button>
+              <button type="button" class="scenario-btn" data-preset="raichur-dry" role="button" tabindex="0" aria-label="Load Raichur Dryland farm profile" onkeydown="if(event.key==='Enter' || event.key===' ') this.click()">Raichur Dryland</button>
+              <button type="button" class="scenario-btn" data-preset="tumakuru-balanced" role="button" tabindex="0" aria-label="Load Tumakuru Balanced farm profile" onkeydown="if(event.key==='Enter' || event.key===' ') this.click()">Tumakuru Balanced</button>
+              <button type="button" class="scenario-btn" data-preset="mysore-irrigated" role="button" tabindex="0" aria-label="Load Mysore Irrigated farm profile" onkeydown="if(event.key==='Enter' || event.key===' ') this.click()">Mysore Irrigated</button>
             </div>
           </div>
 
@@ -203,13 +206,13 @@
             </div>
           </div>
 
-          <form id="advisorForm" novalidate autocomplete="off">
+          <form id="advisorForm" novalidate autocomplete="off" aria-label="Climate-resilient crop advisory form">
 
             <div class="form-section-label">📍 Location &amp; Land</div>
             <div class="form-grid form-grid-2">
               <label class="field-label" for="district">
                 <span class="fl-text">District <span class="fl-req">*</span></span>
-                <select id="district" required>
+                <select id="district" required aria-label="Select your district in Karnataka">
                   <option value="">Select Karnataka district</option>
                   <option value="Raichur">Raichur 🔴</option>
                   <option value="Kalaburagi">Kalaburagi 🔴</option>
@@ -230,7 +233,7 @@
               </label>
               <label class="field-label" for="land">
                 <span class="fl-text">Land Size (acres) <span class="fl-req">*</span></span>
-                <input id="land" type="number" min="0.5" step="0.5" placeholder="e.g. 2.5" required>
+                <input id="land" type="number" min="0.5" step="0.5" placeholder="e.g. 2.5" required aria-label="Enter farm size in acres">
                 <span class="field-hint">Total sowing area in acres</span>
               </label>
             </div>
@@ -238,7 +241,7 @@
             <div class="form-grid form-grid-2">
               <label class="field-label" for="gender">
                 <span class="fl-text">Farmer Gender <span class="fl-opt">(optional)</span></span>
-                <select id="gender">
+                <select id="gender" aria-label="Select gender">
                   <option value="">Prefer not to say</option>
                   <option value="female">Female</option>
                   <option value="male">Male</option>
@@ -248,7 +251,7 @@
               </label>
               <label class="field-label" for="lastCrop">
                 <span class="fl-text">Last Season Crop <span class="fl-opt">(optional)</span></span>
-                <select id="lastCrop">
+                <select id="lastCrop" aria-label="Crop grown in the previous season">
                   <option value="">No previous crop</option>
                   <option value="Rice">Rice</option>
                   <option value="Wheat">Wheat</option>
@@ -267,15 +270,15 @@
             <div class="form-grid form-grid-3">
               <label class="field-label" for="temperature">
                 <span class="fl-text">Temperature (°C) <span class="fl-req">*</span></span>
-                <input id="temperature" type="number" step="0.1" placeholder="e.g. 31.5" required>
+                <input id="temperature" type="number" step="0.1" placeholder="e.g. 31.5" required aria-label="Current temperature in Celsius">
               </label>
               <label class="field-label" for="humidity">
                 <span class="fl-text">Humidity (%) <span class="fl-req">*</span></span>
-                <input id="humidity" type="number" min="0" max="100" placeholder="e.g. 62" required>
+                <input id="humidity" type="number" min="0" max="100" placeholder="e.g. 62" required aria-label="Current humidity percentage">
               </label>
               <label class="field-label" for="rainfall">
                 <span class="fl-text">Rainfall (mm) <span class="fl-req">*</span></span>
-                <input id="rainfall" type="number" placeholder="e.g. 92" required>
+                <input id="rainfall" type="number" placeholder="e.g. 92" required aria-label="Recent rainfall in millimeters">
               </label>
             </div>
 
@@ -283,35 +286,35 @@
             <div class="form-grid form-grid-4">
               <label class="field-label" for="ph">
                 <span class="fl-text">Soil pH <span class="fl-req">*</span></span>
-                <input id="ph" type="number" step="0.1" min="3" max="10" placeholder="6.7" required>
+                <input id="ph" type="number" step="0.1" min="3" max="10" placeholder="6.7" required aria-label="Soil pH level between 4 and 9">
                 <span class="field-hint">Ideal: 6.0–7.5</span>
               </label>
               <label class="field-label" for="N">
                 <span class="fl-text">Nitrogen (N) <span class="fl-req">*</span></span>
-                <input id="N" type="number" placeholder="82" required>
+                <input id="N" type="number" placeholder="82" required aria-label="Nitrogen content in kg per hectare">
                 <span class="field-hint">kg/ha</span>
               </label>
               <label class="field-label" for="P">
                 <span class="fl-text">Phosphorus (P) <span class="fl-req">*</span></span>
-                <input id="P" type="number" placeholder="42" required>
+                <input id="P" type="number" placeholder="42" required aria-label="Phosphorus content in kg per hectare">
                 <span class="field-hint">kg/ha</span>
               </label>
               <label class="field-label" for="K">
                 <span class="fl-text">Potassium (K) <span class="fl-req">*</span></span>
-                <input id="K" type="number" placeholder="38" required>
+                <input id="K" type="number" placeholder="38" required aria-label="Potassium content in kg per hectare">
                 <span class="field-hint">kg/ha</span>
               </label>
             </div>
             <div class="form-grid form-grid-2" style="max-width:460px">
               <label class="field-label" for="inputCosts">
                 <span class="fl-text">Input Budget (₹) <span class="fl-req">*</span></span>
-                <input id="inputCosts" type="number" step="1000" placeholder="18000" required>
+                <input id="inputCosts" type="number" step="1000" placeholder="18000" required aria-label="Total input costs in Indian rupees">
                 <span class="field-hint">Seeds + fertilizer + labour</span>
               </label>
             </div>
 
             <div class="form-actions">
-              <button class="btn btn-mint btn-submit" id="submitBtn" type="submit">
+              <button class="btn btn-mint btn-submit" id="submitBtn" type="submit" aria-label="Get AI crop advisory" aria-live="polite">
                 <span id="btnText">🌾 Get AI Advisory</span>
                 <span id="btnSpinner" class="spinner" style="display:none"></span>
               </button>
@@ -335,7 +338,7 @@
           </div>
 
           <!-- RESULTS -->
-          <div id="resultsContainer" class="results-container" style="display:none">
+          <div id="resultsContainer" class="results-container" role="region" aria-label="Advisory results" aria-live="polite" aria-atomic="false" style="display:none">
             <div class="results-header">
               <h3 id="resultsTitle">Advisory Results</h3>
               <div class="res-header-actions">
@@ -370,13 +373,13 @@
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
                <div style="font-size: 2.5rem;">🇮🇳</div>
                <div>
-                 <h2 style="margin:0;">ಕನ್ನಡ ಯೋಜನೆ</h2>
+                 <h2 style="margin:0;" lang="kn">ಕನ್ನಡ ಯೋಜನೆ</h2>
                  <p style="margin:0; opacity: 0.8;">Bhashini Powered Kannada Translation</p>
                </div>
             </div>
             <div id="kannada-output-area" class="results-container" style="display:block; min-height: 200px; background: rgba(0,0,0,0.2); border-radius: var(--radius);">
               <div style="text-align: center; padding: 4rem; color: var(--muted);">
-                <p>ಕನ್ನಡ ವರದಿಯನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಮೊದಲು ಸಮಾಲೋಚನೆಯನ್ನು ಚಲಾಯಿಸಿ.</p>
+                <p lang="kn">ಕನ್ನಡ ವರದಿಯನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಮೊದಲು ಸಮಾಲೋಚನೆಯನ್ನು ಚಲಾಯಿಸಿ.</p>
                 <p>(Please run advisory first to see the Kannada report here)</p>
               </div>
             </div>
@@ -416,7 +419,7 @@
       <div class="tip-card"><strong>Market Tip</strong>Mandi prices peak 4–6 weeks post-harvest.</div>
       <div class="tip-card"><strong>Certified Seeds</strong>Yield 15–22% higher vs unverified seeds.</div>
       <div class="fsb-divider"></div>
-      <div class="fsb-kannada">ರೈತ ಗೆಳತಿ ನಿಮ್ಮ ಜೊತೆ ಇದ್ದಾಳೆ 🌿</div>
+      <div class="fsb-kannada" lang="kn">ರೈತ ಗೆಳತಿ ನಿಮ್ಮ ಜೊತೆ ಇದ್ದಾಳೆ 🌿</div>
     </aside>
   </div>
 

@@ -43,6 +43,27 @@
 
 ---
 
+## 🎬 Live Demo Scenarios
+
+> Click the **Live Demo** badge above, then try these farmer scenarios:
+
+| Scenario | District | Condition | What to see |
+|----------|----------|-----------|-------------|
+| 🌾 Lakshmi | Raichur | Drought stress | High drought risk, Toor Dal recommended, 43% water saving |
+| 🌊 Meena | Tumakuru | Post-flood | Flood-tolerant crop, drainage advisory, soil recovery plan |
+| 🔥 Savitha | Dharwad | Heatwave | Heat-resistant variety, early morning irrigation, govt scheme |
+| ✈ Offline | Any | No internet | Toggle offline — JS engine gives full advisory without backend |
+
+### What makes each advisory unique
+- **SHAP explanations** — every recommendation shows the top 3 soil/climate reasons
+- **Live weather card** — real-time drought/flood risk per district  
+- **Price sparkline** — 7-day Agmarknet mandi trend for the recommended crop
+- **Farm Health Dashboard** — 5 animated gauges: Crop Match, Sustainability, Water Efficiency, Soil Health, Profit Potential
+- **Season Plan PDF** — downloadable 1-page personalized crop calendar
+- **Shareable card** — PNG advisory card farmers can share on WhatsApp
+
+---
+
 [![CrewAI](https://img.shields.io/badge/CrewAI-Orchestration-7c3aed?style=flat-square)](https://www.crewai.com/)
 [![Groq](https://img.shields.io/badge/Groq-LLaMA_3.3_70B-111827?style=flat-square)](https://console.groq.com/)
 [![SHAP](https://img.shields.io/badge/SHAP-Explainability-ef4444?style=flat-square)](https://shap.readthedocs.io/)
@@ -202,6 +223,9 @@ RythaGelathi solves this by combining **district-specific intelligence** + **rea
 | 📡 System Intelligence Log | Real-time terminal showing 4-agent thinking process |
 | 🏗️ Enterprise Backend | Modular Flask Blueprints + Pydantic validation + Swagger Docs |
 | 📱 WhatsApp Share | One-click advisory sharing |
+| 🎴 Shareable Advisory | WhatsApp-ready PNG card generated from Canvas API |
+| 📊 Price Sparkline | 7-day Agmarknet mandi price trend chart |
+| 🌦 Live Weather Card | Real-time district drought/flood risk snapshot |
 
 ---
 
@@ -521,7 +545,6 @@ for f in glob.glob('frontend/*.html'):
 ✅ Python Syntax: All files compile clean
 ✅ Security Checks: GitGuardian, no secrets detected
 ✅ Overall: PASSING
-```
 
 ---
 

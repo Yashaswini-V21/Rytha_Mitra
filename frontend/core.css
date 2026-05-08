@@ -13,10 +13,91 @@
   --shadow:    0 8px 40px rgba(0,0,0,.4);
 }
 
+/* ─── ACCESSIBILITY: Skip Link ────────────────── */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #14532d;
+  color: white;
+  padding: 8px 12px;
+  z-index: 9999;
+  border-radius: 4px;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0;
+}
+
 /* Core page follows global theme variables from styles.css */
 body.core-page {
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
   color: var(--text);
+}
+
+/* FARM HEALTH DASHBOARD styles */
+.farm-health-dashboard {
+  background: #0f172a;
+  border: 1px solid #14532d;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.dashboard-header {
+  margin-bottom: 20px;
+}
+
+.dashboard-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #f59e0b;
+  margin: 0 0 6px 0;
+}
+
+.dashboard-subtitle {
+  font-size: 11px;
+  color: #888;
+  margin: 0;
+}
+
+.gauges-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.gauge-item {
+  text-align: center;
+  min-width: 80px;
+}
+
+.gauge-svg {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 8px;
+}
+
+.gauge-arc {
+  stroke-dashoffset: 0;
+}
+
+.gauge-value {
+  font-size: 16px;
+  font-weight: bold;
+  fill: #f1f5f9;
+  pointer-events: none;
+}
+
+.gauge-label {
+  font-size: 11px;
+  color: #888;
+  margin: 0;
+  font-weight: 500;
 }
 
 /* Light mode tuning for advisory page */
