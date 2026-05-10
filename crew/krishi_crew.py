@@ -684,88 +684,76 @@ def _extract_json_from_text(value: str, default_obj: Any) -> Any:
 
 
 def _translate_to_kannada_bhashini(text: str) -> str:
-    url = os.getenv("BHASHINI_API_URL", "").strip()
-    if not url:
-        return "Kannada translation unavailable: BHASHINI_API_URL not set."
+    """Translate English text to Kannada using Sarvam AI Translate API."""
+    api_key = os.getenv("SARVAM_API_KEY", "").strip()
+    if not api_key:
+        return "Kannada translation unavailable: SARVAM_API_KEY not set."
 
+    url = "https://api.sarvam.ai/translate"
     payload = {
-        "pipelineTasks": [
-            {
-                "taskType": "translation",
-                "config": {
-                    "language": {
-                        "sourceLanguage": "en",
-                        "targetLanguage": "kn",
-                    }
-                },
-            }
-        ],
-        "inputData": {"input": [{"source": text}]},
+        "input": text[:1500],  # Sarvam limit
+        "source_language_code": "en-IN",
+        "target_language_code": "kn-IN",
+        "speaker_gender": "Female",
+        "mode": "formal",
+        "model": "mayura:v1",
+        "enable_preprocessing": True,
     }
-
-    headers = {"Content-Type": "application/json"}
-    api_key = os.getenv("BHASHINI_API_KEY", "").strip()
-    if api_key:
-        headers["Authorization"] = api_key
-
-    try:
-        response = requests.post(url, json=payload, headers=headers, timeout=8)
-        response.raise_for_status()
-        data = response.json()
-    except (requests.RequestException, ValueError):
-        return "Kannada translation unavailable: Bhashini request failed."
-
-    try:
-        translated = data["pipelineResponse"][0]["output"][0]["target"]
-        if translated:
-            return str(translated)
-    except (KeyError, IndexError, TypeError):
-        pass
-
-    return "Kannada translation unavailable: unexpected Bhashini response."
-
-
-def _synthesize_kannada_audio_bhashini(text: str) -> Dict[str, Any]:
-    url = os.getenv("BHASHINI_API_URL", "").strip()
-    if not url:
-        return {"available": False, "error": "BHASHINI_API_URL not set."}
-
-    payload = {
-        "pipelineTasks": [
-            {
-                "taskType": "tts",
-                "config": {
-                    "language": {
-                        "sourceLanguage": "kn",
-                    },
-                    "gender": os.getenv("BHASHINI_TTS_GENDER", "female"),
-                },
-            }
-        ],
-        "inputData": {"input": [{"source": text}]},
+    headers = {
+        "Content-Type": "application/json",
+        "api-subscription-key": api_key,
     }
-
-    headers = {"Content-Type": "application/json"}
-    api_key = os.getenv("BHASHINI_API_KEY", "").strip()
-    if api_key:
-        headers["Authorization"] = api_key
 
     try:
         response = requests.post(url, json=payload, headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()
-    except (requests.RequestException, ValueError):
-        return {"available": False, "error": "Bhashini TTS request failed."}
+    except (requests.RequestException, ValueError) as e:
+        return f"Kannada translation unavailable: Sarvam AI request failed ({e})."
 
-    audio_base64 = _find_audio_base64(data)
-    if not audio_base64:
-        return {"available": False, "error": "No audio payload in Bhashini response."}
+    translated = data.get("translated_text", "")
+    if translated:
+        return str(translated)
 
-    return {
-        "available": True,
-        "audio_base64": audio_base64,
-        "audio_mime": _infer_audio_mime(audio_base64),
+    return "Kannada translation unavailable: unexpected Sarvam AI response."
+
+
+def _synthesize_kannada_audio_bhashini(text: str) -> Dict[str, Any]:
+    """Synthesize Kannada speech using Sarvam AI Text-to-Speech (Bulbul)."""
+    api_key = os.getenv("SARVAM_API_KEY", "").strip()
+    if not api_key:
+        return {"available": False, "error": "SARVAM_API_KEY not set."}
+
+    url = "https://api.sarvam.ai/text-to-speech"
+    payload = {
+        "inputs": [text[:500]],  # Sarvam TTS limit
+        "target_language_code": "kn-IN",
+        "speaker": "meera",  # Female Kannada speaker
+        "model": "bulbul:v1",
+        "enable_preprocessing": True,
     }
+    headers = {
+        "Content-Type": "application/json",
+        "api-subscription-key": api_key,
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=15)
+        response.raise_for_status()
+        data = response.json()
+    except (requests.RequestException, ValueError):
+        return {"available": False, "error": "Sarvam AI TTS request failed."}
+
+    # Sarvam returns audios array with base64 wav
+    audios = data.get("audios", [])
+    if audios and len(audios) > 0:
+        return {
+            "available": True,
+            "audio_base64": audios[0],
+            "audio_mime": "audio/wav",
+        }
+
+    return {"available": False, "error": "No audio payload in Sarvam AI response."}
 
 
 def _parse_price_from_line(line: str) -> float:
