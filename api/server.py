@@ -173,6 +173,39 @@ def create_app():
             },
         }, 200 if all_ok else 503
 
+    @app.get("/ready")
+    def ready():
+        """
+        Readiness Check
+        ---
+        responses:
+          200:
+            description: Service is ready to accept requests
+          503:
+            description: Dependencies are not fully configured
+        """
+        model_exists = (ROOT_DIR / "model" / "crop_model.pkl").exists()
+        dataset_exists = (ROOT_DIR / "data" / "crop_dataset.csv").exists()
+        soil_exists = (ROOT_DIR / "data" / "karnataka_soil_health.json").exists()
+
+        groq_key = bool(os.getenv("GROQ_API_KEY"))
+        bhashini_key = bool(os.getenv("BHASHINI_API_KEY"))
+        weather_key = bool(os.getenv("OPENWEATHER_API_KEY"))
+
+        all_ok = model_exists and groq_key
+        return {
+            "status": "ready" if all_ok else "degraded",
+            "service": "rythagelathi-api",
+            "dependencies": {
+                "ml_model": "ready" if model_exists else "missing",
+                "crop_dataset": "ready" if dataset_exists else "missing",
+                "soil_database": "ready" if soil_exists else "missing",
+                "groq_llm": "configured" if groq_key else "missing",
+                "bhashini_nlp": "configured" if bhashini_key else "missing",
+                "openweather": "configured" if weather_key else "missing",
+            },
+        }, 200 if all_ok else 503
+
     # District coordinates for Karnataka
     DISTRICT_COORDS = {
         'Raichur':  (16.2120, 77.3439),

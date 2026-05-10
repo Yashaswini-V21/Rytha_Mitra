@@ -21,8 +21,22 @@
   </script>
 </head>
 <body class="core-page">
-  <!-- Skip to main content link -->
-  <a href="#advisorForm" class="skip-link">Skip to advisory form</a>
+  <a href="#advisorForm" class="skip-link">Skip to Form</a>
+  <style>
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background: #15803d;
+    color: white;
+    padding: 8px 16px;
+    z-index: 9999;
+    transition: top 0.3s;
+    text-decoration: none;
+    border-radius: 0 0 8px 0;
+  }
+  .skip-link:focus { top: 0; }
+  </style>
   
   <!-- Toast notification container -->
   <div id="toastContainer" class="toast-container"></div>
@@ -55,7 +69,7 @@
     <div class="chb-inner container">
       <div class="chb-badge">
         <span class="hero-badge-dot"></span>
-        Enterprise AI Platform · Groq LLaMA 3.3 · SHAP · Bhashini
+        Enterprise AI Platform · Groq LLaMA 3.3 · SHAP · Sarvam AI
       </div>
       <h1 class="chb-title">Agricultural Intelligence Center</h1>
       <p class="chb-sub">Real-time climate resilience engine for Karnataka's agrarian future.</p>
@@ -135,7 +149,7 @@
         <span class="as-arr">→</span>
         <div class="as-item"><span class="as-icon">🪨</span><div class="as-text"><strong>SoilExpert</strong><span>NPK alerts</span></div></div>
         <span class="as-arr">→</span>
-        <div class="as-item as-last"><span class="as-icon">🇮🇳</span><div class="as-text"><strong>Bhashini</strong><span>Kannada output</span></div></div>
+        <div class="as-item as-last"><span class="as-icon">🇮🇳</span><div class="as-text"><strong>Sarvam AI</strong><span>Kannada output</span></div></div>
       </div>
 
       <!-- TABS -->
@@ -149,7 +163,7 @@
           <button class="tab" role="tab" data-tab="kannada" id="tab-btn-kannada">
             <span class="tab-icon">🇮🇳</span>
             <span>ಕನ್ನಡ ವರದಿ</span>
-            <span class="tab-subtitle">Bhashini Translate</span>
+            <span class="tab-subtitle">Sarvam AI Translate</span>
           </button>
           <button class="tab" role="tab" data-tab="shap" id="tab-btn-shap">
             <span class="tab-icon">🧬</span>
@@ -164,7 +178,7 @@
           <div class="advisory-banner">
             <div class="adv-banner-icon">🌾</div>
             <div class="adv-banner-text">
-              <h2>Enter Your Farm Details</h2>
+              <h2 id="formTitle">Enter Your Farm Details</h2>
               <p>Fill in your current field conditions to get a full AI advisory — crop recommendation, profit estimate, weather flag, soil alerts, and Kannada summary.</p>
             </div>
             <div class="adv-banner-badge">AI-Powered</div>
@@ -176,9 +190,9 @@
               <span>One-click realistic farm profiles for judge demos</span>
             </div>
             <div class="qs-buttons">
-              <button type="button" class="scenario-btn" data-preset="raichur-dry" role="button" tabindex="0" aria-label="Load Raichur Dryland farm profile" onkeydown="if(event.key==='Enter' || event.key===' ') this.click()">Raichur Dryland</button>
-              <button type="button" class="scenario-btn" data-preset="tumakuru-balanced" role="button" tabindex="0" aria-label="Load Tumakuru Balanced farm profile" onkeydown="if(event.key==='Enter' || event.key===' ') this.click()">Tumakuru Balanced</button>
-              <button type="button" class="scenario-btn" data-preset="mysore-irrigated" role="button" tabindex="0" aria-label="Load Mysore Irrigated farm profile" onkeydown="if(event.key==='Enter' || event.key===' ') this.click()">Mysore Irrigated</button>
+              <button type="button" class="scenario-btn" data-preset="raichur-dry" role="button" tabindex="0" aria-label="Load Raichur Dryland farm profile" onkeydown="if(event.key==='Enter') this.click()">Raichur Dryland</button>
+              <button type="button" class="scenario-btn" data-preset="tumakuru-balanced" role="button" tabindex="0" aria-label="Load Tumakuru Balanced farm profile" onkeydown="if(event.key==='Enter') this.click()">Tumakuru Balanced</button>
+              <button type="button" class="scenario-btn" data-preset="mysore-irrigated" role="button" tabindex="0" aria-label="Load Mysore Irrigated farm profile" onkeydown="if(event.key==='Enter') this.click()">Mysore Irrigated</button>
             </div>
           </div>
 
@@ -206,13 +220,13 @@
             </div>
           </div>
 
-          <form id="advisorForm" novalidate autocomplete="off" aria-label="Climate-resilient crop advisory form">
+          <form id="advisorForm" novalidate autocomplete="off" aria-labelledby="formTitle" role="form">
 
             <div class="form-section-label">📍 Location &amp; Land</div>
             <div class="form-grid form-grid-2">
               <label class="field-label" for="district">
                 <span class="fl-text">District <span class="fl-req">*</span></span>
-                <select id="district" required aria-label="Select your district in Karnataka">
+                <select id="district" required aria-label="Select your district">
                   <option value="">Select Karnataka district</option>
                   <option value="Raichur">Raichur 🔴</option>
                   <option value="Kalaburagi">Kalaburagi 🔴</option>
@@ -233,7 +247,7 @@
               </label>
               <label class="field-label" for="land">
                 <span class="fl-text">Land Size (acres) <span class="fl-req">*</span></span>
-                <input id="land" type="number" min="0.5" step="0.5" placeholder="e.g. 2.5" required aria-label="Enter farm size in acres">
+                <input id="land" type="number" min="0.5" step="0.5" placeholder="e.g. 2.5" required aria-label="Farm size in acres">
                 <span class="field-hint">Total sowing area in acres</span>
               </label>
             </div>
@@ -270,15 +284,15 @@
             <div class="form-grid form-grid-3">
               <label class="field-label" for="temperature">
                 <span class="fl-text">Temperature (°C) <span class="fl-req">*</span></span>
-                <input id="temperature" type="number" step="0.1" placeholder="e.g. 31.5" required aria-label="Current temperature in Celsius">
+                <input id="temperature" type="number" step="0.1" placeholder="e.g. 31.5" required aria-label="Current temperature">
               </label>
               <label class="field-label" for="humidity">
                 <span class="fl-text">Humidity (%) <span class="fl-req">*</span></span>
-                <input id="humidity" type="number" min="0" max="100" placeholder="e.g. 62" required aria-label="Current humidity percentage">
+                <input id="humidity" type="number" min="0" max="100" placeholder="e.g. 62" required aria-label="Current humidity">
               </label>
               <label class="field-label" for="rainfall">
                 <span class="fl-text">Rainfall (mm) <span class="fl-req">*</span></span>
-                <input id="rainfall" type="number" placeholder="e.g. 92" required aria-label="Recent rainfall in millimeters">
+                <input id="rainfall" type="number" placeholder="e.g. 92" required aria-label="Recent rainfall in mm">
               </label>
             </div>
 
@@ -286,40 +300,40 @@
             <div class="form-grid form-grid-4">
               <label class="field-label" for="ph">
                 <span class="fl-text">Soil pH <span class="fl-req">*</span></span>
-                <input id="ph" type="number" step="0.1" min="3" max="10" placeholder="6.7" required aria-label="Soil pH level between 4 and 9">
+                <input id="ph" type="number" step="0.1" min="3" max="10" placeholder="6.7" required aria-label="Soil pH level">
                 <span class="field-hint">Ideal: 6.0–7.5</span>
               </label>
               <label class="field-label" for="N">
                 <span class="fl-text">Nitrogen (N) <span class="fl-req">*</span></span>
-                <input id="N" type="number" placeholder="82" required aria-label="Nitrogen content in kg per hectare">
+                <input id="N" type="number" placeholder="82" required aria-label="Nitrogen content in kg/ha">
                 <span class="field-hint">kg/ha</span>
               </label>
               <label class="field-label" for="P">
                 <span class="fl-text">Phosphorus (P) <span class="fl-req">*</span></span>
-                <input id="P" type="number" placeholder="42" required aria-label="Phosphorus content in kg per hectare">
+                <input id="P" type="number" placeholder="42" required aria-label="Phosphorus content in kg/ha">
                 <span class="field-hint">kg/ha</span>
               </label>
               <label class="field-label" for="K">
                 <span class="fl-text">Potassium (K) <span class="fl-req">*</span></span>
-                <input id="K" type="number" placeholder="38" required aria-label="Potassium content in kg per hectare">
+                <input id="K" type="number" placeholder="38" required aria-label="Potassium content in kg/ha">
                 <span class="field-hint">kg/ha</span>
               </label>
             </div>
             <div class="form-grid form-grid-2" style="max-width:460px">
               <label class="field-label" for="inputCosts">
                 <span class="fl-text">Input Budget (₹) <span class="fl-req">*</span></span>
-                <input id="inputCosts" type="number" step="1000" placeholder="18000" required aria-label="Total input costs in Indian rupees">
+                <input id="inputCosts" type="number" step="1000" placeholder="18000" required aria-label="Total input costs">
                 <span class="field-hint">Seeds + fertilizer + labour</span>
               </label>
             </div>
 
             <div class="form-actions">
-              <button class="btn btn-mint btn-submit" id="submitBtn" type="submit" aria-label="Get AI crop advisory" aria-live="polite">
+              <button class="btn btn-mint btn-submit" id="submitBtn" type="submit" aria-label="Submit form to get AI advisory">
                 <span id="btnText">🌾 Get AI Advisory</span>
                 <span id="btnSpinner" class="spinner" style="display:none"></span>
               </button>
               <button class="btn-ghost-sm" type="reset" id="resetBtn">↺ Reset</button>
-              <p class="form-note">Results include crop recommendation, profit estimate, weather flag, soil alerts, SHAP reasons, and Kannada summary via Bhashini API.</p>
+              <p class="form-note">Results include crop recommendation, profit estimate, weather flag, soil alerts, SHAP reasons, and Kannada summary via Sarvam AI.</p>
             </div>
           </form>
 
@@ -338,7 +352,7 @@
           </div>
 
           <!-- RESULTS -->
-          <div id="resultsContainer" class="results-container" role="region" aria-label="Advisory results" aria-live="polite" aria-atomic="false" style="display:none">
+          <div id="resultsContainer" class="results-container" role="region" aria-live="polite" style="display:none">
             <div class="results-header">
               <h3 id="resultsTitle">Advisory Results</h3>
               <div class="res-header-actions">
@@ -374,7 +388,7 @@
                <div style="font-size: 2.5rem;">🇮🇳</div>
                <div>
                  <h2 style="margin:0;" lang="kn">ಕನ್ನಡ ಯೋಜನೆ</h2>
-                 <p style="margin:0; opacity: 0.8;">Bhashini Powered Kannada Translation</p>
+                 <p style="margin:0; opacity: 0.8;">Sarvam AI Powered Kannada Translation</p>
                </div>
             </div>
             <div id="kannada-output-area" class="results-container" style="display:block; min-height: 200px; background: rgba(0,0,0,0.2); border-radius: var(--radius);">
@@ -452,7 +466,7 @@
         <a href="/health">API Health</a>
         <a href="https://www.agmarknet.gov.in/" target="_blank" rel="noopener noreferrer">Agmarknet</a>
         <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap</a>
-        <a href="https://bhashini.gov.in/" target="_blank" rel="noopener noreferrer">Bhashini</a>
+        <a href="https://www.sarvam.ai/" target="_blank" rel="noopener noreferrer">Sarvam AI</a>
       </div>
 
       <div class="cf-col">
@@ -466,7 +480,7 @@
 
     <div class="container cf-bottom">
       <p>© 2026 RythaGelathi. Built for Karnataka women farmers.</p>
-      <p class="cf-bottom-note">CrewAI · Groq LLaMA 3.3 · SHAP · Bhashini</p>
+      <p class="cf-bottom-note">CrewAI · Groq LLaMA 3.3 · SHAP · Sarvam AI</p>
     </div>
   </footer>
 

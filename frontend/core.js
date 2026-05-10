@@ -491,12 +491,12 @@ function addPDFDownloadButton(result) {
   }
 
   function transcribeKannadaAudio(audioBlob) {
-    // Convert audio blob to base64 for Bhashini ASR API
+    // Convert audio blob to base64 for Sarvam AI ASR API
     var reader = new FileReader();
     reader.onloadend = function () {
       var base64Audio = reader.result.split(',')[1];
 
-      // Call Bhashini ASR API (requires valid Bhashini API key)
+      // Call Sarvam AI ASR API (requires valid Sarvam API key)
       var asrPayload = {
         audio: [{
           audioContent: base64Audio,
@@ -514,13 +514,13 @@ function addPDFDownloadButton(result) {
         },
       };
 
-      var bhashiniKey = 'demo'; // In production, fetch from server
+      var sarvamKey = 'demo'; // In production, fetch from server
 
       fetch('https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + bhashiniKey,
+          'Authorization': 'Bearer ' + sarvamKey,
         },
         body: JSON.stringify({
           language: { sourceLanguage: 'kn' },
@@ -759,7 +759,7 @@ function addPDFDownloadButton(result) {
       "Agent MarketAnalyst: Requesting Agmarknet price feed...",
       "Agent WeatherIntel: Fetching OWM 15-day forecast...",
       "Agent SoilExpert: Cross-referencing district database...",
-      "Bhashini: Initializing Kannada translation engine...",
+      "Sarvam AI: Initializing Kannada translation engine...",
       "System: Aggregating climate resilience scores..."
     ];
     
@@ -1038,7 +1038,7 @@ function addPDFDownloadButton(result) {
       var sust     = result.sustainability_score || 75;
       var water    = (result.irrigation && result.irrigation.daily_water_litres) ? result.irrigation.daily_water_litres : 70;
       var price    = (result.market && result.market.price_per_quintal) ? result.market.price_per_quintal : 2500;
-      var conf     = result.confidence || (result.top_crops && result.top_crops[0] && result.top_crops[0].score) ? result.top_crops[0].score : 80;
+      var conf     = result.confidence || ((result.top_crops && result.top_crops[0] && result.top_crops[0].score) ? result.top_crops[0].score : 80);
       var reason   = (result.top_crops && result.top_crops[0] && result.top_crops[0].reasons && result.top_crops[0].reasons[0]) ? result.top_crops[0].reasons[0] : 'Optimal soil and climate match';
       var mode     = result.advisory_mode === 'offline' ? '⚡ Offline AI' : '☁ Cloud AI';
 
@@ -1153,77 +1153,92 @@ function addPDFDownloadButton(result) {
     }
   }
 
-  // ERROR STATE UI — friendly failure handling
   function showErrorState(errorMsg) {
-    var skeleton = document.getElementById('loadingSkeleton');
-    if (skeleton) skeleton.style.display = 'none';
+    const existingError = document.getElementById('errorStateCard');
+    if (existingError) existingError.remove();
 
-    var existing = document.getElementById('errorStateCard');
-    if (existing) existing.remove();
+    const errorCard = document.createElement('div');
+    errorCard.id = 'errorStateCard';
+    errorCard.style.cssText = `
+      background: #1a0a0a; border: 1px solid #7f1d1d; border-radius: 12px;
+      padding: 20px; margin: 20px 0; color: #fecaca; font-family: inherit;
+      animation: fadeIn 0.3s ease;
+    `;
 
-    var card = document.createElement('div');
-    card.id = 'errorStateCard';
-    card.style.cssText = 'background:#1a0a0a; border:1px solid #7f1d1d; border-radius:12px;' +
-      'padding:32px; text-align:center; margin:20px 0;';
-    card.innerHTML = '<div style="font-size:40px;margin-bottom:16px">⚠️</div>' +
-      '<div style="color:#fca5a5;font-size:16px;font-weight:bold;' +
-      'margin-bottom:8px">Advisory Temporarily Unavailable</div>' +
-      '<div style="color:#6b7280;font-size:13px;margin-bottom:20px;' +
-      'line-height:1.6">' + (errorMsg || 'The cloud AI is unreachable.') + '<br>' +
-      '<span style="color:#f59e0b">' +
-      'Switching to offline engine automatically...' +
-      '</span></div>' +
-      '<button onclick="document.getElementById(\'errorStateCard\').remove();"' +
-      ' style="background:#14532d;color:#f59e0b;border:none;padding:10px 24px;' +
-      'border-radius:8px;cursor:pointer;font-size:13px;font-weight:bold">' +
-      '🔄 Retry with Offline Engine</button>';
+    errorCard.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">⚠️</span>
+          <strong style="color: #ef4444;">Advisory Failed</strong>
+        </div>
+        <p style="margin: 0; font-size: 14px; opacity: 0.9;">${errorMsg}</p>
+        <button id="retryOfflineBtn" style="
+          background: #7f1d1d; color: white; border: none; padding: 10px 16px;
+          border-radius: 8px; cursor: pointer; font-weight: 600; width: fit-content;
+          transition: background 0.2s; margin-top: 8px;
+        ">Retry with Offline Engine</button>
+      </div>
+    `;
 
-    var rc = document.getElementById('resultsContainer');
-    if (rc) {
-      rc.style.display = 'block';
-      rc.insertBefore(card, rc.firstChild);
-    } else {
-      var main = document.querySelector('main');
-      if (main) main.appendChild(card);
-    }
-  }
-
-  // RESET BUTTON — clear form and results
-  function addResetButton() {
-    var submitBtn = document.getElementById('submitBtn');
-    if (!submitBtn || document.getElementById('resetBtn')) return;
-
-    var btn = document.createElement('button');
-    btn.id = 'resetBtn';
-    btn.type = 'button';
-    btn.textContent = '↺ Clear';
-    btn.style.cssText = 'margin-left:12px; padding:12px 20px;' +
-      'background:transparent; color:#6b7280;' +
-      'border:1px solid #374151; border-radius:8px;' +
-      'font-size:14px; cursor:pointer;';
-    btn.onmouseover = function() { btn.style.borderColor = '#14532d'; };
-    btn.onmouseout = function() { btn.style.borderColor = '#374151'; };
-    btn.onclick = function() {
-      var form = document.getElementById('advisorForm');
-      if (form) form.reset();
-      var rc = document.getElementById('resultsContainer');
-      if (rc) rc.innerHTML = '';
-      var errorCard = document.getElementById('errorStateCard');
-      if (errorCard) errorCard.remove();
-      var weather = document.getElementById('weatherCard');
-      if (weather) weather.remove();
-      var pdf = document.getElementById('pdfDownloadBtn');
-      if (pdf) pdf.remove();
-      var share = document.getElementById('shareCardBtn');
-      if (share) share.remove();
-      var offline = document.getElementById('offlineBanner');
-      if (offline) offline.remove();
-      var scenarioBtns = document.querySelectorAll('.scenario-btn');
-      scenarioBtns.forEach(function(b) { b.classList.remove('active'); });
-      showToast('Form cleared', 'info');
+    const resultsContainer = document.getElementById('resultsContainer');
+    resultsContainer.prepend(errorCard);
+    
+    document.getElementById('retryOfflineBtn').onclick = () => {
+      const formData = getFormValues();
+      submitAdvisory(formData);
     };
 
-    submitBtn.insertAdjacentElement('afterend', btn);
+    const autoDismiss = setTimeout(() => {
+      if (errorCard.parentElement) errorCard.remove();
+    }, 6000);
+
+    errorCard.onclick = () => {
+      clearTimeout(autoDismiss);
+      errorCard.remove();
+    };
+  }
+
+  function addResetButton() {
+    const submitBtn = document.getElementById('submitBtn');
+    if (!submitBtn || document.getElementById('resetBtn')) return;
+
+    const resetBtn = document.createElement('button');
+    resetBtn.id = 'resetBtn';
+    resetBtn.type = 'button';
+    resetBtn.innerHTML = '↺ Clear';
+    resetBtn.style.cssText = `
+      background: transparent; border: 1px solid #374151; color: #9ca3af;
+      padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;
+      font-weight: 500; transition: all 0.2s; margin-left: 10px;
+    `;
+
+    resetBtn.onmouseover = () => resetBtn.style.borderColor = '#4b5563';
+    resetBtn.onmouseout = () => resetBtn.style.borderColor = '#374151';
+
+    resetBtn.onclick = () => {
+      const form = document.getElementById('advisorForm');
+      form.reset();
+
+      const idsToRemove = [
+        'errorStateCard', 'weatherCard', 'pdfDownloadBtn', 
+        'shareCardBtn', 'offlineBanner'
+      ];
+      idsToRemove.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
+
+      document.getElementById('resultsContainer').innerHTML = '';
+      
+      document.querySelectorAll('.scenario-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      lastResult = null;
+      showToast("Form cleared — ready for new advisory", "info");
+    };
+
+    submitBtn.parentNode.insertBefore(resetBtn, submitBtn.nextSibling);
   }
 
   function renderResults(data) {
@@ -1508,7 +1523,7 @@ function addPDFDownloadButton(result) {
           + '</audio>'
           + '</div>';
       }
-      kanHTML = '<div class="kannada-box"><div class="kannada-label">🇮🇳 Kannada Advisory (via Bhashini)</div><div class="kannada-text">' + kannada + '</div>' + audioHTML + '</div>';
+      kanHTML = '<div class="kannada-box"><div class="kannada-label">🇮🇳 Kannada Advisory (via Sarvam AI)</div><div class="kannada-text">' + kannada + '</div>' + audioHTML + '</div>';
     }
 
     /* ── Stunning Enterprise Dashboard (SHAP + Metrics) ── */
@@ -1684,7 +1699,7 @@ function addPDFDownloadButton(result) {
       { text: "⟳ WeatherIntel → evaluating 7-day drought risk...", color: "#fbbf24", delay: 5400 },
       { text: "⟳ SoilExpert → cross-referencing Karnataka soil DB...", color: "#60a5fa", delay: 7200 },
       { text: "✓ SHAP engine → computing feature importances...", color: "#4ade80", delay: 9000 },
-      { text: "✓ Bhashini → preparing Kannada translation...", color: "#f59e0b", delay: 10800 }
+      { text: "✓ Sarvam AI → preparing Kannada translation...", color: "#f59e0b", delay: 10800 }
     ];
 
     skeleton.innerHTML = `
@@ -1762,7 +1777,7 @@ function addPDFDownloadButton(result) {
         "Agent MarketAnalyst: Requesting Agmarknet prices for " + values.district + " mandi...",
         "Agent WeatherIntel: Fetching OWM forecast (" + values.temperature + "°C, " + values.rainfall + "mm)...",
         "Agent SoilExpert: Analyzing pH=" + values.ph + " for district soil profile...",
-        "Bhashini: Preparing Kannada translation pipeline...",
+        "Sarvam AI: Preparing Kannada translation pipeline...",
         "System: Computing drought risk score for " + values.district + "..."
       ];
       dynamicLogs.forEach(function(msg, i) {
@@ -1805,7 +1820,7 @@ function addPDFDownloadButton(result) {
             console.log('❌ ERROR PATH TRIGGERED');
             addLog("Pipeline issue: " + (data.error || 'Unknown'), "var(--red)");
             showToast('Advisory returned an error. Check API logs.', 'error');
-            renderError(data.error || 'Advisory pipeline failed.');
+            showErrorState(data.error || 'Advisory pipeline failed.');
           }
         } catch(renderErr) {
           console.error('Error during result rendering:', renderErr);
@@ -1819,7 +1834,7 @@ function addPDFDownloadButton(result) {
         console.error('Advisory error:', err);
         addLog('Unexpected error: ' + err.message, 'var(--red)');
         showToast('An unexpected error occurred.', 'error');
-        renderError('Error: ' + err.message);
+        showErrorState('Error: ' + err.message);
       });
     });
   }
@@ -1850,15 +1865,7 @@ function addPDFDownloadButton(result) {
     resultsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  /* ─── RESET BUTTON ───────────────────────────── */
-  var resetBtn = document.getElementById('resetBtn');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', function () {
-      if (resultsBox) resultsBox.style.display = 'none';
-      hideSkeleton();
-      showToast('Form reset. Ready for new analysis.', 'info');
-    });
-  }
+
 
   /* ─── COPY JSON ──────────────────────────────── */
   var copyBtn = document.getElementById('copyBtn');

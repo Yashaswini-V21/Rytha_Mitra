@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RythaGelathi — ರೈತ ಗೆಳತಿ | AI Crop Advisor for Women Farmers of Karnataka</title>
-  <meta name="description" content="AI crop advisor for 62 lakh women farmers of Karnataka. Personalised Kannada recommendations powered by CrewAI, Groq, SHAP and Bhashini.">
+  <meta name="description" content="AI crop advisor for 62 lakh women farmers of Karnataka. Personalised Kannada recommendations powered by CrewAI, Groq, SHAP and Sarvam AI.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -123,7 +123,7 @@
         </div>
         <div class="hero-mini-stats rv d3">
           <div class="hms"><span class="hms-n">74%</span><span class="hms-l">Crop confidence</span></div>
-          <div class="hms"><span class="hms-n">6</span><span class="hms-l">Climate modules</span></div>
+          <div class="hms"><span class="hms-n">10</span><span class="hms-l">Climate modules</span></div>
           <div class="hms"><span class="hms-n">₹0</span><span class="hms-l">Platform cost</span></div>
         </div>
         <div class="h-tags rv d3">
@@ -335,8 +335,8 @@
         <div class="hw-n">04</div>
         <div class="hw-b">
           <h4>Full advisory translated to Kannada</h4>
-          <p>The entire recommendation is translated to natural Kannada via Government of India's Bhashini API — so the farmer herself can read and share it on WhatsApp.</p>
-          <span class="hw-tag">Bhashini API · en→kn · _translate_to_kannada_bhashini</span>
+          <p>The entire recommendation is translated to natural Kannada via Sarvam AI — so the farmer herself can read and share it on WhatsApp.</p>
+          <span class="hw-tag">Sarvam AI · en→kn · ASR + Translation + TTS</span>
         </div>
       </div>
     </div>
@@ -366,7 +366,7 @@
         <li>SHAP-backed Toor Dal — district-specific intelligence</li>
         <li>43% water saved — drought-optimized schedule</li>
         <li>NPK gap analysis — ₹1,840/acre savings</li>
-        <li>Full Kannada voice output via Bhashini</li>
+        <li>Full Kannada voice output via Sarvam AI</li>
         <li>7-day climate risk score — act before crop fails</li>
         <li>Offline JS engine — works in dead zones</li>
       </ul>
@@ -398,7 +398,7 @@
     </div>
     <div class="extra-row rv">
       <span class="extra-lbl">Also included:</span>
-      <span class="ext">🇮🇳 Kannada via Bhashini</span>
+      <span class="ext">🇮🇳 Kannada via Sarvam AI</span>
       <span class="ext">📈 Live Mandi Prices</span>
       <span class="ext">📊 SHAP Explainability</span>
       <span class="ext">🐛 Pest Risk Alerts</span>
@@ -428,7 +428,7 @@
       <div class="ml-arr">→</div>
       <div class="ml-node"><div class="ml-ico">📊</div><strong>SHAP Explainer</strong><span>force_plot + top 3 reasons</span></div>
       <div class="ml-arr">→</div>
-      <div class="ml-node"><div class="ml-ico">🇮🇳</div><strong>Bhashini</strong><span>Full Kannada output</span></div>
+      <div class="ml-node"><div class="ml-ico">🇮🇳</div><strong>Sarvam AI</strong><span>Full Kannada output</span></div>
     </div>
     <div class="demo-terminal rv">
       <div class="dt-bar"><div class="dt-dot dt-r"></div><div class="dt-dot dt-y"></div><div class="dt-dot dt-g"></div></div>
@@ -446,7 +446,7 @@
       <div class="spec"><div class="spec-ico">🌲</div><h4>Random Forest</h4><p>100 estimators · max_depth=10 · random_state=42</p></div>
       <div class="spec"><div class="spec-ico">📊</div><h4>SHAP TreeExplainer</h4><p>force_plot per prediction · top 3 feature reasons</p></div>
       <div class="spec"><div class="spec-ico">📦</div><h4>Kaggle Dataset</h4><p>2,200 samples · 7 features per row</p></div>
-      <div class="spec"><div class="spec-ico">🇮🇳</div><h4>Bhashini API</h4><p>Government of India en→kn pipeline</p></div>
+      <div class="spec"><div class="spec-ico">🇮🇳</div><h4>Sarvam AI</h4><p>Kannada ASR + Translation + TTS</p></div>
     </div>
   </div>
 </section>
@@ -465,7 +465,7 @@
       <div class="ag rv d1"><div class="ag-head"><span class="ag-num">01</span><span class="ag-icon">🌱</span></div><h3>CropAdvisor</h3><p class="ag-fn">crop_advisor_tool</p><p>Random Forest (100 trees, max_depth=10) on N-P-K, temperature, humidity, pH, rainfall. SHAP TreeExplainer generates force_plot and top 3 reasons per crop.</p><div class="ag-out">→ top_crops · shap_reasons · probabilities</div></div>
       <div class="ag rv d2"><div class="ag-head"><span class="ag-num">02</span><span class="ag-icon">📈</span></div><h3>MarketAnalyst</h3><p class="ag-fn">AgmarknetPriceTool</p><p>Fetches live Karnataka mandi prices via Agmarknet API (3s timeout, 6hr LRU cache, static JSON fallback). Profit = yield × price − input_costs.</p><div class="ag-out">→ market_prices · top_crop · profit_estimate</div></div>
       <div class="ag rv d3"><div class="ag-head"><span class="ag-num">03</span><span class="ag-icon">🌦️</span></div><h3>WeatherIntel</h3><p class="ag-fn">weather_intel_tool</p><p>OWM Geo API → district lat/lon → 7-day one-call forecast → aggregated temp, humidity, rainfall → GREEN/AMBER/RED flag per crop based on suitability bands.</p><div class="ag-out">→ weather_flags (GREEN / AMBER / RED)</div></div>
-      <div class="ag rv d4"><div class="ag-head"><span class="ag-num">04</span><span class="ag-icon">🪨</span></div><h3>SoilExpert + Bhashini</h3><p class="ag-fn">soil_expert_tool · bhashini_translate</p><p>Karnataka Soil Health Card JSON per district flags N, P, K deficiencies. Bhashini API translates the final structured advisory to natural Kannada.</p><div class="ag-out">→ soil_alerts · kannada_summary</div></div>
+      <div class="ag rv d4"><div class="ag-head"><span class="ag-num">04</span><span class="ag-icon">🪨</span></div><h3>SoilExpert + Sarvam AI</h3><p class="ag-fn">soil_expert_tool · sarvam_translate</p><p>Karnataka Soil Health Card JSON per district flags N, P, K deficiencies. Sarvam AI translates the final structured advisory to natural Kannada.</p><div class="ag-out">→ soil_alerts · kannada_summary</div></div>
     </div>
     <div class="output-box rv">
       <div class="ob-title">Final Structured JSON Output</div>
@@ -475,7 +475,7 @@
         <div class="ob-field"><span class="ob-k">weather_flag</span><span class="ob-v">GREEN / AMBER / RED from 7-day OWM</span></div>
         <div class="ob-field"><span class="ob-k">soil_alerts</span><span class="ob-v">N / P / K deficiency flags by district</span></div>
         <div class="ob-field"><span class="ob-k">shap_reasons</span><span class="ob-v">Top 3 SHAP features that drove the pick</span></div>
-        <div class="ob-field ob-gold"><span class="ob-k">kannada_summary</span><span class="ob-v">Full advisory in Kannada via Bhashini</span></div>
+        <div class="ob-field ob-gold"><span class="ob-k">kannada_summary</span><span class="ob-v">Full advisory in Kannada via Sarvam AI</span></div>
       </div>
     </div>
   </div>
@@ -495,7 +495,7 @@
         <a href="core.html" class="btn btn-out">Crop Advisory</a>
         <a href="#why" class="btn btn-out">Learn More</a>
       </div>
-      <p class="cta-note">Made with 💚 for climate action · ರೈತ ಗೆಳತಿ · 6 AI modules · ₹0 stack cost</p>
+      <p class="cta-note">Made with 💚 for climate action · ರೈತ ಗೆಳತಿ · 10 AI modules · ₹0 stack cost</p>
     </div>
   </div>
 </section>
@@ -571,7 +571,7 @@
           <li><a href="https://github.com/Yashaswini-V21/Rytha_Gelathi" target="_blank" rel="noopener noreferrer">GitHub Repository ↗</a></li>
           <li><a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap ↗</a></li>
           <li><a href="https://www.agmarknet.gov.in/" target="_blank" rel="noopener noreferrer">Agmarknet ↗</a></li>
-          <li><a href="https://bhashini.gov.in/" target="_blank" rel="noopener noreferrer">Bhashini ↗</a></li>
+          <li><a href="https://www.sarvam.ai/" target="_blank" rel="noopener noreferrer">Sarvam AI ↗</a></li>
         </ul>
         <h5 style="margin-top:1.3rem">Contact</h5>
         <p class="foot-meta">Built by harvest hex harvesters for climate-resilient farming in Karnataka.</p>
