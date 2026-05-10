@@ -1,289 +1,199 @@
-<!-- FARMING STYLE HEADER -->
 <div align="center">
 
-[![Live Demo](https://img.shields.io/badge/🌾_Live_Demo-Vercel-black?style=for-the-badge)](https://rytha-gelathi.vercel.app)
-[![Backend API](https://img.shields.io/badge/API-Render_Live-22c55e?style=for-the-badge)](https://rytha-gelathi.onrender.com/health)
-[![Release](https://img.shields.io/github/v/release/Yashaswini-V21/Rytha_Gelathi?style=for-the-badge&color=f59e0b)](https://github.com/Yashaswini-V21/Rytha_Gelathi/releases)
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,6,11,20&height=280&section=header&text=ರೈತ%20ಗೆಳತಿ&fontSize=72&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=RythaGelathi%20·%20Climate%20Intelligence%20for%20Karnataka's%20Women%20Farmers&descAlignY=58&descSize=18" width="100%"/>
 
-**▶ [Watch 90-second demo video](https://loom.com/share/your-loom-url-here)** ← Demo video link
+### AI-Powered Climate Resilience · Explainable Predictions · Kannada Voice-First
 
----
+<p><em>"Technology serves best when it speaks the language of the person who needs it most."</em></p>
 
-## 🚀 Latest Updates (May 7, 2026)
-
-✅ **E2E Testing Suite Added** — 12 payload validation tests + CI/CD fixtures  
-✅ **CI/CD Pipeline Optimized** — 21 fast tests in <30 seconds (slow tests marked, excluded from PR)  
-✅ **CSS Validation Fixed** — All 3 CSS files balanced, all 4 HTML files div-balanced  
-✅ **Pytest Configuration** — Custom markers registered, zero warnings  
-✅ **Git Attribution** — All commits properly attributed to yashasyashu0987@gmail.com  
-✅ **Production Ready** — Live on Vercel + Render, Docker-ready, 100% offline-capable
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,6,11,20&height=280&section=header&text=RythaGelathi&fontSize=64&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Climate%20Resilience%20Platform%20for%20Women%20Farmers%20of%20Karnataka&descAlignY=62&descSize=18" width="100%"/>
-
-<h3>ರೈತ ಗೆಳತಿ · Climate-resilient, explainable, Kannada-ready agricultural intelligence</h3>
-
-<p><strong>10 AI modules for irrigation optimization, fertilizer intelligence, carbon tracking, sustainability scoring, and crop advisory — at ₹0 stack cost.</strong></p>
-
-[![Star](https://img.shields.io/badge/⭐_Star_This_Repo-111827?style=for-the-badge&logo=github)](https://github.com/Yashaswini-V21/Rytha_Gelathi)
-[![Kannada First](https://img.shields.io/badge/Kannada-Voice_First-15803d?style=for-the-badge)](.)
-[![Climate Action](https://img.shields.io/badge/Track-Climate_Action-16a34a?style=for-the-badge)](.)
-
-[![Hackathon](https://img.shields.io/badge/WitchHunt-2026-f97316?style=for-the-badge)](.)
-[![Modules](https://img.shields.io/badge/Modules-10_Climate_Engines-22c55e?style=for-the-badge)](.)
-[![Status](https://img.shields.io/badge/Status-Production_Ready-22c55e?style=for-the-badge)](.)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-2563eb?style=for-the-badge&logo=python&logoColor=white)](.)
+[![Live Demo](https://img.shields.io/badge/🌾_Live_Demo-Vercel-000?style=for-the-badge&logo=vercel)](https://rytha-gelathi.vercel.app)
+[![Backend API](https://img.shields.io/badge/⚡_API-Render_Live-22c55e?style=for-the-badge)](https://rytha-gelathi.onrender.com/health)
+[![Hackathon](https://img.shields.io/badge/WitchHunt-2026-f97316?style=for-the-badge)]()
+[![Python](https://img.shields.io/badge/Python-3.11-2563eb?style=for-the-badge&logo=python&logoColor=white)]()
 
 ---
 
-### ⚡ Quick Links for Judges
-- **Advisory Dashboard**: [Advisory Center](frontend/core.html)
-- **Climate Simulator**: [Simulator Mode](frontend/climate.html)
-- **API Health**: https://rytha-gelathi.onrender.com/health
-- **Technical Bible**: [BIBLE.md](./BIBLE.md)
+**10 AI modules** · **97.4% ML accuracy** · **₹0 stack cost** · **100% offline-capable** · **Kannada voice I/O**
 
----
-
-## 🎬 Live Demo Scenarios
-
-> Click the **Live Demo** badge above, then try these farmer scenarios:
-
-| Scenario | District | Condition | What to see |
-|----------|----------|-----------|-------------|
-| 🌾 Lakshmi | Raichur | Drought stress | High drought risk, Toor Dal recommended, 43% water saving |
-| 🌊 Meena | Tumakuru | Post-flood | Flood-tolerant crop, drainage advisory, soil recovery plan |
-| 🔥 Savitha | Dharwad | Heatwave | Heat-resistant variety, early morning irrigation, govt scheme |
-| ✈ Offline | Any | No internet | Toggle offline — JS engine gives full advisory without backend |
-
-### What makes each advisory unique
-- **SHAP explanations** — every recommendation shows the top 3 soil/climate reasons
-- **Live weather card** — real-time drought/flood risk per district  
-- **Price sparkline** — 7-day Agmarknet mandi trend for the recommended crop
-- **Farm Health Dashboard** — 5 animated gauges: Crop Match, Sustainability, Water Efficiency, Soil Health, Profit Potential
-- **Season Plan PDF** — downloadable 1-page personalized crop calendar
-- **Shareable card** — PNG advisory card farmers can share on WhatsApp
-
----
-
-[![CrewAI](https://img.shields.io/badge/CrewAI-Orchestration-7c3aed?style=flat-square)](https://www.crewai.com/)
+[![CrewAI](https://img.shields.io/badge/CrewAI-Multi_Agent-7c3aed?style=flat-square)](https://www.crewai.com/)
 [![Groq](https://img.shields.io/badge/Groq-LLaMA_3.3_70B-111827?style=flat-square)](https://console.groq.com/)
 [![SHAP](https://img.shields.io/badge/SHAP-Explainability-ef4444?style=flat-square)](https://shap.readthedocs.io/)
-[![Bhashini](https://img.shields.io/badge/Bhashini-Kannada-f59e0b?style=flat-square)](https://bhashini.gov.in/)
-[![OpenWeatherMap](https://img.shields.io/badge/OWM-Forecast-0284c7?style=flat-square)](https://openweathermap.org/)
-[![Agmarknet](https://img.shields.io/badge/Agmarknet-Mandi_Data-f97316?style=flat-square)](https://agmarknet.gov.in/)
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=6,11,20&height=85&section=header&text=Irrigation%20AI%20%7C%20Fertilizer%20Engine%20%7C%20Carbon%20Tracker%20%7C%20Sustainability%20Score&fontSize=20&fontColor=ffffff&animation=fadeIn" width="100%"/>
+[![Sarvam](https://img.shields.io/badge/Sarvam_AI-Kannada_Voice-f59e0b?style=flat-square)](https://www.sarvam.ai/)
+[![OpenWeatherMap](https://img.shields.io/badge/OWM-Weather_Intel-0284c7?style=flat-square)](https://openweathermap.org/)
 
 </div>
 
 ---
 
-## 🏆 Judge's Premium Highlight (World-Class Features)
+## 📌 Table of Contents
 
-To stand out in the Top 1%, RythaGelathi includes several advanced modules rarely found in standard hackathon entries:
-
-- **🎯 Precision Risk Radar**: A 5-axis SVG intelligence chart visualizing Weather, Soil, Market, Drought, and AI Confidence scores simultaneously.
-- **📅 Dynamic Crop Growth Calendar**: Visual month-by-month lifecycle timeline (Sowing → Flowering → Harvest) specific to the recommended crop.
-- **🐛 Pest Risk AI Engine**: A predictive model warning of pest outbreaks based on temp/humidity correlations with organic intervention suggestions.
-- **🌍 SDG 13 Carbon Footprint**: Real-time calculation of CO₂ footprint and water usage per acre, including tree-offset metrics for sustainability reporting.
-- **🛰️ SHAP Explainability**: Not just a "black box" prediction—we provide local and global feature importance scores for every single recommendation.
-- **🇮🇳 Multi-Modal Bhashini Integration**: Full Kannada support via Bhashini ASR (voice input), NMT (translation), and TTS (voice output).
-
----
-
-## 📋 Pre-Submission Checklist ✅
-
-| Item | Status | Evidence |
-|------|--------|----------|
-| Crop Recommendation Engine | ✅ | Random Forest (100 trees, 97.4% accuracy) + SHAP explainability |
-| 10 Climate Modules | ✅ | Irrigation, Fertilizer, Simulator, Carbon, Sustainability, etc. |
-| Offline-First PWA | ✅ | Service Worker v3, 13 cached assets, runs 100% offline |
-| Kannada Support | ✅ | Bhashini API (voice + text translation + TTS) |
-| Live Deployment | ✅ | Frontend: https://rytha-gelathi.vercel.app / Backend: https://rytha-gelathi.onrender.com |
-| 12 E2E Tests | ✅ | Payload validation, temperature, land, pH, NPK, scenarios, JSON, PDF format |
-| CI/CD Pipeline | ✅ | GitHub Actions, 21 fast tests (<30s), slow tests marked and excluded |
-| Docker Support | ✅ | Dockerfile + docker-compose.yml + gunicorn config |
-| SHAP Explainability | ✅ | Force plot on every advisory with feature importance |
-| Government Schemes | ✅ | 15+ schemes auto-matched per district/crop/gender |
-| PDF Export | ✅ | Season plan with crop calendar, water schedule, government schemes |
-| Git Attribution | ✅ | All commits: Yashaswini-V21 <yashasyashu0987@gmail.com> |
+- [The Problem We Solve](#-the-problem-we-solve)
+- [What is RythaGelathi](#-what-is-rythagelathi)
+- [Why We're Unique — Competitive Analysis](#-why-were-unique--competitive-analysis)
+- [Platform Modules (10)](#-platform-modules-10)
+- [Technical Architecture](#-technical-architecture)
+- [AI & ML Deep Dive](#-ai--ml-deep-dive)
+- [Technology Stack](#-technology-stack)
+- [Impact Metrics](#-impact-metrics)
+- [Live Demo Scenarios](#-live-demo-scenarios)
+- [Quick Start](#-quick-start)
+- [Testing & CI/CD](#-testing--cicd)
+- [Deployment](#-deployment)
+- [Project Structure](#-project-structure)
+- [Future Roadmap](#-future-roadmap)
+- [Team](#-team)
 
 ---
 
-## Table of Contents
-
-- [Latest Updates](#-latest-updates-may-7-2026)
-- [Pre-Submission Checklist](#-pre-submission-checklist-)
-- [Project Summary](#project-summary)
-- [Project Workflow (Road to Top 1%)](#project-workflow-road-to-top-1)
-- [Why This Matters](#why-this-matters)
-- [Platform Modules (10)](#platform-modules-10)
-- [Impact Metrics](#impact-metrics)
-- [System Architecture](#system-architecture)
-- [Data Flow Diagram](#data-flow-diagram)
-- [Technology Stack](#technology-stack)
-- [Quick Start & Testing](#quick-start--testing)
-- [Environment Variables](#environment-variables)
-- [Deployment](#deployment)
-- [Team](#team)
-- [License](#license)
-
----
-
-## 🛣️ Project Workflow (Road to Top 1%)
-
-RythaGelathi was built in **5 distinct engineering phases** to ensure hackathon-winning quality. 
-
-**[👉 Read the full Step-by-Step Implementation Workflow here](./PROJECT_WORKFLOW.md)**
-
-1.  **Phase 1: Foundation** — 2,200-row dataset + 97% accurate RF model.
-2.  **Phase 2: Intelligence** — CrewAI 4-agent pipeline + SHAP explainability.
-3.  **Phase 3: Visual Excellence** — Dashboard gauges, toasts, and skeleton loaders.
-4.  **Phase 4: Localization** — Bhashini Kannada API + Voice-first output.
-5.  **Phase 5: Production Audit** — 17 unit tests + CI/CD + Model persistence.
-
----
-
-## Project Summary
-
-RythaGelathi is a **climate-resilient agriculture platform** built for 62 lakh women farmers in Karnataka.
-
-It is not just a crop recommender — it is a **complete climate adaptation toolkit**:
-
-| What | How |
-|------|-----|
-| 🌾 **Crop Intelligence** | Random Forest + SHAP explainability → top 3 crops with reasons |
-| 🌊 **Irrigation Optimization** | Real agronomic formulas → daily water need, weekly schedule, drought/overwatering alerts |
-| ⚗️ **Fertilizer Intelligence** | NPK gap analysis → excess detection, cost savings, eco-friendly alternatives |
-| 🎮 **Climate Scenario Simulator** | 6 presets (drought, flood, heatwave) → real-time crop/yield/profit recalculation |
-| 🌍 **Carbon Impact Module** | CO₂ per crop per acre → greener farming recommendations |
-| 📊 **Sustainability Score** | 0–100 composite → water efficiency + fertilizer + climate resilience + profitability |
-| 🗺️ **District Intelligence Map** | 9 Karnataka districts → drought/flood risk, crop suitability, click-to-drill |
-| 🇮🇳 **Kannada Output** | Bhashini government API → text translation + text-to-speech |
-| 📈 **Market Intelligence** | Agmarknet mandi prices → profit estimation with offline fallback |
-| 🐛 **Pest Risk Alerts** | Temperature + humidity patterns → weekly pest probability + organic interventions |
-| 🛡️ **Sustainability Status** | Real-time eco-compliance badge (EXCELLENT/GOOD) based on farm profile |
-| 📱 **PWA Offline Support** | Installable mobile app + service worker caching for connectivity-dead zones |
-
-Every number on screen is **computed from real formulas**, not hardcoded.
-
----
-
-## Why This Matters
+## 🔥 The Problem We Solve
 
 <table>
-  <tr>
-    <td style="background:#fef2f2;border:1px solid #fecaca;border-radius:14px;padding:16px;vertical-align:top;">
-      <strong>287</strong><br/>
-      Farmer suicides in Karnataka in 2024. Climate uncertainty drives crop failure and debt.
-    </td>
-    <td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:16px;vertical-align:top;">
-      <strong>62 Lakh</strong><br/>
-      Women perform the majority of farm work but receive zero personalised climate advisory.
-    </td>
-    <td style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:16px;vertical-align:top;">
-      <strong>73%</strong><br/>
-      Farmers get generic advisories that ignore local soil, weather, and market conditions.
-    </td>
-  </tr>
+<tr>
+<td width="33%" align="center" style="background:#fef2f2;border-radius:14px;padding:16px;">
+<h2>287</h2>
+<strong>Farmer suicides in Karnataka (2024)</strong><br/>
+Climate uncertainty drives crop failure, debt, and despair.
+</td>
+<td width="33%" align="center" style="background:#f0fdf4;border-radius:14px;padding:16px;">
+<h2>62 Lakh</h2>
+<strong>Women farmers with zero advisory</strong><br/>
+They perform majority of farm work but receive no personalized climate intelligence.
+</td>
+<td width="33%" align="center" style="background:#eff6ff;border-radius:14px;padding:16px;">
+<h2>73%</h2>
+<strong>Generic advisories that fail</strong><br/>
+Current tools ignore local soil, weather, market, and language barriers.
+</td>
+</tr>
 </table>
 
-RythaGelathi solves this by combining **district-specific intelligence** + **real-time climate simulation** + **Kannada accessibility** into one deployable platform at **₹0 stack cost**.
+> **The gap**: India's existing agritech platforms (AgroStar, Cropin, Plantix, DeHaat) focus on input sales, image-based diagnosis, or enterprise satellite monitoring — **none** combine district-level soil intelligence + SHAP-explainable AI + real-time climate simulation + native language voice I/O into a single zero-cost deployable platform for smallholder women farmers.
 
 ---
 
-## Platform Modules (10)
+## 🌾 What is RythaGelathi?
+
+**RythaGelathi** (ರೈತ ಗೆಳತಿ — "Farmer's Friend" in Kannada) is a **climate-resilient agricultural intelligence platform** purpose-built for the 62 lakh women farmers of Karnataka.
+
+It is **not** just a crop recommender. It is a **complete climate adaptation toolkit**:
+
+| Capability | What It Does |
+|:---|:---|
+| 🧠 **AI Crop Intelligence** | 100-tree Random Forest + SHAP → top 3 crops with explainable reasons |
+| 🌊 **Irrigation Optimization** | Real agronomic formulas → daily water need, 7-day schedule, drought alerts |
+| ⚗️ **Fertilizer Intelligence** | NPK gap analysis → excess detection, ₹/acre savings, eco alternatives |
+| 🎮 **Climate Scenario Simulator** | 6 presets (drought/flood/heatwave) → real-time crop/yield/profit updates |
+| 🌍 **Carbon Impact Tracker** | CO₂ per crop per acre → SDG 13 compliance, tree-offset metrics |
+| 📊 **Sustainability Score** | 0–100 composite from water + fertilizer + climate + profit factors |
+| 🗺️ **District Intelligence Map** | 9 Karnataka districts → drill-down risk profiles |
+| 🎯 **5-Axis Risk Radar** | SVG visualization of weather, soil, market, drought, and AI confidence |
+| 🐛 **Pest Risk AI** | Temp × humidity modeling → pest probability + organic interventions |
+| 🇮🇳 **Kannada Voice Assistant** | Sarvam AI → voice input (ASR) + translation + voice output (TTS) |
+
+**Every number on screen is computed from real formulas, not hardcoded.**
+
+---
+
+## 🏆 Why We're Unique — Competitive Analysis
+
+This is what separates RythaGelathi from every existing agritech platform in India:
+
+| Feature | RythaGelathi | AgroStar | Cropin | Plantix | DeHaat | Kisan Suvidha |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Explainable AI (SHAP)** | ✅ Glass-box | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Multi-Agent Orchestration** | ✅ 4 CrewAI agents | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Kannada Voice I/O** | ✅ Sarvam AI | Partial | ❌ | ❌ | Partial | ❌ |
+| **Climate Scenario Simulator** | ✅ 6 presets, real-time | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Offline-First PWA** | ✅ Full advisory offline | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Irrigation Optimization** | ✅ Formula-driven | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Carbon Footprint Tracking** | ✅ Per crop/acre | ❌ | Partial | ❌ | ❌ | ❌ |
+| **Sustainability Scoring** | ✅ 4-factor composite | ❌ | Partial | ❌ | ❌ | ❌ |
+| **Government Scheme Matcher** | ✅ Auto-matched | ❌ | ❌ | ❌ | ❌ | Basic |
+| **Women Farmer Focus** | ✅ Primary target | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Stack Cost** | **₹0** | Paid | Enterprise | Freemium | Freemium | Free |
+| **District-Level Soil Data** | ✅ 9 districts | ❌ | Satellite | ❌ | ❌ | Generic |
+
+### 🎯 The 5 Pillars That Make Us Unbeatable
+
+1. **Glass-Box AI, Not Black-Box** — Every recommendation comes with SHAP feature-importance breakdown. We don't just say "grow Rice" — we explain *"High Rainfall (+22%) and Phosphorus levels (+18%) drove this recommendation."* This builds **farmer trust**.
+
+2. **Village-Ready Architecture** — PWA with service worker caching means the entire Climate Dashboard works with **zero internet**. The offline JS engine provides full crop advisory when the backend is unreachable. Built for real-world connectivity dead zones.
+
+3. **Sarvam AI Voice-First Design** — Not Google Translate. We use **Sarvam AI** for government-grade Kannada ASR (voice input), translation, and TTS (voice output). Agricultural terminology is accurately localized, not generically translated.
+
+4. **Multi-Agent Intelligence** — While competitors use single-prompt LLM calls, we orchestrate **4 specialized CrewAI agents** (CropAdvisor, MarketAnalyst, WeatherIntel, SoilExpert) that collaborate like a team of agricultural scientists.
+
+5. **Climate Action, Not Just Prediction** — We go beyond crop recommendation. Our 10 climate modules compute **irrigation schedules, fertilizer savings, carbon footprints, sustainability scores, and pest risks** — turning data into actionable farming strategy.
+
+---
+
+## 🧩 Platform Modules (10)
 
 ### Core AI Pipeline
 
-| # | Module | Logic | Output |
-|---|--------|-------|--------|
-| 1 | **AI Crop Recommender** | 100-tree Random Forest on 2,200-sample dataset | Top 3 crops + SHAP force_plot reasons |
-| 2 | **Market Intelligence** | Agmarknet live prices + offline JSON fallback | ₹/quintal profit estimation |
-| 3 | **Weather Intelligence** | OWM 7-day forecast + drought risk scoring | GREEN/AMBER/RED compatibility flags |
-| 4 | **Pest Risk Alert** | Temperature + humidity pattern modeling | Weekly pest probability + organic advice |
+| # | Module | Engine | Output |
+|:--|:-------|:-------|:-------|
+| 1 | **AI Crop Recommender** | 100-tree Random Forest + SHAP on 2,200 samples | Top 3 crops + explainability force plot |
+| 2 | **Market Intelligence** | Agmarknet live prices + offline JSON fallback | ₹/quintal profit estimation + 7-day sparkline |
+| 3 | **Weather Intelligence** | OpenWeatherMap 7-day + drought risk scoring | GREEN/AMBER/RED flags + 15-day rainfall projection |
+| 4 | **Pest Risk AI** | Temperature × humidity pattern modeling | Weekly pest probability + organic interventions |
 
-### Climate Action Modules (NEW)
+### Climate Action Modules
 
-| # | Module | Formula/Logic | Output |
-|---|--------|---------------|--------|
-| 5 | **Irrigation Optimization** | `water = baseWater × tempFactor × humFactor × rainFactor` | Daily L/acre, 7-day schedule, SVG gauges |
-| 6 | **Fertilizer Intelligence** | NPK gap analysis with legume rotation bonus | Excess/low/optimal status, ₹/acre savings |
-| 7 | **Climate Scenario Simulator** | Multi-factor scoring: drought×40 + heat×25 + NPK match | Real-time crop/yield/profit/risk updates |
+| # | Module | Formula / Logic | Output |
+|:--|:-------|:----------------|:-------|
+| 5 | **Irrigation Optimizer** | `water = baseWater × tempFactor × humFactor × rainFactor` | Daily L/acre, 7-day schedule, SVG gauges |
+| 6 | **Fertilizer Intelligence** | NPK gap analysis + legume rotation bonus (−15 kg N/ha) | Excess/low/optimal status, ₹/acre savings |
+| 7 | **Climate Simulator** | Multi-factor scoring: drought×40 + heat×25 + NPK match | Real-time crop/yield/profit/risk recalculation |
 | 8 | **Climate-Resilient Crops** | Drought/flood/heat resistance per crop (0–1 scale) | Categorized crop cards per stress type |
-| 9 | **Carbon Impact Module** | CO₂ kg/acre/season per crop from carbon database | Color-coded comparison bars |
+| 9 | **Carbon Impact** | CO₂ kg/acre/season from carbon database | Color-coded bars + tree-offset equivalents |
 | 10 | **Sustainability Score** | `avg(waterEff + fertEff + climateRes + profitability)` | 0–100 SVG ring gauge + 4-factor breakdown |
 
 ### Supporting Features
 
 | Feature | Implementation |
-|---------|----------------|
-| 🗺️ Karnataka District Map | 9 districts with drought/flood risk, click-to-drill detail panels |
-| 🇮🇳 Kannada Translation | Bhashini API (government) → text + voice |
-| 📋 Government Schemes | Auto-matched based on crop, district, and gender |
-| 📡 System Intelligence Log | Real-time terminal showing 4-agent thinking process |
-| 🏗️ Enterprise Backend | Modular Flask Blueprints + Pydantic validation + Swagger Docs |
-| 📱 WhatsApp Share | One-click advisory sharing |
-| 🎴 Shareable Advisory | WhatsApp-ready PNG card generated from Canvas API |
-| 📊 Price Sparkline | 7-day Agmarknet mandi price trend chart |
+|:--------|:--------------|
+| 🗺️ District Intelligence Map | 9 districts with drought/flood risk, click-to-drill panels |
+| 🎯 5-Axis Risk Radar | SVG chart: Weather, Soil, Market, Drought, AI Confidence |
+| 📅 Crop Growth Calendar | Visual month-by-month lifecycle (Sowing → Harvest) |
+| 🇮🇳 Kannada Voice Assistant | Sarvam AI: ASR + translation + TTS |
+| 📋 Government Schemes | 15+ schemes auto-matched per district/crop/gender |
+| 📄 Season Plan PDF | Downloadable crop calendar + water schedule + schemes |
+| 📱 WhatsApp Share | One-click advisory sharing via Canvas API card |
+| 📈 Price Sparkline | 7-day Agmarknet mandi trend chart |
 | 🌦 Live Weather Card | Real-time district drought/flood risk snapshot |
+| 📡 System Intelligence Log | Real-time terminal showing 4-agent thinking process |
 
 ---
 
-## Impact Metrics
-
-| Metric | Value | Source |
-|--------|-------|--------|
-| Women farmers targeted | 62 lakh | Karnataka agricultural census |
-| Farmer suicides (2024) | 287 | NCRB Karnataka |
-| Water saving potential | Up to 65% | Irrigation engine computation |
-| Fertilizer cost reduction | ₹840–2,500/acre | NPK optimization engine |
-| Carbon tracking range | 0.4–4.5 kg CO₂/acre | Crop carbon database |
-| Districts covered | 9 high-risk | Real drought-risk data |
-| Platform cost | ₹0 | All free-tier APIs |
-| Climate modules | 10 | Fully functional engines |
-
----
-
-## 💎 Technical Standout Features (Hackathon "Edge")
-
-To reach the **Top 1%**, we implemented several features that go beyond standard prototypes:
-
-- **Glass-Box AI (SHAP)**: We don't just provide a result; we provide **explainability**. Every recommendation is backed by a feature-importance breakdown (e.g., "High Rainfall (+22%) was the primary driver for this Rice recommendation").
-- **Government-Grade Translation (Bhashini)**: Instead of generic Google Translate, we integrated the **MeitY Bhashini API** to ensure agricultural terminology is accurate in Kannada.
-- **Cold-Start Optimization**: Using **joblib model persistence**, we reduced prediction latency by **90%**, ensuring the demo feels instantaneous to judges.
-- **Resilience Engineering**: The app features a **Dual-Mode API** system. If the AI backend is unreachable, the frontend automatically switches to a locally-computed **Deterministic Simulation Mode** so the demo never fails.
-- **PWA Excellence**: Fully installable with a service worker that caches the entire **Climate Dashboard**, allowing farmers to use 80% of the app's utility with zero internet.
-
----
-
-## System Architecture
+## 🏗 Technical Architecture
 
 ```mermaid
 flowchart LR
-  classDef farm fill:#14532d,stroke:#86efac,color:#ffffff,stroke-width:2px;
-  classDef api fill:#1d4ed8,stroke:#93c5fd,color:#ffffff,stroke-width:2px;
-  classDef crew fill:#7c3aed,stroke:#d8b4fe,color:#ffffff,stroke-width:2px;
-  classDef climate fill:#b45309,stroke:#fcd34d,color:#ffffff,stroke-width:2px;
-  classDef output fill:#047857,stroke:#6ee7b7,color:#ffffff,stroke-width:2px;
+  classDef farm fill:#14532d,stroke:#86efac,color:#ffffff,stroke-width:2px
+  classDef api fill:#1d4ed8,stroke:#93c5fd,color:#ffffff,stroke-width:2px
+  classDef crew fill:#7c3aed,stroke:#d8b4fe,color:#ffffff,stroke-width:2px
+  classDef climate fill:#b45309,stroke:#fcd34d,color:#ffffff,stroke-width:2px
+  classDef output fill:#047857,stroke:#6ee7b7,color:#ffffff,stroke-width:2px
 
   A[Farmer on Mobile]:::farm --> B[Landing Page]:::farm
   B --> C1[Core Advisory UI]:::farm
   B --> C2[Climate Dashboard]:::farm
 
-  C1 --> D[Flask API]:::api
+  C1 --> D[Flask API + Pydantic]:::api
   D --> E[KrishiCrew Orchestrator]:::crew
 
-  E --> F1[CropAdvisorTool · RF+SHAP]:::crew
-  E --> F2[MarketAnalystTool · Agmarknet]:::climate
-  E --> F3[WeatherIntelTool · OWM]:::climate
-  E --> F4[SoilExpertTool · District Data]:::climate
+  E --> F1[CropAdvisor · RF+SHAP]:::crew
+  E --> F2[MarketAnalyst · Agmarknet]:::climate
+  E --> F3[WeatherIntel · OWM]:::climate
+  E --> F4[SoilExpert · District DB]:::climate
 
-  F1 --> G[Final Advisory Composer]:::output
+  F1 --> G[Advisory Composer]:::output
   F2 --> G
   F3 --> G
   F4 --> G
 
-  G --> H[Bhashini Translation + TTS]:::output
+  G --> H[Sarvam AI Translation + TTS]:::output
   H --> I[Kannada Result Cards]:::farm
 
   C2 --> J1[Irrigation Engine]:::climate
@@ -293,380 +203,312 @@ flowchart LR
   C2 --> J5[District Intel Map]:::climate
 ```
 
----
-
-## Data Flow Diagram
+### Data Flow
 
 ```mermaid
 flowchart TD
-  classDef input fill:#0f766e,stroke:#5eead4,color:#ffffff,stroke-width:2px;
-  classDef api fill:#1d4ed8,stroke:#bfdbfe,color:#ffffff,stroke-width:2px;
-  classDef ml fill:#7c3aed,stroke:#ddd6fe,color:#ffffff,stroke-width:2px;
-  classDef climate fill:#b45309,stroke:#fde68a,color:#ffffff,stroke-width:2px;
-  classDef out fill:#15803d,stroke:#bbf7d0,color:#ffffff,stroke-width:2px;
+  classDef input fill:#0f766e,stroke:#5eead4,color:#ffffff,stroke-width:2px
+  classDef process fill:#7c3aed,stroke:#ddd6fe,color:#ffffff,stroke-width:2px
+  classDef output fill:#15803d,stroke:#bbf7d0,color:#ffffff,stroke-width:2px
 
-  A[Farmer Inputs]:::input --> B[POST /api/recommend]:::api
-  B --> C[Flask API]:::api
-  C --> D[CropAdvisorTool · RF+SHAP]:::ml
-  D --> E[MarketAnalystTool]:::climate
-  D --> F[WeatherIntelTool]:::climate
-  D --> G[SoilExpertTool]:::climate
-  E --> H[Advisory Composer]:::out
-  F --> H
-  G --> H
-  H --> I[Bhashini · Kannada]:::out
-  I --> J[Result Cards + Voice]:::out
-
-  K[Climate Dashboard]:::input --> L[Irrigation Engine]:::climate
-  K --> M[Fertilizer Engine]:::climate
-  K --> N[Scenario Simulator]:::climate
-  K --> O[Carbon + Sustainability]:::climate
-  K --> P[District Map]:::climate
+  A[Farmer Input · Voice or Form]:::input --> B{Backend Available?}
+  B -->|Yes| C[Flask API · Pydantic Validation]:::process
+  B -->|No| D[Offline JS Engine v2.0]:::process
+  C --> E[CrewAI 4-Agent Pipeline]:::process
+  E --> F[RF Model + SHAP Explainability]:::process
+  F --> G[Advisory + Sarvam AI Kannada]:::output
+  D --> H[Local Crop Scoring + Irrigation]:::output
+  G --> I[Result Cards + PDF + WhatsApp]:::output
+  H --> I
 ```
 
 ---
 
-## Climate Dashboard
+## 🧠 AI & ML Deep Dive
 
-The Climate Intelligence Dashboard is a **standalone page** (`climate.html`) with 6 interactive modules:
+### Random Forest Classifier (100 Trees)
+- **Dataset**: 2,200 samples, 7 features (N, P, K, temperature, humidity, pH, rainfall), 22 crop classes
+- **Accuracy**: 97.4% on 80/20 stratified test split
+- **Cold-start optimization**: Model persisted via `joblib` → subsequent loads in <200ms
+- **Why RF over Neural Networks**: Agricultural data is tabular and non-linear. RF handles feature interactions (temp × rainfall) better than linear models, and resists overfitting on our dataset size.
 
-### Simulator
-Drag sliders for rainfall, temperature, humidity, soil pH, and NPK — watch crop recommendation, yield estimate, profit projection, irrigation need, sustainability score, and climate risk update **in real time**.
+### SHAP Explainability (Glass-Box AI)
+- Every prediction generates a **SHAP force plot** showing per-feature contribution
+- Top 3 driving features displayed as human-readable reason cards
+- Example: *"High Rainfall (+22%) was the primary driver for this Rice recommendation"*
+- **Why this matters**: Farmers won't trust a black box. Explainability = adoption.
 
-6 one-click presets: ☀️ Normal · 🏜️ Drought · 🌊 Flood · 🔥 Heatwave · 💧 Water Scarcity · ⚗️ Fertilizer Shortage
+### CrewAI Multi-Agent Orchestration
+Four specialized agents collaborate sequentially:
 
-### Irrigation Engine
-- **Input**: District, crop, soil type, land size, rainfall, temperature, humidity
-- **Output**: Daily water (L/acre), irrigation frequency, water savings %, 7-day schedule with skip-days, drought/overwatering alerts, low-water crop alternatives
-- **Formula**: `dailyWater = baseWater × (1 + max(0, (temp-28)×0.05)) × (1 - hum/300) × max(0.3, 1 - rain/baseWater) / 7`
+| Agent | Expertise | Data Source |
+|:------|:----------|:-----------|
+| `CropAdvisor` | Soil-crop compatibility | RF model + SHAP |
+| `MarketAnalyst` | Profit potential | Agmarknet mandi prices |
+| `WeatherIntel` | Climate survival risk | OpenWeatherMap 7-day forecast |
+| `SoilExpert` | District soil health | Karnataka soil health JSON database |
 
-### Fertilizer Engine
-- **Input**: N, P, K (kg/ha), soil pH, crop type, previous crop
-- **Output**: Excess/low/optimal status per nutrient, ₹/acre cost of overuse, soil health impact, CO₂ from fertilizer, eco-friendly alternatives (vermicompost, neem-coated urea, green manure, bio-fertilizers)
-- **Logic**: Compares current NPK against crop-specific requirements with ±30% tolerance bands. Legume previous crop reduces N requirement by 15 kg/ha.
-
-### Carbon Impact
-CO₂ per crop per acre per season — from 0.4 kg (Toor Dal) to 4.5 kg (Sugarcane) — with color-coded comparison bars.
-
-### Sustainability Score
-Composite 0–100 score from 4 equally weighted factors:
-1. 💧 Water Efficiency
-2. ⚗️ Fertilizer Efficiency
-3. 🌾 Climate Resilience
-4. 💰 Profitability
-
-### District Map
-9 Karnataka districts with drought risk, flood risk, average rainfall, average temperature, best crops, and sustainability baseline. Click any district card for a drill-down detail panel.
+### Drought Risk Classification
+A weighted composite score using real meteorological logic:
+```
+drought_score = (deficit_ratio × 0.65) + (temp_penalty × 0.2) + (dry_day_ratio × 0.15)
+```
+Levels: NORMAL → WATCH → WARNING → EMERGENCY
 
 ---
 
-## Technology Stack
+## ⚙️ Technology Stack
 
-| Layer | Stack | Purpose |
-|-------|-------|---------|
-| Frontend | HTML, CSS, Vanilla JS | 3 pages: Landing, Advisory, Climate Dashboard |
-| Backend | Flask, Flask-CORS | API + static hosting |
-| Orchestration | CrewAI | 4-agent advisory workflow |
-| LLM | Groq LLaMA 3.3 70B | Language reasoning |
-| ML | scikit-learn Random Forest | Crop prediction (100 trees, 2,200 samples) |
-| Explainability | SHAP | Feature-level transparency |
-| Climate Engines | Vanilla JS | Irrigation, fertilizer, carbon, sustainability computation |
-| Weather | OpenWeatherMap | Forecast + drought risk |
-| Market | Agmarknet + offline JSON | Mandi prices + profit estimation |
-| Translation | Bhashini (Govt API) | Kannada text + voice |
+| Layer | Technology | Purpose |
+|:------|:----------|:--------|
+| **Frontend** | HTML5, CSS3, Vanilla JS | Zero-dependency, ultra-fast, PWA-installable |
+| **Backend** | Flask + Flask-CORS + Pydantic | Modular API with input validation |
+| **Orchestration** | CrewAI | 4-agent multi-expert advisory pipeline |
+| **LLM** | Groq LLaMA 3.3 70B | World's fastest inference for language reasoning |
+| **ML Engine** | scikit-learn Random Forest | 100-tree classifier on 2,200 samples |
+| **Explainability** | SHAP | Feature-level transparency on every prediction |
+| **Voice & Language** | Sarvam AI | Kannada ASR + translation + TTS |
+| **Weather** | OpenWeatherMap | 7-day forecast + drought risk scoring |
+| **Market Data** | Agmarknet + offline JSON | Live mandi prices + profit estimation |
+| **PDF Generation** | ReportLab | Season plan with crop calendar + schemes |
+| **API Documentation** | Flasgger (Swagger UI) | Interactive API docs at `/apidocs` |
+| **Production Server** | Gunicorn | WSGI server (2 workers, 120s timeout) |
+| **CI/CD** | GitHub Actions | Automated tests + CSS/HTML/Python validation |
+| **Containerization** | Docker | Production-ready with health checks |
 
 **Total stack cost: ₹0** — all APIs are free-tier.
 
 ---
 
-## API Contract
+## 📊 Impact Metrics
 
-### POST /api/recommend
-
-```json
-{
-  "district": "Raichur",
-  "land_acres": 2,
-  "temperature": 31,
-  "humidity": 62,
-  "rainfall": 92,
-  "ph": 6.7,
-  "N": 82, "P": 42, "K": 38,
-  "input_costs": 18000,
-  "last_crop": "Ragi",
-  "gender": "female"
-}
-```
-
-### POST /api/simulate
-Fast simulation endpoint — bypasses full CrewAI pipeline for real-time slider updates.
-
-### Other Endpoints
-- `GET /` — Landing page
-- `GET /health` — Health check
-- `GET /public/<path>` — Static assets
+| Metric | Value | Source |
+|:-------|:------|:-------|
+| Women farmers targeted | **62 lakh** | Karnataka agricultural census |
+| Farmer suicides (2024) | **287** | NCRB Karnataka |
+| ML model accuracy | **97.4%** | Stratified test split |
+| Water saving potential | **Up to 65%** | Irrigation engine computation |
+| Fertilizer cost reduction | **₹840–2,500/acre** | NPK optimization engine |
+| Carbon tracking range | **0.4–4.5 kg CO₂/acre** | Crop carbon database |
+| Districts covered | **9 high-risk** | Real drought-risk data |
+| Climate modules | **10** | Fully functional engines |
+| Platform cost | **₹0** | All free-tier APIs |
+| Test suite | **21 fast + 8 slow** | Pytest with CI/CD |
 
 ---
 
-## Project Structure
+## 🎬 Live Demo Scenarios
 
-```text
-Rytha_Gelathi/
-├── api/server.py              # Flask API (recommend + simulate + season-plan)
-├── crew/krishi_crew.py        # 4-agent CrewAI pipeline
-├── data/
-│   ├── crop_dataset.csv       # 2,200-row training data
-│   └── karnataka_soil_health.json
-├── frontend/
-│   ├── index.html             # Landing page
-│   ├── core.html              # Advisory tool
-│   ├── climate.html           # Climate dashboard
-│   ├── core.js                # Advisory logic + offline engine
-│   └── premium.js             # Premium features
-├── tools/market_price_tool.py
-├── tests/                     # 17 pytest tests
-├── .github/workflows/         # CI/CD
-├── Dockerfile
-├── render.yaml
-└── requirements.txt
-```
+> Click **[Live Demo](https://rytha-gelathi.vercel.app)** and try these farmer scenarios:
+
+| Scenario | District | Condition | What You'll See |
+|:---------|:---------|:----------|:----------------|
+| 🌾 Lakshmi | Raichur | Drought stress | High drought risk, Toor Dal recommended, 43% water saving |
+| 🌊 Meena | Tumakuru | Post-flood | Flood-tolerant crop, drainage advisory, soil recovery plan |
+| 🔥 Savitha | Dharwad | Heatwave | Heat-resistant variety, early morning irrigation, govt scheme |
+| ✈ Offline | Any | No internet | Toggle offline — JS engine gives full advisory without backend |
+
+### What makes each advisory unique
+- **SHAP explanations** — top 3 soil/climate reasons for every recommendation
+- **Live weather card** — real-time drought/flood risk per district
+- **Price sparkline** — 7-day Agmarknet mandi trend
+- **Farm Health Dashboard** — 5 animated gauges
+- **Season Plan PDF** — downloadable personalized crop calendar
+- **WhatsApp card** — shareable PNG advisory card
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1) Clone
+### 1. Clone & Setup
 
 ```bash
 git clone https://github.com/Yashaswini-V21/Rytha_Gelathi.git
 cd Rytha_Gelathi
-```
-
-### 2) Create Environment
-
-```powershell
 python -m venv .venv
+# Windows:
 .\.venv\Scripts\Activate.ps1
-```
-
-### 3) Install Dependencies
-
-```bash
+# Linux/Mac:
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4) Configure Keys
+### 2. Configure API Keys
 
-```powershell
-Copy-Item .env.example .env
-# Edit .env with your API keys
+```bash
+cp .env.example .env
+# Edit .env with your keys (all free-tier)
 ```
 
-### 5) Run
+| Key | Service | Get It |
+|:----|:--------|:-------|
+| `GROQ_API_KEY` | LLaMA 3.3 70B inference | [console.groq.com](https://console.groq.com/) |
+| `OPENWEATHER_API_KEY` | Weather forecasts | [openweathermap.org](https://openweathermap.org/) |
+| `SARVAM_API_KEY` | Kannada voice + translation | [sarvam.ai](https://www.sarvam.ai/) |
 
-**Full backend (with AI pipeline):**
+### 3. Run
+
 ```bash
+# Full backend (with AI pipeline):
 python api/server.py
-```
 
-**Frontend-only preview (no API keys needed):**
-```bash
+# Frontend-only preview (no API keys needed):
 python serve.py
 ```
 
-### 6) Open
+### 4. Open
 
 | Page | URL |
-|------|-----|
+|:-----|:----|
 | Landing | http://localhost:8000 |
 | Advisory | http://localhost:8000/core.html |
 | Climate Dashboard | http://localhost:8000/climate.html |
+| API Docs | http://localhost:8000/apidocs |
 | Health Check | http://localhost:8000/health |
 
 ---
 
-## 🧪 Quick Start & Testing
+## 🧪 Testing & CI/CD
 
-### Run Unit Tests (Fast — 21 tests in <30s)
+### Run Tests
 
 ```bash
-# Run only fast tests (excludes slow model loading tests)
+# Fast tests only (CI default — <30 seconds)
 pytest tests/ -v -m "not slow"
+# Result: 21 passed, 2 skipped, 8 deselected
 
-# Expected output:
-# 21 passed, 2 skipped, 8 deselected in 11s
-```
-
-### Run All Tests (Slow — includes model training)
-
-```bash
-# Run everything including slow tests
+# All tests including model training
 pytest tests/ -v
 
-# To run ONLY slow tests:
-pytest tests/ -m slow
-```
-
-### Load Test (Concurrent Users)
-
-```bash
-# Test 10 concurrent users × 5 requests each
+# Load test (10 concurrent users × 5 requests)
 python load_test.py
-
-# Expected: >95% success rate
 ```
 
-### Validation Checks (Same as CI)
+### CI/CD Pipeline (GitHub Actions)
 
-```bash
-# CSS brace balance (all files)
-python -c "
-import glob
-for f in glob.glob('frontend/*.css'):
-    css = open(f).read()
-    o, c = css.count('{'), css.count('}')
-    print(f'{f}: {o} opens, {c} closes - {'✅' if o==c else '❌'}')"
-
-# HTML div balance (all files)
-python -c "
-import re, glob
-for f in glob.glob('frontend/*.html'):
-    html = open(f).read()
-    o, c = len(re.findall(r'<div[\s>]', html)), html.count('</div>')
-    print(f'{f}: {o} opens, {c} closes - {'✅' if o==c else '❌'}')"
-```
-
-### CI/CD Pipeline Status
-
-```
-✅ Test Step: 21 passed, 2 skipped (<30 seconds)
-✅ CSS Validation: All 3 files balanced
-✅ HTML Validation: All 4 files div-balanced
-✅ Python Syntax: All files compile clean
-✅ Security Checks: GitGuardian, no secrets detected
-✅ Overall: PASSING
+| Check | Status |
+|:------|:-------|
+| 21 fast unit tests | ✅ Passing |
+| CSS brace validation (3 files) | ✅ Balanced |
+| HTML div validation (4 files) | ✅ Balanced |
+| Python syntax compilation | ✅ Clean |
+| Security (GitGuardian) | ✅ No secrets |
 
 ---
 
-## Environment Variables
+## 🌐 Deployment
 
-**Required:**
-- `GROQ_API_KEY` — Groq LLaMA 3.3 70B (Free tier: 30 RPM)
-- `OPENWEATHER_API_KEY` — OpenWeatherMap One Call API 3.0
-- `BHASHINI_API_KEY` — MeitY Bhashini API Key ([Get it here](https://bhashini.gov.in/ulca/model/explore-models))
-- `BHASHINI_USER_ID` — MeitY Bhashini User ID
-- `BHASHINI_API_URL` — Bhashini endpoint (defaults to ULCACore)
+| Layer | Platform | Configuration |
+|:------|:---------|:-------------|
+| **Frontend** | Vercel | `frontend/` directory auto-deployed |
+| **Backend** | Render | `gunicorn api.server:app --workers 2 --timeout 120` |
+| **PWA** | Service Worker | 13 cached assets, full offline support |
+| **Docker** | Production-ready | Health checks, 2 workers, port 8000 |
 
-**Optional:**
-- `AGMARKNET_API_KEY`, `AGMARKNET_API_URL` — Live mandi prices
-- `CROP_DATASET_PATH` — Custom crop dataset
-- `API_HOST`, `API_PORT` — Server configuration
+> The Climate Dashboard runs **entirely client-side** — no API keys needed.
 
 ---
 
-## Deployment
+## 📁 Project Structure
 
-| Service | What | How |
-|---------|------|-----|
-| **Vercel** | Frontend (3 HTML pages + CSS + JS) | Deploy `frontend/` directory |
-| **Render** | Flask API backend | Deploy with `gunicorn api.server:app --workers 2` |
-
-The Climate Dashboard (`climate.html`) runs **entirely client-side** — no API keys needed. Only the Core Advisory requires the Flask backend.
-
-> **Production Note:** The `render.yaml` and `Dockerfile` both use `gunicorn` (production WSGI server) instead of the Flask dev server for proper concurrency and reliability.
+```
+Rytha_Gelathi/
+├── api/
+│   ├── server.py              # Flask API (recommend + simulate + season-plan + weather)
+│   ├── routes/                # Modular Blueprint routes
+│   └── schemas/               # Pydantic validation models
+├── crew/
+│   └── krishi_crew.py         # 4-agent CrewAI pipeline (1,552 lines of intelligence)
+├── data/
+│   ├── crop_dataset.csv       # 2,200-row training dataset
+│   └── karnataka_soil_health.json  # 9-district soil database
+├── frontend/
+│   ├── index.html             # Landing page
+│   ├── core.html / core.js    # Advisory tool + offline engine
+│   ├── climate.html / .js     # Climate dashboard (6 modules)
+│   ├── premium.js             # Risk radar, crop calendar, pest AI, carbon
+│   ├── sw.js                  # Service worker (PWA offline)
+│   └── manifest.json          # PWA manifest
+├── model/
+│   └── crop_model.pkl         # Pre-trained RF model (6.3 MB, joblib)
+├── tools/
+│   ├── market_price_tool.py   # Agmarknet price integration
+│   └── Karnataka_mandi_prices.json  # Offline price fallback
+├── tests/                     # 29 pytest tests (21 fast + 8 slow)
+├── .github/workflows/ci.yml   # CI/CD pipeline
+├── Dockerfile                 # Production container
+├── render.yaml                # Render deployment config
+├── BIBLE.md                   # Technical deep-dive document
+└── requirements.txt           # 18 Python dependencies
+```
 
 ---
 
-## Team
+## 🔮 Future Roadmap
+
+| Phase | Feature | Impact |
+|:------|:--------|:-------|
+| 🛰️ | **Sentinel-2 Satellite Integration** | NDVI crop health monitoring + flood damage assessment |
+| 🔗 | **Carbon Credit Blockchain** | Verifiable ledger for farmers to trade carbon credits |
+| 🏢 | **FPO Enterprise Dashboard** | Multi-tenant portal for Farmer Producer Organizations |
+| 🤖 | **RAG-Powered Chatbot** | 24/7 Kannada voice agent for pest/disease troubleshooting |
+| 🌦️ | **IoT Weather Stations** | Field-specific micro-climate data from ground sensors |
+| 📈 | **LSTM Price Forecasting** | Predict optimal mandi selling window across South India |
+| 📄 | **Auto Insurance Claims** | One-click filing using satellite-verified climate events |
+
+---
+
+## 👥 Team
 
 | Name | Role |
-|------|------|
+|:-----|:-----|
 | **Yashaswini V** | Data Science & AI/ML |
 | **Darshini K.H** | Full Stack Developer |
 
-**Team:** harvest hex harvesters
-**Hackathon:** WitchHunt 2026 · Climate Action Track
+**Team**: Harvest Hex Harvesters
+**Hackathon**: WitchHunt 2026 · Climate Action Track
 
 ---
 
 ## ✅ Submission Checklist
 
-- [x] Frontend live on Vercel
-- [x] Backend API live on Render  
-- [x] Offline JS engine — works without backend
-- [x] 10 climate AI modules functional
-- [x] Bhashini Kannada voice output
-- [x] SHAP explainability on every recommendation
-- [x] PDF season plan downloadable
-- [x] Farmer persona presets for instant demo
-- [x] Animated AI thinking log
-- [x] 17 pytest unit tests passing
-- [x] CI/CD via GitHub Actions
-- [x] Docker + gunicorn production-ready
-- [x] PWA installable offline
+- [x] 10 climate AI modules — all functional
+- [x] 97.4% accurate Random Forest with SHAP explainability
+- [x] CrewAI 4-agent multi-expert orchestration
+- [x] Sarvam AI Kannada voice input + output
+- [x] Offline-first PWA — works without internet
+- [x] Live on Vercel (frontend) + Render (backend)
+- [x] 29 pytest tests + CI/CD pipeline
+- [x] Docker + Gunicorn production-ready
+- [x] PDF season plan export
+- [x] Government scheme auto-matcher
+- [x] WhatsApp advisory sharing
+- [x] ₹0 total stack cost
 
 ---
 
-## License
+## 📄 License
 
-Open-source under MIT License. See LICENSE for complete terms.
-
----
-
-## 🚀 Future Roadmap: Enterprise Vision
-
-To scale RythaGelathi to a nation-wide platform, we have planned the following enterprise-grade modules:
-
-*   **🛰️ Sentinel-2 Satellite Integration**: Automated crop health monitoring (NDVI) and localized flood damage assessment using Copernicus satellite data.
-*   **🔗 Carbon Credit Blockchain**: Transparent, verifiable ledger for carbon sequestration metrics, allowing farmers to trade carbon credits on global markets.
-*   **🏢 FPO Enterprise Dashboard**: Multi-tenant management portal for **Farmer Producer Organizations** to track thousands of members, aggregate yield projections, and negotiate bulk market prices.
-*   **🤖 Vernacular AI Chatbot (Voice-First)**: 24/7 Kannada-speaking agent powered by RAG (Retrieval-Augmented Generation) for instant troubleshooting of pests and disease.
-*   **🌦️ Hyper-Local Weather Stations**: Integration with IoT ground sensors for field-specific micro-climate data, bypassing generic district-level forecasts.
-*   **📈 Predictive Market Arbitrage**: LSTM-based price forecasting across all major Mandis in South India to suggest the optimal selling window.
-*   **📄 Automated Insurance Claiming**: One-click insurance filing using satellite-verified climate events (drought/flood) for instant payout triggers.
+Open-source under MIT License. See [LICENSE](LICENSE) for complete terms.
 
 ---
 
-## 🌐 Hosting & Deployment
-
-| Layer | Platform | Status |
-|-------|----------|--------|
-| **Frontend** | [Vercel](https://vercel.com/) | ✅ Infrastructure Ready |
-| **Backend API** | [Render](https://render.com/) | ✅ Infrastructure Ready (`render.yaml` + `Dockerfile`) |
-| **PWA** | Service Worker | ✅ Functional (Offline Ready) |
-| **WSGI Server** | Gunicorn | ✅ Production-grade (2 workers, 120s timeout) |
-| **CI/CD** | GitHub Actions | ✅ Tests + CSS + HTML + Python validation |
-
----
-
-## 🏆 Winning Demo Strategy (Top 1%)
-
-**During your 5-minute presentation, emphasize these 3 pillars:**
-
-1. **The "Glass Box" AI**: Don't just say "it recommends Rice." Explain that you use **SHAP explainability** to tell the farmer *why* (e.g., "High Phosphorus drove this pick"). This builds trust.
-2. **Connectivity-First**: Show the **PWA** feature. Mention that *"Our app works offline for farmers in dead zones via service worker caching."*
-3. **Localized Intelligence**: Click the district cards on the **Climate Dashboard**. Show that you aren't using generic data, but district-specific soil health records from your integrated JSON database.
-
----
-
-<!-- FARMING STYLE FOOTER -->
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=0,2,6,11,20&height=160&section=header&text=Climate-Resilient%20Farming%20Starts%20Here&fontSize=32&fontColor=ffffff&animation=fadeIn" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=0,2,6,11,20&height=120&section=header&text=From%20Climate%20Uncertainty%20to%20Confident%20Sowing%20Decisions&fontSize=24&fontColor=ffffff&animation=fadeIn" width="100%"/>
 
-[![Focus](https://img.shields.io/badge/Focus-62_Lakh_Women_Farmers-15803d?style=for-the-badge)](.)
-[![Modules](https://img.shields.io/badge/Modules-10_Climate_Engines-22c55e?style=for-the-badge)](.)
-[![Stack](https://img.shields.io/badge/Stack_Cost-₹0-166534?style=for-the-badge)](.)
-[![Trust](https://img.shields.io/badge/Trust-SHAP_Explainable-1d4ed8?style=for-the-badge)](.)
+[![Focus](https://img.shields.io/badge/Focus-62_Lakh_Women_Farmers-15803d?style=for-the-badge)]()
+[![Modules](https://img.shields.io/badge/Modules-10_Climate_Engines-22c55e?style=for-the-badge)]()
+[![Stack](https://img.shields.io/badge/Stack_Cost-₹0-166534?style=for-the-badge)]()
+[![Trust](https://img.shields.io/badge/AI-SHAP_Explainable-1d4ed8?style=for-the-badge)]()
 
 ### ಕೃಷಿಗೆ ಸ್ಪಷ್ಟತೆ · ರೈತನಿಗೆ ಶಕ್ತಿ
+*Clarity for farming · Strength for the farmer*
 
-<p><strong>From climate uncertainty to confident sowing decisions — powered by AI, delivered in Kannada.</strong></p>
+**Powered by AI · Delivered in Kannada · Built with ❤️ for Karnataka**
 
-[![Star RythaGelathi](https://img.shields.io/badge/Star-RythaGelathi-111827?style=for-the-badge&logo=github)](https://github.com/Yashaswini-V21/Rytha_Gelathi)
+[![Star RythaGelathi](https://img.shields.io/badge/⭐_Star-RythaGelathi-111827?style=for-the-badge&logo=github)](https://github.com/Yashaswini-V21/Rytha_Gelathi)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=110&section=footer&animation=fadeIn" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer&animation=fadeIn" width="100%"/>
 
 </div>
-
-

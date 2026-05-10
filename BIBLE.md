@@ -20,7 +20,7 @@
 | **LLM** | Groq LLaMA 3.3 70B | The world's fastest inference—gives the "System Intelligence" its reasoning speed. |
 | **ML Engine** | scikit-learn (Random Forest) | Proven reliability for multi-class classification on tabular agricultural data. |
 | **Explainability** | SHAP | Essential for building trust; converts "Black Box" AI into a "Glass Box." |
-| **Localization** | MeitY Bhashini API | Government-grade Kannada translation and high-fidelity Voice (TTS). |
+| **Localization** | Sarvam AI | Kannada ASR (voice input), translation (NMT), and TTS (voice output). |
 
 ---
 
@@ -63,8 +63,8 @@
 ## ✅ 5. Advantages & Disadvantages
 
 ### Advantages
-- **Kannada First**: Not just a translation, but a voice-first experience for rural accessibility.
-- **Zero Cost Stack**: Built entirely on free-tier production APIs (Groq, OWM, Bhashini).
+- **Kannada First**: Sarvam AI-powered voice-first experience — ASR, translation, and TTS — for rural accessibility.
+- **Zero Cost Stack**: Built entirely on free-tier production APIs (Groq, OWM, Sarvam AI).
 - **High Resilience**: "Dual-Mode" API ensures the dashboard works even if the AI backend is offline.
 - **Transparent AI**: SHAP-powered reasons build long-term farmer trust.
 
@@ -83,7 +83,7 @@
 **Unique Selling Points (USPs) for the Presentation**:
 1.  **The "Glass Box" Demo**: Click the AI Confidence ring and show the SHAP reasons.
 2.  **The PWA Install**: Show the app icon on your home screen. Mention it's "Village-Ready."
-3.  **The Bhashini Voice**: Play the Kannada audio. This proves you thought about the *end-user*, not just the technology.
+3.  **The Sarvam Voice**: Play the Kannada audio (Sarvam AI TTS). This proves you thought about the *end-user*, not just the technology.
 4.  **Production Rigor**: Mention the 17 unit tests and the 2,200-row dataset. This proves the project is **Audited & Enterprise-Ready**.
 
 ---
