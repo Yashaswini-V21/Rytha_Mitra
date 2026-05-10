@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,6,11,20&height=280&section=header&text=ರೈತ%20ಗೆಳತಿ&fontSize=72&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=RythaGelathi%20·%20Climate%20Intelligence%20for%20Karnataka's%20Women%20Farmers&descAlignY=58&descSize=18" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2,6,11,20&height=280&section=header&text=Rytha%20Gelathi&fontSize=72&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=RythaGelathi%20·%20Climate%20Intelligence%20for%20Karnataka's%20Women%20Farmers&descAlignY=58&descSize=18" width="100%"/>
 
 ### AI-Powered Climate Resilience · Explainable Predictions · Kannada Voice-First
 
