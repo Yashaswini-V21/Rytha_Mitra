@@ -41,6 +41,7 @@ SAMPLE_INPUTS = {
 }
 
 def main() -> None:
+    sys.stdout.reconfigure(encoding='utf-8')
     print("\n" + "=" * 60)
     print("  *   Rytha Mitra -- Krishi Intelligence Demo")
     print("  *   harvest hex harvesters")
