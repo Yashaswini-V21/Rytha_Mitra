@@ -13,7 +13,7 @@ class RecommendRequest(BaseModel):
     K: int = Field(default=38)
     input_costs: float = Field(default=18000.0)
     last_crop: Optional[str] = Field(default="")
-    gender: Optional[str] = Field(default="female")
+    gender: Optional[str] = Field(default="")
 
 class SimulateRequest(BaseModel):
     N: int = Field(default=82)

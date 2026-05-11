@@ -95,7 +95,7 @@ class FarmInput(BaseModel):
     K: int = Field(ge=0, le=300)
     input_costs: float = Field(ge=0, alias="inputCosts")
     last_crop: Optional[str] = Field(default="", alias="lastCrop")
-    gender: Optional[str] = Field(default="female")
+    gender: Optional[str] = Field(default="")
 
     model_config = {"populate_by_name": True}
 

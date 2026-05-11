@@ -1,17 +1,12 @@
 .env
 __pycache__/
 *.pyc
-model/
+*.pkl
 *.pdf
 node_modules/
 .DS_Store
 .venv/
 venv/
-*.pkl
-
-# Cleanup
 scratch/
 *.pkl.bak
-__pycache__/
-.DS_Store
-.env
+.pytest_cache/

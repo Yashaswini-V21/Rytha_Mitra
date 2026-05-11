@@ -1850,8 +1850,11 @@ function addPDFDownloadButton(result) {
               showToast('Advisory generated successfully!', 'success');
             }
             document.getElementById('resultsTitle').textContent = '🌾 Advisory for ' + values.district;
-            var displayData = { ok: true, result: data };
-            lastResult = data; // Store for PDF download
+            // Normalize: online API returns {ok, inputs, result:{...}} — extract .result
+            // Offline engine returns the result directly at top level (has .top_crop but no .result)
+            var actualResult = data.result || data;
+            var displayData = { ok: true, result: actualResult };
+            lastResult = actualResult; // Store for PDF download
             renderResults(displayData, values);
             addPDFDownloadButton(lastResult); // Add PDF download button
             if (window._renderPremiumFeatures) {

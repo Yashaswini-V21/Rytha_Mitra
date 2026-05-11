@@ -10,8 +10,7 @@ const OFFLINE_ASSETS = [
   '/app.js',
   '/core.js',
   '/climate.js',
-  '/premium.js',
-  '/tools/Karnataka_mandi_prices.json'
+  '/premium.js'
 ];
 
 self.addEventListener('install', e => {

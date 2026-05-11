@@ -20,7 +20,7 @@ except ImportError:
 
 CACHE_TTL_SECONDS = 6 * 60 * 60
 TREND_STABLE_THRESHOLD = 0.5
-DEFAULT_STATIC_PATH = os.path.join("tools", "Karnataka_mandi_prices.json")
+DEFAULT_STATIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Karnataka_mandi_prices.json")
 
 
 def _cache_bucket() -> int:

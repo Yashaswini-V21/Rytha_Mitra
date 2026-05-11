@@ -14,10 +14,10 @@ def health():
       200:
         description: System status and dependency health
     """
-    ROOT_DIR = Path(__file__).resolve().parents[2]
+    ROOT_DIR = Path(__file__).resolve().parents[3]
     
     # Check Model
-    model_exists = (ROOT_DIR / "model" / "crop_model.pkl").exists()
+    model_exists = (ROOT_DIR / "src" / "model" / "crop_model.pkl").exists()
     
     # Check Environment
     groq_key = os.getenv("GROQ_API_KEY")
