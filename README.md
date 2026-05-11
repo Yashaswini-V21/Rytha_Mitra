@@ -168,6 +168,9 @@ The project follows a clean, enterprise-standard organization for audit readines
   - 📂 `src/crew/`: Multi-agent orchestration logic (CrewAI).
   - 📂 `src/model/`: Serialized ML models and training scripts.
   - 📂 `src/tools/`: Custom AI tools (Market price, etc.).
+- 📂 `scripts/`: Helper scripts for development and demonstration.
+  - `run_demo.py`: Fast CLI demonstration of the AI pipeline.
+  - `serve.py`: Simple HTTP server for local frontend preview.
 - 📂 `data/`: Curated agricultural datasets (Crop requirements & Soil health).
 - 📂 `docs/`: Technical documentation, Code of Conduct, and architecture deep-dives.
 - 📂 `tests/`: Comprehensive test suite including unit, security, and performance tests.
@@ -236,7 +239,13 @@ SARVAM_API_KEY=your_key_here
 
 ```bash
 # Start the full API and frontend
-python api/server.py
+python src/api/server.py
+
+# (Optional) Start the frontend-only dev server
+python scripts/serve.py
+
+# (Optional) Run the CLI demo
+python scripts/run_demo.py
 
 # Access the platform
 # Landing: http://localhost:8000

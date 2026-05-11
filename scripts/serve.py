@@ -1,7 +1,7 @@
 import http.server, os, socketserver
 
 PORT = 8080
-ROOT = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
