@@ -23,12 +23,16 @@ from reportlab.lib.units import cm
 import io, datetime
 
 # ── Path Setup ──────────────────────────────────
-ROOT_DIR = Path(__file__).resolve().parents[1]
+ROOT_DIR = Path(__file__).resolve().parents[2]
 FRONTEND_DIR = ROOT_DIR / "frontend"
 PUBLIC_DIR = ROOT_DIR / "public"
 
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
+
+SRC_DIR = ROOT_DIR / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 # ── Environment ─────────────────────────────────
 try:
@@ -150,7 +154,7 @@ def create_app():
           200:
             description: System status and dependency health
         """
-        model_exists = (ROOT_DIR / "model" / "crop_model.pkl").exists()
+        model_exists = (ROOT_DIR / "src" / "model" / "crop_model.pkl").exists()
         dataset_exists = (ROOT_DIR / "data" / "crop_dataset.csv").exists()
         soil_exists = (ROOT_DIR / "data" / "karnataka_soil_health.json").exists()
 
@@ -184,7 +188,7 @@ def create_app():
           503:
             description: Dependencies are not fully configured
         """
-        model_exists = (ROOT_DIR / "model" / "crop_model.pkl").exists()
+        model_exists = (ROOT_DIR / "src" / "model" / "crop_model.pkl").exists()
         dataset_exists = (ROOT_DIR / "data" / "crop_dataset.csv").exists()
         soil_exists = (ROOT_DIR / "data" / "karnataka_soil_health.json").exists()
 

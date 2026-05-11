@@ -15,9 +15,10 @@ import json
 import pytest
 from pathlib import Path
 
-# Add project root to path
-ROOT = Path(__file__).resolve().parents[1]
+# Add project root and src to path
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "src"))
 
 
 class TestDataset:

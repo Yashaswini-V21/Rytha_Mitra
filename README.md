@@ -159,6 +159,44 @@ Rytha Mitra leverages a modern, cost-effective, and highly scalable technology s
 
 ---
 
+## 📂 Repository Structure
+
+The project follows a clean, enterprise-standard organization for audit readiness:
+
+- 📂 `src/`: Core application source code.
+  - 📂 `src/api/`: Backend server logic and endpoint definitions.
+  - 📂 `src/crew/`: Multi-agent orchestration logic (CrewAI).
+  - 📂 `src/model/`: Serialized ML models and training scripts.
+  - 📂 `src/tools/`: Custom AI tools (Market price, etc.).
+- 📂 `data/`: Curated agricultural datasets (Crop requirements & Soil health).
+- 📂 `docs/`: Technical documentation, Code of Conduct, and architecture deep-dives.
+- 📂 `tests/`: Comprehensive test suite including unit, security, and performance tests.
+- 📂 `frontend/`: UI components and static assets.
+- 📂 `public/`: Global static assets and branding.
+
+---
+
+## ⚠️ Model Limitations
+
+While Rytha Mitra is designed for high accuracy, the following limitations apply:
+
+1.  **Data Variance**: The current model is trained on a dataset of 2,200 rows. While accurate (91.7%), it may require retraining with local ground-truth data for specific micro-climates.
+2.  **External API Dependencies**: Real-time features (Weather/Market) depend on external API availability (OpenWeatherMap/Agmarknet). Fallback logic is implemented to provide historical averages.
+3.  **Vision Diagnosis**: Gemini Vision AI provides advisory suggestions based on visual symptoms. It is not a substitute for professional laboratory testing in case of severe infestations.
+4.  **Hardware Accuracy**: Soil health data is as accurate as the user's input. For maximum precision, we recommend integration with calibrated IoT soil sensors (planned for Phase 4).
+
+---
+
+## 📜 Technical Audit & Docs
+
+- 📄 [Code of Conduct](docs/CODE_OF_CONDUCT.md)
+- 📄 [Contribution Guide](docs/CONTRIBUTING.md)
+- 📄 [Test Plan & Test Cases](tests/docs/TEST_PLAN.md)
+- 📄 [Security Audit Report](tests/security/vulnerability_scan.md)
+- 📄 [Latest Test Summary](tests/reports/test_summary.md)
+
+---
+
 ## 👥 Meet the Team
 
 **Team Name:** Harvest Hex Harvesters  
