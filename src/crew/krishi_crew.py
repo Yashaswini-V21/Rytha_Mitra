@@ -9,6 +9,17 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
+from pathlib import Path
+
+# Add project root and src to path for tools import
+_THIS_DIR = Path(__file__).resolve().parent
+_ROOT = _THIS_DIR.parents[1]
+_SRC = _ROOT / "src"
+import sys
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
 try:
     import numpy as np
@@ -68,7 +79,7 @@ from tools.market_price_tool import AgmarknetPriceTool
 
 
 FEATURE_COLUMNS = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
-DEFAULT_MODEL_PATH = Path("model/crop_model.pkl")
+DEFAULT_MODEL_PATH = Path("src/model/crop_model.pkl")
 DEFAULT_DATA_PATH = Path("data/crop_dataset.csv")
 DEFAULT_SOIL_PATH = Path("data/karnataka_soil_health.json")
 
