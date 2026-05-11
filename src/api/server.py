@@ -535,6 +535,9 @@ def _payload_to_inputs(payload):
 
 # ── Entry Point ─────────────────────────────────
 if __name__ == "__main__":
+    import sys
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
     host = os.getenv("API_HOST", "0.0.0.0")
     port = int(os.environ.get("PORT", os.getenv("API_PORT", "8000")))
 

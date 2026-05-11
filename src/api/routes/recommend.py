@@ -52,5 +52,5 @@ def recommend():
         logger.error("internal_error", error=str(exc))
         return jsonify({
             "ok": False,
-            "error": "An internal error occurred while processing your request."
+            "error": f"Internal Error: {str(exc)}"
         }), 500

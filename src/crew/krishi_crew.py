@@ -79,9 +79,9 @@ from tools.market_price_tool import AgmarknetPriceTool
 
 
 FEATURE_COLUMNS = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
-DEFAULT_MODEL_PATH = Path("src/model/crop_model.pkl")
-DEFAULT_DATA_PATH = Path("data/crop_dataset.csv")
-DEFAULT_SOIL_PATH = Path("data/karnataka_soil_health.json")
+DEFAULT_MODEL_PATH = _ROOT / "src" / "model" / "crop_model.pkl"
+DEFAULT_DATA_PATH = _ROOT / "data" / "crop_dataset.csv"
+DEFAULT_SOIL_PATH = _ROOT / "data" / "karnataka_soil_health.json"
 
 DEFAULT_YIELD_PER_ACRE = {
     "rice": 22.0,

@@ -1271,7 +1271,7 @@ function addPDFDownloadButton(result) {
     submitBtn.parentNode.insertBefore(resetBtn, submitBtn.nextSibling);
   }
 
-  function renderResults(data) {
+  function renderResults(data, inputs) {
     var r = data.result || {};
     var top     = r.top_crop || 'N/A';
     var profit  = r.profit_estimate || 0;
@@ -1852,7 +1852,7 @@ function addPDFDownloadButton(result) {
             document.getElementById('resultsTitle').textContent = '🌾 Advisory for ' + values.district;
             var displayData = { ok: true, result: data };
             lastResult = data; // Store for PDF download
-            renderResults(displayData);
+            renderResults(displayData, values);
             addPDFDownloadButton(lastResult); // Add PDF download button
             if (window._renderPremiumFeatures) {
               window._renderPremiumFeatures(displayData, values);
