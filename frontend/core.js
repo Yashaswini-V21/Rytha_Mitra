@@ -67,6 +67,36 @@ function initScenarioPresets() {
   });
 }
 
+function addResetButton() {
+  const btn = document.getElementById('resetBtn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const form = document.getElementById('advisorForm');
+    if (form) form.reset();
+    const results = document.getElementById('resultsContainer');
+    if (results) results.style.display = 'none';
+    document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+    showToast('Form fields cleared', 'info');
+  });
+}
+
+function showErrorState(msg) {
+  const container = document.getElementById('resultsContainer');
+  const content = document.getElementById('resultsContent');
+  if (!container || !content) return;
+  
+  content.innerHTML = `
+    <div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#fca5a5; padding:2rem; border-radius:12px; text-align:center; margin-top:1rem;">
+      <div style="font-size:2.5rem; margin-bottom:1rem;">⚠️</div>
+      <h3 style="margin:0 0 0.5rem; color:#f87171;">Unexpected Error</h3>
+      <p style="font-size:0.9rem; opacity:0.8; max-width:400px; margin:0 auto 1.5rem;">${msg || 'The AI advisory engine encountered a temporary issue. Please check your connection and try again.'}</p>
+      <button onclick="location.reload()" class="btn btn-mint" style="padding:0.5rem 1.5rem;">Try Again</button>
+    </div>
+  `;
+  container.style.display = 'block';
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 document.addEventListener('DOMContentLoaded', initScenarioPresets);
 
 // ════════════════════════════════════════════
@@ -328,7 +358,7 @@ const OFFLINE_ENGINE = {
 
 async function submitAdvisory(formData) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
+  const timeout = setTimeout(() => controller.abort(), 60000);
   try {
     const res = await fetch('/api/recommend', {
       method: 'POST',
