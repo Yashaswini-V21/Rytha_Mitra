@@ -86,7 +86,7 @@ def main() -> None:
     print(f"  Profit Estimate: Rs.{profit:,.2f}")
     print(f"  Weather Flag   : {flag}")
     print(f"  Kannada Output : {kannada}")
-    print("\n  Made with heart for the 62 lakh women farmers of Karnataka")
+    print("\n  Made with heart for the farmers of Karnataka")
     print("=" * 60 + "\n")
 
 
