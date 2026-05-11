@@ -1,4 +1,4 @@
-"""Quick validation script for RythaGelathi project integrity."""
+"""Quick validation script for Rytha Mitra project integrity."""
 import re
 import os
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     all_pass &= check_file_contains("Dockerfile", "gunicorn", "Dockerfile uses gunicorn")
     all_pass &= check_file_contains("render.yaml", "gunicorn", "render.yaml uses gunicorn")
     all_pass &= check_file_contains("requirements.txt", "gunicorn", "gunicorn in requirements")
-    all_pass &= check_file_contains(".env.example", "BHASHINI_USER_ID", "BHASHINI_USER_ID in .env.example")
+    all_pass &= check_file_contains(".env.example", "SARVAM_API_KEY", "SARVAM_API_KEY in .env.example")
     
     print("\n" + ("=" * 40))
     print(f"RESULT: {'ALL CHECKS PASSED!' if all_pass else 'SOME CHECKS FAILED'}")

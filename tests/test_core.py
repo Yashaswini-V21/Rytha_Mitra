@@ -1,5 +1,5 @@
 """
-RythaGelathi — Unit Tests
+Rytha Mitra — Unit Tests
 =========================
 Tests for data loading, model training, API endpoints,
 and scheme matching logic.

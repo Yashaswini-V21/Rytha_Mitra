@@ -1,1 +1,1 @@
-# RythaGelathi API Routes Package
+# Rytha Mitra API Routes Package

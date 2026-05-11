@@ -1,4 +1,4 @@
-const CACHE = 'rytha-gelathi-v1';
+const CACHE = 'rytha-mitra-v1';
 const OFFLINE_ASSETS = [
   '/',
   '/index.html',

@@ -1,17 +1,13 @@
 services:
   - type: web
-    name: rythagelathi
+    name: rytha-mitra
     runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn api.server:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: GROQ_API_KEY
         sync: false
-      - key: BHASHINI_API_KEY
-        sync: false
-      - key: BHASHINI_API_URL
-        sync: false
-      - key: BHASHINI_USER_ID
+      - key: SARVAM_API_KEY
         sync: false
       - key: OPENWEATHER_API_KEY
         sync: false

@@ -1,1 +1,1 @@
-# RythaGelathi API Package
+# Rytha Mitra API Package

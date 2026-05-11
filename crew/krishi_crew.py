@@ -31,10 +31,14 @@ except ImportError:  # pragma: no cover
     RandomForestClassifier = None  # type: ignore[assignment]
 
 try:
-    from sklearn.metrics import accuracy_score
-    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+    from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 except ImportError:  # pragma: no cover
     accuracy_score = None  # type: ignore[assignment]
+    classification_report = None  # type: ignore[assignment]
+    confusion_matrix = None  # type: ignore[assignment]
+    StratifiedKFold = None  # type: ignore[assignment]
+    cross_val_score = None  # type: ignore[assignment]
     train_test_split = None  # type: ignore[assignment]
 
 try:
@@ -306,14 +310,14 @@ def _generate_kalasa_mandi_voice_text(crop: str, modal_price: float) -> str:
     return f"{crop} ದ ಬೆಲೆ {price_str} ರೂಪಾಯಿ ಪ್ರತಿ ಕ್ವಿಂಟ್. {crop} ತರುವ ಸಿದ್ಧತೆ ಮಾಡಿ."
 
 
-def _synthesize_mandi_price_audio_bhashini(crop: str, district: str, modal_price: float) -> Dict[str, Any]:
+def _synthesize_mandi_price_audio_sarvam(crop: str, district: str, modal_price: float) -> Dict[str, Any]:
     """
     Enhancement 2: Synthesize Kannada voice for current mandi price.
     Returns audio payload ready for frontend playback.
     """
     try:
         kannada_text = _generate_kalasa_mandi_voice_text(crop, modal_price)
-        return _synthesize_kannada_audio_bhashini(kannada_text)
+        return _synthesize_kannada_audio_sarvam(kannada_text)
     except Exception:
         return {"available": False, "error": "Mandi price voice synthesis failed", "audio_base64": "", "audio_mime": ""}
 
@@ -431,7 +435,7 @@ def _generate_soil_health_card_pdf(
 
         # Footer
         c.setFont("Helvetica", 8)
-        c.drawString(2 * mm, 1.5 * mm, "RythaGelathi • AI-Powered Soil Health Card • April 2026")
+        c.drawString(2 * mm, 1.5 * mm, "Rytha Mitra • AI-Powered Soil Health Card • April 2026")
 
         # Save PDF
         c.save()
@@ -571,27 +575,64 @@ def _build_or_load_model() -> Tuple[RandomForestClassifier, shap.TreeExplainer, 
     X = df[FEATURE_COLUMNS]
     y = df["label"]
 
-    model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
-    model_accuracy: Optional[float] = None
+    # MODEL EVALUATION — 70/30 stratified split + 5-fold CV
+    # Changed from 80/20 per mentor review — reduces overfitting bias
+    # class_weight='balanced' handles synthetic equal-class distribution
+    from sklearn.model_selection import StratifiedKFold, cross_val_score
+    import numpy as np
+    import logging
 
-    if train_test_split is not None and accuracy_score is not None and len(df) >= 10:
+    logger = logging.getLogger(__name__)
+
+    # class_weight='balanced' handles the equal-per-class synthetic distribution
+    model = RandomForestClassifier(
+        n_estimators=100,
+        max_depth=10,
+        random_state=42,
+        class_weight='balanced'
+    )
+    model_accuracy: Optional[float] = None
+    cv_accuracy: Optional[float] = None
+    cv_std: Optional[float] = None
+
+    if train_test_split is not None and accuracy_score is not None and len(df) >= 30:
         try:
+            # FIX 1: Changed from 0.2 to 0.3 (70/30 split) — mentor recommendation
             X_train, X_test, y_train, y_test = train_test_split(
-                X,
-                y,
-                test_size=0.2,
+                X, y,
+                test_size=0.30,
                 random_state=42,
-                stratify=y if len(set(y)) > 1 else None,
+                stratify=y   # ensures each crop class proportionally represented
             )
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             model_accuracy = float(accuracy_score(y_test, y_pred))
-        except Exception:
+
+            # FIX 2: 5-fold stratified cross-validation — most honest metric
+            # Refit on full data after evaluation (standard practice)
+            cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+            cv_scores = cross_val_score(model, X, y, cv=cv, scoring='accuracy')
+            cv_accuracy = float(np.mean(cv_scores))
+            cv_std = float(np.std(cv_scores))
+
+            # Refit on ALL data for production use (after honest evaluation)
             model.fit(X, y)
-            model_accuracy = float(model.score(X, y))
+
+            logger.info(
+                f"Model evaluation — "
+                f"70/30 test accuracy: {model_accuracy:.4f} | "
+                f"5-fold CV: {cv_accuracy:.4f} (+/- {cv_std*2:.4f})"
+            )
+
+        except Exception as e:
+            logger.warning(f"Model evaluation failed: {e}")
+            model.fit(X, y)
+            # FIX 3: Never score on training data — use None instead
+            model_accuracy = None
+            cv_accuracy = None
     else:
         model.fit(X, y)
-        model_accuracy = float(model.score(X, y))
+        model_accuracy = None  # FIX 3: honest — no evaluation possible
 
     # Persist trained model for fast subsequent loads
     try:
@@ -683,89 +724,77 @@ def _extract_json_from_text(value: str, default_obj: Any) -> Any:
         return default_obj
 
 
-def _translate_to_kannada_bhashini(text: str) -> str:
-    url = os.getenv("BHASHINI_API_URL", "").strip()
-    if not url:
-        return "Kannada translation unavailable: BHASHINI_API_URL not set."
+def _translate_to_kannada_sarvam(text: str) -> str:
+    """Translate English text to Kannada using Sarvam AI Translate API."""
+    api_key = os.getenv("SARVAM_API_KEY", "").strip()
+    if not api_key:
+        return "Kannada translation unavailable: SARVAM_API_KEY not set."
 
+    url = "https://api.sarvam.ai/translate"
     payload = {
-        "pipelineTasks": [
-            {
-                "taskType": "translation",
-                "config": {
-                    "language": {
-                        "sourceLanguage": "en",
-                        "targetLanguage": "kn",
-                    }
-                },
-            }
-        ],
-        "inputData": {"input": [{"source": text}]},
+        "input": text[:1500],  # Sarvam limit
+        "source_language_code": "en-IN",
+        "target_language_code": "kn-IN",
+        "speaker_gender": "Female",
+        "mode": "formal",
+        "model": "mayura:v1",
+        "enable_preprocessing": True,
     }
-
-    headers = {"Content-Type": "application/json"}
-    api_key = os.getenv("BHASHINI_API_KEY", "").strip()
-    if api_key:
-        headers["Authorization"] = api_key
-
-    try:
-        response = requests.post(url, json=payload, headers=headers, timeout=8)
-        response.raise_for_status()
-        data = response.json()
-    except (requests.RequestException, ValueError):
-        return "Kannada translation unavailable: Bhashini request failed."
-
-    try:
-        translated = data["pipelineResponse"][0]["output"][0]["target"]
-        if translated:
-            return str(translated)
-    except (KeyError, IndexError, TypeError):
-        pass
-
-    return "Kannada translation unavailable: unexpected Bhashini response."
-
-
-def _synthesize_kannada_audio_bhashini(text: str) -> Dict[str, Any]:
-    url = os.getenv("BHASHINI_API_URL", "").strip()
-    if not url:
-        return {"available": False, "error": "BHASHINI_API_URL not set."}
-
-    payload = {
-        "pipelineTasks": [
-            {
-                "taskType": "tts",
-                "config": {
-                    "language": {
-                        "sourceLanguage": "kn",
-                    },
-                    "gender": os.getenv("BHASHINI_TTS_GENDER", "female"),
-                },
-            }
-        ],
-        "inputData": {"input": [{"source": text}]},
+    headers = {
+        "Content-Type": "application/json",
+        "api-subscription-key": api_key,
     }
-
-    headers = {"Content-Type": "application/json"}
-    api_key = os.getenv("BHASHINI_API_KEY", "").strip()
-    if api_key:
-        headers["Authorization"] = api_key
 
     try:
         response = requests.post(url, json=payload, headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()
-    except (requests.RequestException, ValueError):
-        return {"available": False, "error": "Bhashini TTS request failed."}
+    except (requests.RequestException, ValueError) as e:
+        return f"Kannada translation unavailable: Sarvam AI request failed ({e})."
 
-    audio_base64 = _find_audio_base64(data)
-    if not audio_base64:
-        return {"available": False, "error": "No audio payload in Bhashini response."}
+    translated = data.get("translated_text", "")
+    if translated:
+        return str(translated)
 
-    return {
-        "available": True,
-        "audio_base64": audio_base64,
-        "audio_mime": _infer_audio_mime(audio_base64),
+    return "Kannada translation unavailable: unexpected Sarvam AI response."
+
+
+def _synthesize_kannada_audio_sarvam(text: str) -> Dict[str, Any]:
+    """Synthesize Kannada speech using Sarvam AI Text-to-Speech (Bulbul)."""
+    api_key = os.getenv("SARVAM_API_KEY", "").strip()
+    if not api_key:
+        return {"available": False, "error": "SARVAM_API_KEY not set."}
+
+    url = "https://api.sarvam.ai/text-to-speech"
+    payload = {
+        "inputs": [text[:500]],  # Sarvam TTS limit
+        "target_language_code": "kn-IN",
+        "speaker": "meera",  # Female Kannada speaker
+        "model": "bulbul:v1",
+        "enable_preprocessing": True,
     }
+    headers = {
+        "Content-Type": "application/json",
+        "api-subscription-key": api_key,
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=15)
+        response.raise_for_status()
+        data = response.json()
+    except (requests.RequestException, ValueError):
+        return {"available": False, "error": "Sarvam AI TTS request failed."}
+
+    # Sarvam returns audios array with base64 wav
+    audios = data.get("audios", [])
+    if audios and len(audios) > 0:
+        return {
+            "available": True,
+            "audio_base64": audios[0],
+            "audio_mime": "audio/wav",
+        }
+
+    return {"available": False, "error": "No audio payload in Sarvam AI response."}
 
 
 def _parse_price_from_line(line: str) -> float:
@@ -1404,11 +1433,11 @@ class KrishiCrew:
             f"Weather flag: {weather_flag}. Soil alerts: {soil_alerts}. "
             f"SHAP reasons: {top_crop_reasons}."
         )
-        kannada_summary = _translate_to_kannada_bhashini(english_summary)
-
+        kannada_summary = _translate_to_kannada_sarvam(english_summary)
+        
         tts_payload: Dict[str, Any] = {"available": False, "error": "Skipped"}
         if kannada_summary and "unavailable" not in kannada_summary.lower():
-            tts_payload = _synthesize_kannada_audio_bhashini(kannada_summary)
+            tts_payload = _synthesize_kannada_audio_sarvam(kannada_summary)
 
         model_accuracy = task1_obj.get("model_accuracy")
 
@@ -1425,14 +1454,14 @@ class KrishiCrew:
             modal_price = _safe_float(top_market.get("today_price") or top_market.get("modal_price"), 0.0)
             if modal_price > 0:
                 district = str(inputs.get("district", "Karnataka")) if inputs else "Karnataka"
-                mandi_price_voice = _synthesize_mandi_price_audio_bhashini(top_crop, district, modal_price)
+                mandi_price_voice = _synthesize_mandi_price_audio_sarvam(top_crop, district, modal_price)
 
         # Enhancement 6: Top-3 profitability comparison + Kannada voice summary
         profitability_comparison = _build_profitability_comparison(market_rows)
         profitability_voice = {"available": False, "audio_base64": "", "audio_mime": "", "error": "No comparison rows"}
         profitability_voice_text = _build_profitability_voice_text(profitability_comparison)
         if profitability_voice_text:
-            profitability_voice = _synthesize_kannada_audio_bhashini(profitability_voice_text)
+            profitability_voice = _synthesize_kannada_audio_sarvam(profitability_voice_text)
 
         # Enhancement 7: personalized government scheme matcher
         scheme_matches = _match_government_schemes(inputs or {}, top_crop)

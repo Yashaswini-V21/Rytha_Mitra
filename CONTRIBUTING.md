@@ -1,13 +1,13 @@
-# Contributing to RythaGelathi
+# Contributing to Rytha Mitra
 
-Thank you for your interest in contributing to RythaGelathi — an AI-powered climate advisory platform for Karnataka's women farmers.
+Thank you for your interest in contributing to Rytha Mitra — an AI-powered climate advisory platform for Karnataka's women farmers.
 
 ## 🛠️ Development Setup
 
 ```bash
 # 1. Clone & install
-git clone https://github.com/your-username/Rytha_Gelathi.git
-cd Rytha_Gelathi
+git clone https://github.com/your-username/Rytha_Mitra.git
+cd Rytha_Mitra
 pip install -r requirements.txt
 
 # 2. Configure environment
@@ -24,7 +24,7 @@ python api/server.py  # http://localhost:8000
 ## 📁 Project Structure
 
 ```
-Rytha_Gelathi/
+Rytha_Mitra/
 ├── api/            # Flask API server
 ├── crew/           # CrewAI multi-agent pipeline
 ├── data/           # Crop dataset + soil database

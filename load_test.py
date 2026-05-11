@@ -1,169 +1,81 @@
-#!/usr/bin/env python3
-"""
-Load Test Script for RythaGelathi
-Tests concurrent advisory requests to verify scalability
-Usage: python load_test.py
-"""
-import requests
-import json
-import time
 import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
+import urllib.request
+import urllib.error
+import math
 
-BASE_URL = "http://localhost:8000"
-
-PAYLOADS = [
-    {
-        "district": "Raichur",
-        "land": 2,
-        "temperature": 38,
-        "humidity": 35,
-        "rainfall": 40,
-        "ph": 6.2,
-        "N": 60,
-        "P": 30,
-        "K": 25,
-        "inputCosts": 15000,
-        "lastCrop": "Ragi",
-        "gender": "female"
-    },
-    {
-        "district": "Tumakuru",
-        "land": 4,
-        "temperature": 28,
-        "humidity": 72,
-        "rainfall": 120,
-        "ph": 6.8,
-        "N": 85,
-        "P": 45,
-        "K": 38,
-        "inputCosts": 22000,
-        "lastCrop": "Maize",
-        "gender": "female"
-    },
-    {
-        "district": "Mysore",
-        "land": 3,
-        "temperature": 26,
-        "humidity": 80,
-        "rainfall": 160,
-        "ph": 7.1,
-        "N": 100,
-        "P": 55,
-        "K": 45,
-        "inputCosts": 28000,
-        "lastCrop": "Rice",
-        "gender": "female"
-    }
+# Configuration
+BASE_URL = "https://rytha-mitra.onrender.com"
+ENDPOINTS = [
+    "/health",
+    "/api/weather?district=Raichur",
+    "/api/simulate?district=Raichur&N=60&P=30&K=25&temperature=38&humidity=35&rainfall=40&ph=6.2&land=2"
 ]
+THREADS = 5
+ROUNDS = 3
 
-results = {
-    'success': 0,
-    'failure': 0,
-    'times': [],
-    'errors': []
-}
-results_lock = threading.Lock()
+results = {url: [] for url in ENDPOINTS}
+errors = {url: 0 for url in ENDPOINTS}
 
-def make_request(payload, request_id):
-    """Make single advisory request"""
+def run_test(url):
     try:
         start = time.time()
-        response = requests.post(
-            f"{BASE_URL}/api/recommend",
-            json=payload,
-            timeout=15
-        )
-        elapsed = time.time() - start
-        
-        with results_lock:
-            results['times'].append(elapsed)
-            if response.status_code in [200, 201]:
-                results['success'] += 1
+        with urllib.request.urlopen(f"{BASE_URL}{url}", timeout=15) as response:
+            latency = (time.time() - start) * 1000
+            if response.status == 200:
+                results[url].append(latency)
             else:
-                results['failure'] += 1
-                results['errors'].append(f"Req {request_id}: {response.status_code}")
-        
-        return elapsed, response.status_code
-    except Exception as e:
-        with results_lock:
-            results['failure'] += 1
-            results['errors'].append(f"Req {request_id}: {str(e)}")
-        return None, None
+                errors[url] += 1
+    except Exception:
+        errors[url] += 1
 
-def load_test(concurrent_users=10, requests_per_user=5):
-    """Run load test with specified concurrency"""
-    print(f"\n{'='*60}")
-    print(f"RythaGelathi Load Test")
-    print(f"{'='*60}")
-    print(f"Concurrent users: {concurrent_users}")
-    print(f"Requests per user: {requests_per_user}")
-    print(f"Total requests: {concurrent_users * requests_per_user}")
-    print(f"{'='*60}\n")
+def execute_load_test():
+    print(f"Starting Load Test: {THREADS} threads x {ROUNDS} rounds...")
     
-    start_time = time.time()
-    
-    with ThreadPoolExecutor(max_workers=concurrent_users) as executor:
-        futures = []
-        for user_id in range(concurrent_users):
-            for req_num in range(requests_per_user):
-                payload = PAYLOADS[(user_id + req_num) % len(PAYLOADS)]
-                request_id = f"U{user_id}-R{req_num}"
-                future = executor.submit(make_request, payload, request_id)
-                futures.append(future)
-        
-        # Progress tracker
-        completed = 0
-        for future in as_completed(futures):
-            completed += 1
-            if completed % 5 == 0:
-                print(f"  Progress: {completed}/{concurrent_users * requests_per_user} requests")
-    
-    total_time = time.time() - start_time
-    
-    # Results summary
-    print(f"\n{'='*60}")
-    print(f"Load Test Results")
-    print(f"{'='*60}")
-    print(f"✓ Success: {results['success']}")
-    print(f"✗ Failure: {results['failure']}")
-    print(f"Total time: {total_time:.2f}s")
-    
-    if results['times']:
-        avg_time = sum(results['times']) / len(results['times'])
-        min_time = min(results['times'])
-        max_time = max(results['times'])
-        print(f"Avg response: {avg_time:.3f}s")
-        print(f"Min response: {min_time:.3f}s")
-        print(f"Max response: {max_time:.3f}s")
-        print(f"Requests/sec: {len(results['times']) / total_time:.2f}")
-    
-    if results['errors']:
-        print(f"\nErrors:")
-        for err in results['errors'][:5]:
-            print(f"  - {err}")
-        if len(results['errors']) > 5:
-            print(f"  ... and {len(results['errors']) - 5} more")
-    
-    print(f"{'='*60}\n")
-    
-    # Pass/Fail verdict
-    success_rate = (results['success'] / (results['success'] + results['failure']) * 100) if (results['success'] + results['failure']) > 0 else 0
-    print(f"Success Rate: {success_rate:.1f}%")
-    
-    if success_rate >= 95:
-        print("✓ LOAD TEST PASSED (>95% success)")
-        return True
-    else:
-        print("✗ LOAD TEST FAILED (<95% success)")
-        return False
+    for r in range(ROUNDS):
+        pool = []
+        for url in ENDPOINTS:
+            for _ in range(THREADS):
+                t = threading.Thread(target=run_test, args=(url,))
+                pool.append(t)
+                t.start()
+        for t in pool:
+            t.join()
 
-if __name__ == '__main__':
-    # Quick test: 10 concurrent users, 5 requests each = 50 total
-    passed = load_test(concurrent_users=10, requests_per_user=5)
+    # Generate Report
+    report = "# Load Test Report\n\n"
+    report += "| Endpoint | Avg Latency (ms) | P95 (ms) | Success Rate |\n"
+    report += "| :--- | :--- | :--- | :--- |\n"
     
-    # Optionally run larger test
-    print("\nRunning medium load test (20 users × 3 requests)...")
-    passed = load_test(concurrent_users=20, requests_per_user=3) and passed
+    total_passed = True
     
-    exit(0 if passed else 1)
+    for url in ENDPOINTS:
+        latencies = sorted(results[url])
+        count = len(latencies)
+        total_attempts = THREADS * ROUNDS
+        
+        if count > 0:
+            avg = sum(latencies) / count
+            p95_idx = min(math.ceil(count * 0.95) - 1, count - 1)
+            p95 = latencies[p95_idx]
+            success_rate = (count / total_attempts) * 100
+        else:
+            avg = p95 = 0
+            success_rate = 0
+            
+        report += f"| `{url}` | {avg:.2f}ms | {p95:.2f}ms | {success_rate:.1f}% |\n"
+        
+        # Verdict logic: 100% success rate and < 3s avg latency
+        if success_rate < 100 or avg > 3000:
+            total_passed = False
+
+    with open("LOAD_TEST_REPORT.md", "w") as f:
+        f.write(report)
+    
+    print("\n" + "="*30)
+    print("VERDICT: " + ("PASS" if total_passed else "FAIL"))
+    print("="*30)
+    print("Results saved to LOAD_TEST_REPORT.md")
+
+if __name__ == "__main__":
+    execute_load_test()

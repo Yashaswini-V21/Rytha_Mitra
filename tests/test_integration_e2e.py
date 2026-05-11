@@ -1,5 +1,5 @@
 """
-Integration tests for RythaGelathi end-to-end flow
+Integration tests for Rytha Mitra end-to-end flow
 Tests: form submission → advisory → offline fallback → PDF download
 """
 import pytest
@@ -145,8 +145,8 @@ def test_pdf_filename_format():
     """Test PDF filename format is correct"""
     crop = "Ragi"
     district = "Raichur"
-    filename = f"RythaGelathi_{crop}_{district}.pdf"
-    assert filename == "RythaGelathi_Ragi_Raichur.pdf"
+    filename = f"Rytha Mitra_{crop}_{district}.pdf"
+    assert filename == "Rytha Mitra_Ragi_Raichur.pdf"
     assert ".pdf" in filename
 
 
