@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   RythaGelathi — Premium Differentiators
+   Rytha Mitra — Premium Differentiators
    Risk Radar · Crop Calendar · Pest AI · WhatsApp · Print · Carbon
    ═══════════════════════════════════════════════════════════════ */
 (function () {
@@ -112,14 +112,14 @@
 
   /* ─── WHATSAPP SHARE ─────────────────────────── */
   window.shareWhatsApp = function (topCrop, profit, district, weatherFlag) {
-    var text = '🌾 *RythaGelathi Advisory* 🌾\n\n'
+    var text = '🌾 *Rytha Mitra Advisory* 🌾\n\n'
       + '📍 District: ' + district + '\n'
       + '🌱 Best Crop: *' + topCrop + '*\n'
       + '💰 Expected Profit: ₹' + Math.round(profit).toLocaleString('en-IN') + '\n'
       + '🌦️ Weather: ' + weatherFlag + '\n\n'
       + '🤖 Powered by AI (CrewAI + SHAP)\n'
       + '🇮🇳 ಕನ್ನಡ ವರದಿ ಲಭ್ಯವಿದೆ\n\n'
-      + '→ rythagelathi.com';
+      + '→ rytha-mitra.com';
     window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
   };
 

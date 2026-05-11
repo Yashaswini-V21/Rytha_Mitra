@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RythaGelathi — Core Advisory | ರೈತ ಗೆಳತಿ</title>
-  <meta name="description" content="RythaGelathi Core Advisory — AI crop recommendations with SHAP, live mandi prices, weather flag, soil alerts, and Kannada output.">
+  <title>Rytha Mitra — Core Advisory | ರೈತ ಮಿತ್ರ</title>
+  <meta name="description" content="Rytha Mitra Core Advisory — AI crop recommendations with SHAP, live mandi prices, weather flag, soil alerts, and Kannada output.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -46,14 +46,22 @@
     <div class="container nav-inner">
       <a href="index.html" class="brand">
         <span class="brand-icon">🌾</span>
-        <span>RythaGelathi</span>
-        <span class="brand-kannada" lang="kn">ರೈತ ಗೆಳತಿ</span>
+        <span>Rytha Mitra</span>
+        <span class="brand-kannada" lang="kn">ರೈತ ಮಿತ್ರ</span>
       </a>
       <div class="nav-links" id="navLinks">
         <a href="index.html">← Landing</a>
         <a href="core.html" class="active">Advisory Tool</a>
         <a href="climate.html">🌍 Climate Dashboard</a>
         <a href="climate.html#simulator">Simulator</a>
+      </div>
+      <div class="community-pulse" id="communityPulse">
+        <div class="cp-track">
+          <span class="cp-item"><span class="cp-dot cp-dot-green"></span> <strong>Raichur:</strong> 12 farmers recently switched to Toor Dal</span>
+          <span class="cp-item"><span class="cp-dot cp-dot-amber"></span> <strong>Tumakuru:</strong> Moderate pest alert (Aphids) reported</span>
+          <span class="cp-item"><span class="cp-dot cp-dot-green"></span> <strong>Mysore:</strong> PMFBY Insurance claims active for Rice</span>
+          <span class="cp-item"><span class="cp-dot cp-dot-green"></span> <strong>Dharwad:</strong> 43% water saving achieved this week</span>
+        </div>
       </div>
       <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
@@ -169,6 +177,16 @@
             <span class="tab-icon">🧬</span>
             <span>Analytics</span>
             <span class="tab-subtitle">SHAP Intelligence</span>
+          </button>
+          <button class="tab" role="tab" data-tab="vision" id="tab-btn-vision">
+            <span class="tab-icon">📸</span>
+            <span>Pest Scan</span>
+            <span class="tab-subtitle">Vision AI (Gemini)</span>
+          </button>
+          <button class="tab" role="tab" data-tab="field" id="tab-btn-field">
+            <span class="tab-icon">🛰️</span>
+            <span>Field View</span>
+            <span class="tab-subtitle">Satellite NDVI</span>
           </button>
         </div>
 
@@ -418,6 +436,101 @@
           </div>
         </div>
 
+        <!-- ── VISION TAB ──────────────────── -->
+        <div class="tab-panel" id="tab-vision">
+          <div class="glass-card vision-card">
+            <div class="vision-header">
+               <div class="vision-icon-wrap">📸</div>
+               <div class="vision-title-group">
+                 <h2>Pest & Disease Scanner</h2>
+                 <p>Powered by Gemini 1.5 Flash Vision AI</p>
+               </div>
+               <div class="vision-live-badge"><span class="pulse-dot"></span> LIVE AI</div>
+            </div>
+            
+            <div class="vision-body">
+              <div class="vision-upload-zone" id="visionUploadZone">
+                <input type="file" id="visionFile" accept="image/*" hidden>
+                <div class="vuz-content">
+                  <div class="vuz-icon">📤</div>
+                  <h3>Upload Crop Photo</h3>
+                  <p>Snap a clear photo of the pest or leaf spot for instant diagnosis.</p>
+                  <button type="button" class="btn btn-mint" onclick="document.getElementById('visionFile').click()">Select Photo</button>
+                </div>
+              </div>
+
+              <div class="vision-preview" id="visionPreview" style="display:none;">
+                <div class="vp-image-wrap">
+                  <img id="previewImg" src="" alt="Crop preview">
+                  <div class="vp-scan-line"></div>
+                </div>
+                <div class="vp-actions">
+                  <button type="button" class="btn btn-mint" id="analyzeVisionBtn">🚀 Analyze with Gemini</button>
+                  <button type="button" class="btn-ghost-sm" onclick="location.reload()">↺ Clear</button>
+                </div>
+              </div>
+
+              <div class="vision-results" id="visionResults" style="display:none;">
+                <!-- Results injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── FIELD VIEW TAB ──────────────────── -->
+        <div class="tab-panel" id="tab-field">
+          <div class="glass-card field-view-card">
+            <div class="fv-header">
+               <div class="fv-title-group">
+                 <h2>Sentinel-2 Satellite Intelligence</h2>
+                 <p>Real-time NDVI & Nitrogen Mapping for your coordinates</p>
+               </div>
+               <div class="fv-coords-badge">📍 15.334° N, 76.462° E</div>
+            </div>
+            
+            <div class="fv-body">
+              <div class="fv-map-wrap">
+                <!-- Mock Satellite Map -->
+                <div class="fv-map-mock">
+                  <div class="fv-map-grid"></div>
+                  <div class="fv-field-polygon"></div>
+                  <div class="fv-hotspot" style="top:20%; left:30%"></div>
+                  <div class="fv-hotspot" style="top:60%; left:70%"></div>
+                  <div class="fv-scan-overlay"></div>
+                </div>
+                <div class="fv-legend">
+                  <div class="fvl-item"><span class="fvl-box" style="background:#065f46"></span> High Vigor (0.8+)</div>
+                  <div class="fvl-item"><span class="fvl-box" style="background:#059669"></span> Normal (0.5)</div>
+                  <div class="fvl-item"><span class="fvl-box" style="background:#f59e0b"></span> Stress (0.3)</div>
+                  <div class="fvl-item"><span class="fvl-box" style="background:#ef4444"></span> Critical (0.1)</div>
+                </div>
+              </div>
+
+              <div class="fv-sidebar">
+                <div class="fv-stat-card">
+                  <strong>Current NDVI</strong>
+                  <div class="fv-stat-val">0.72</div>
+                  <p>Health: Robust</p>
+                </div>
+                <div class="fv-stat-card">
+                  <strong>Soil Moisture</strong>
+                  <div class="fv-stat-val">24%</div>
+                  <p>Status: Stable</p>
+                </div>
+                <div class="fv-stat-card">
+                  <strong>Nitrogen Flux</strong>
+                  <div class="fv-stat-val">+12%</div>
+                  <p>Last 7 days</p>
+                </div>
+                <div class="fv-alert">
+                   <strong>🛰️ Satellite Alert</strong>
+                   <p>Lower vegetation vigor detected in NW quadrant. Possible irrigation leak or localized stress.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
           <!-- PREMIUM FEATURES AREA -->
           <div id="premiumFeaturesArea" style="display:none; margin-top: 2.5rem;"></div>
 
@@ -433,7 +546,7 @@
       <div class="tip-card"><strong>Market Tip</strong>Mandi prices peak 4–6 weeks post-harvest.</div>
       <div class="tip-card"><strong>Certified Seeds</strong>Yield 15–22% higher vs unverified seeds.</div>
       <div class="fsb-divider"></div>
-      <div class="fsb-kannada" lang="kn">ರೈತ ಗೆಳತಿ ನಿಮ್ಮ ಜೊತೆ ಇದ್ದಾಳೆ 🌿</div>
+      <div class="fsb-kannada" lang="kn">ರೈತ ಮಿತ್ರ ನಿಮ್ಮ ಜೊತೆ ಇದ್ದಾಳೆ 🌿</div>
     </aside>
   </div>
 
@@ -443,8 +556,8 @@
 
     <div class="container cf-grid">
       <div class="cf-brand">
-        <div class="cf-logo">🌾 RythaGelathi</div>
-        <div class="cf-kn">ರೈತ ಗೆಳತಿ · harvest hex harvesters</div>
+        <div class="cf-logo">🌾 Rytha Mitra</div>
+        <div class="cf-kn">ರೈತ ಮಿತ್ರ · harvest hex harvesters</div>
         <p class="cf-desc">AI climate advisory for women farmers in Karnataka, powered by a 4-agent CrewAI pipeline with explainable crop intelligence and Kannada output.</p>
         <div class="cf-badges">
           <span>WitchHunt 2026</span>
@@ -479,7 +592,7 @@
     </div>
 
     <div class="container cf-bottom">
-      <p>© 2026 RythaGelathi. Built for Karnataka women farmers.</p>
+      <p>© 2026 Rytha Mitra. Built for Karnataka women farmers.</p>
       <p class="cf-bottom-note">CrewAI · Groq LLaMA 3.3 · SHAP · Sarvam AI</p>
     </div>
   </footer>

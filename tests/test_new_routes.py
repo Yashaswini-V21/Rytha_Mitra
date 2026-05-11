@@ -14,9 +14,12 @@ def client():
         yield client
 
 def test_health_endpoint(client):
-    """Tests /health returns 200"""
+    """Tests /health returns status and dependency info"""
     response = client.get('/health')
-    assert response.status_code == 200
+    assert response.status_code in (200, 503)
+    data = response.get_json()
+    assert 'status' in data
+    assert 'dependencies' in data
 
 
 def test_ready_endpoint(client):

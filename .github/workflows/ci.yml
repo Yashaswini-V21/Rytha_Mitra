@@ -1,4 +1,4 @@
-name: RythaGelathi CI
+name: Rytha Mitra CI
 on: [push, pull_request]
 
 jobs:

@@ -5,7 +5,7 @@ import urllib.error
 import math
 
 # Configuration
-BASE_URL = "https://rytha-gelathi.onrender.com"
+BASE_URL = "https://rytha-mitra.onrender.com"
 ENDPOINTS = [
     "/health",
     "/api/weather?district=Raichur",

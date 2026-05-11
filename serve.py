@@ -36,7 +36,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return 'application/javascript', None
         return super().guess_type(path)
 
-print(f"=== RythaGelathi Dev Server ===")
+print(f"=== Rytha Mitra Dev Server ===")
 print(f"  http://localhost:{PORT}/index.html")
 print(f"  http://localhost:{PORT}/climate.html")
 print(f"  http://localhost:{PORT}/core.html")

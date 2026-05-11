@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RythaGelathi -- Quick Demo Runner
+Rytha Mitra -- Quick Demo Runner
 Runs the KrishiCrew pipeline with sample inputs for Raichur district.
 Usage: python run_demo.py
 """
@@ -40,7 +40,7 @@ SAMPLE_INPUTS = {
 
 def main() -> None:
     print("\n" + "=" * 60)
-    print("  *   RythaGelathi -- Krishi Intelligence Demo")
+    print("  *   Rytha Mitra -- Krishi Intelligence Demo")
     print("  *   harvest hex harvesters")
     print("=" * 60)
     print(f"\n  District : {SAMPLE_INPUTS['district']}")

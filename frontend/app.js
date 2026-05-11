@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   RythaGelathi — app.js
+   Rytha Mitra — app.js
    Splash · Stars · Theme · Scroll · Counters · Tabs
    ═══════════════════════════════════════════════ */
 (function () {

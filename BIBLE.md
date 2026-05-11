@@ -1,6 +1,6 @@
-# 📖 RythaGelathi: The Project Bible
+# 📖 Rytha Mitra: The Project Bible
 
-*The ultimate guide to the vision, engineering, and competitive edge of the RythaGelathi Climate Intelligence Platform.*
+*The ultimate guide to the vision, engineering, and competitive edge of the Rytha Mitra Climate Intelligence Platform.*
 
 ---
 
@@ -78,7 +78,7 @@
 
 **Mentor/Judge Question**: *"What makes this more than just another crop recommender?"*
 > **The Winning Answer**: 
-> "Standard recommenders give you a name. RythaGelathi gives you a **Survival Strategy**. We combine **SHAP explainability** (trust), **Bhashini translation** (access), and **10 specialized climate modules** (action). We aren't just predicting a crop; we are computing its daily water needs, its carbon footprint, and its profit in the Raichur Mandi—all delivered in the farmer's native tongue."
+> "Standard recommenders give you a name. Rytha Mitra gives you a **Survival Strategy**. We combine **SHAP explainability** (trust), **Sarvam AI Kannada voice** (access), and **10 specialized climate modules** (action). We aren't just predicting a crop; we are computing its daily water needs, its carbon footprint, and its profit in the Raichur Mandi—all delivered in the farmer's native tongue."
 
 **Unique Selling Points (USPs) for the Presentation**:
 1.  **The "Glass Box" Demo**: Click the AI Confidence ring and show the SHAP reasons.
