@@ -29,6 +29,7 @@
 - [The Vision — For Every Farmer](#-the-vision--for-every-farmer)
 - [What It Does](#-what-it-does)
 - [Why It's Unique](#-why-its-unique)
+- [Competitor Analysis](#-competitor-analysis)
 - [What We Implemented (Real Product Features)](#-what-we-implemented-real-product-features)
 - [Technical Architecture](#-technical-architecture)
 - [Future Enhancements (Phases)](#-future-enhancements-phases)
@@ -67,6 +68,23 @@ Most agritech platforms focus on enterprise dashboards or simple input sales. Ry
 | **Voice-First Empathy** | Powered by **Sarvam AI**, farmers can speak their inputs in Kannada and receive translated text and synthesized audio (TTS) back. No typing required. |
 | **Multi-Agent Brain** | Orchestrated by **CrewAI**, 4 distinct agents (Crop, Weather, Market, Soil) debate and collaborate to form the final advisory, mimicking a real scientific panel. |
 | **Holistic Ecosystem** | It combines diagnostics (Vision AI), monitoring (NDVI), planning (CrewAI), and finance (Credit Score) into a single, cohesive "Space-Tech" interface. |
+
+---
+
+## 📊 Competitor Analysis
+
+Rytha Mitra isn't just another crop recommender; it's a high-fidelity intelligence platform. Here is how we compare against existing industry solutions:
+
+| Feature | **Rytha Mitra** | Plantix | AgroStar | DeHaat | Kisan Suvidha |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Explainable AI (SHAP)** | ✅ **Yes** | ❌ No | ❌ No | ❌ No | ❌ No |
+| **Voice-First (Kannada)** | ✅ **Yes** | ⚠️ Basic | ❌ No | ❌ No | ❌ No |
+| **Multi-Agent Logic** | ✅ **Yes** | ❌ No | ❌ No | ❌ No | ❌ No |
+| **Offline-First PWA** | ✅ **Yes** | ❌ No | ❌ No | ⚠️ Partial | ❌ No |
+| **NDVI Satellite Vision** | ✅ **Yes** | ❌ No | ⚠️ Beta | ❌ No | ❌ No |
+| **Zero-Cost Stack** | ✅ **Yes** | ⚠️ Paid | ⚠️ Paid | ⚠️ Paid | ✅ Yes |
+
+> **The Rytha Mitra Advantage**: While most platforms provide simple look-up tables or basic diagnostics, we provide a **Glass-Box** experience. We don't just tell a farmer what to grow; we explain the *why* (via SHAP) and deliver it in their *native tongue* (via Sarvam AI), ensuring trust and accessibility in the most remote fields.
 
 ---
 

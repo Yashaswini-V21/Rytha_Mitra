@@ -374,7 +374,6 @@ async function submitAdvisory(formData) {
   } catch(err) {
     clearTimeout(timeout);
     console.warn('Backend unavailable, switching to offline engine:', err.message);
-    showErrorState(err.message);
     showOfflineBanner();
     try {
       const offlineResult = OFFLINE_ENGINE.run(formData);

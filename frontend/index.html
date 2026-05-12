@@ -20,6 +20,7 @@
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#home">Skip to content</a>
 
 <!-- ════════════════════════════════════════════════
      SPLASH SCREEN
@@ -32,16 +33,18 @@
 
   <!-- Centered content -->
   <div class="sp-body">
-    <div class="sp-eyebrow"><span class="sp-dot"></span>WitchHunt 2026 · Climate Action Track · Karnataka · 6 AI Modules</div>
+    <div class="sp-eyebrow"><span class="sp-dot"></span>WitchHunt 2026 · Climate Action Track · Karnataka · 8 AI Modules</div>
     <div class="sp-title-wrap">
       <h1 class="sp-title">Rytha Mitra</h1>
     </div>
     <p class="sp-kn">ರೈತ ಮಿತ್ರ · The Farmer's Friend</p>
     <p class="sp-tag">Climate-resilient agriculture platform — irrigation AI, fertilizer optimization, carbon tracking, sustainability scoring.</p>
-    <button class="sp-enter" id="spEnter">
-      Enter App
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </button>
+    <div class="sp-ctr-actions">
+      <button class="sp-enter" id="spEnter">Enter App
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <button class="sp-skip" id="spSkip">Skip Intro</button>
+    </div>
   </div>
 
   <!-- Full-width grass — CSS ::before handles all the tiling -->
@@ -49,20 +52,20 @@
 </div>
 
 <!-- Theme toggle -->
-<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme" aria-pressed="false">🌙</button>
 
 <!-- ════════════════════════════════════════════════
      NAVBAR
 ════════════════════════════════════════════════ -->
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
   <div class="container nav-inner">
     <a href="#home" class="brand">
       <span class="brand-emoji">🌾</span>
       <span>Rytha Mitra</span>
       <span class="brand-kn">ರೈತ ಮಿತ್ರ</span>
     </a>
-    <div class="nav-links" id="navLinks">
-      <a href="#why">Why Built</a>
+    <div class="nav-links" id="navLinks" aria-hidden="false">
+      <a href="#why">Opportunity</a>
       <a href="#howworks">How It Works</a>
       <a href="#features">Features</a>
       <a href="#agents">AI Agents</a>
@@ -70,7 +73,7 @@
       <a href="core.html" class="nav-cta">Open App →</a>
     </div>
     <a href="core.html" class="nav-float-cta" id="navFloatCta">Open Advisory</a>
-    <button class="nav-ham" id="navHam" aria-label="Menu">
+    <button class="nav-ham" id="navHam" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -92,18 +95,17 @@
         <div class="h-badge"><span class="h-bdot"></span>Climate Action · Built for the farmers of Karnataka</div>
         <h1 class="hero-title rv d1">
           Climate-resilient farming<br>
-          in <span class="t-gold">Kannada</span>,<br>
+          in <span class="t-gold">Karnataka</span>,<br>
           <span class="t-mint">AI-powered and actionable</span>.
         </h1>
         <p class="hero-desc rv d2">
-          A complete climate adaptation platform — irrigation optimization, fertilizer intelligence,
-          carbon tracking, and sustainability scoring for daily farm decisions.
+          Actionable, district-focused crop advice in Kannada — faster farm decisions.
         </p>
         <!-- IMPACT COUNTERS -->
         <div class="impact-counters" id="impactCounters">
           <div class="ic-stat">
             <div class="ic-num" data-target="6200000" data-prefix="" data-suffix="+">0</div>
-            <div class="ic-label">Women farmers targeted</div>
+            <div class="ic-label">Farmers supported</div>
           </div>
           <div class="ic-div"></div>
           <div class="ic-stat">
@@ -112,7 +114,7 @@
           </div>
           <div class="ic-div"></div>
           <div class="ic-stat">
-            <div class="ic-num" data-target="10" data-prefix="" data-suffix="">0</div>
+            <div class="ic-num" data-target="8" data-prefix="" data-suffix="">0</div>
             <div class="ic-label">Climate AI modules</div>
           </div>
           <div class="ic-div"></div>
@@ -123,7 +125,7 @@
         </div>
         <div class="hero-mini-stats rv d3">
           <div class="hms"><span class="hms-n">74%</span><span class="hms-l">Crop confidence</span></div>
-          <div class="hms"><span class="hms-n">10</span><span class="hms-l">Climate modules</span></div>
+          <div class="hms"><span class="hms-n">8</span><span class="hms-l">Climate modules</span></div>
           <div class="hms"><span class="hms-n">₹0</span><span class="hms-l">Platform cost</span></div>
         </div>
         <div class="h-tags rv d3">
@@ -135,9 +137,9 @@
         </div>
 
         <div class="h-actions rv d4">
-          <a href="climate.html" class="btn btn-green">🌍 Climate Dashboard →</a>
-          <a href="core.html" class="btn btn-out">Crop Advisory</a>
-          <a href="#why" class="btn btn-out">Why We Built This</a>
+          <a href="core.html" id="primaryCta" class="btn btn-primary" style="background:#1a9a4b;color:#fff;border:none;">Open Advisory →</a>
+          <a href="climate.html" class="btn btn-out">Climate Dashboard</a>
+          <a href="#why" class="btn btn-out">Learn more</a>
         </div>
       </div>
 
@@ -189,7 +191,7 @@
   <div class="container">
     <div class="pl-head rv">
       <div class="sec-label">Product Look</div>
-      <h2>Built like a product, not just a prototype</h2>
+      <h2>Built like a product, not just a concept  </h2>
       <p>Real farm visuals, structured data cards, and a polished advisory flow designed for trust, clarity, and mobile usability.</p>
     </div>
 
@@ -232,66 +234,40 @@
 </section>
 
 <!-- ════════════════════════════════════════════════
-     METRICS
-════════════════════════════════════════════════ -->
-<div class="metrics">
-  <div class="container">
-    <div class="metrics-inner">
-      <div class="m-item"><span class="m-num" data-target="287">0</span><span class="m-lbl">Farmer suicides in Karnataka 2024</span></div>
-      <div class="m-div"></div>
-      <div class="m-item"><span class="m-num" data-target="62" data-suffix=" Lakh">0</span><span class="m-lbl">Women doing majority of farm work</span></div>
-      <div class="m-div"></div>
-      <div class="m-item"><span class="m-num" data-target="10">0</span><span class="m-lbl">Climate intelligence modules</span></div>
-      <div class="m-div"></div>
-      <div class="m-item"><span class="m-num" data-target="65" data-suffix="%">0</span><span class="m-lbl">Water savings via irrigation AI</span></div>
-      <div class="m-div"></div>
-      <div class="m-item"><span class="m-num">₹0</span><span class="m-lbl">Total stack cost — fully free tier</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════
      WHY WE BUILT
 ════════════════════════════════════════════════ -->
 <section class="section" id="why">
   <div class="container">
     <div class="sec-head rv">
-      <div class="sec-label">Why We Built This</div>
-      <h2>A problem hiding in plain sight</h2>
-      <p>Women farmers in Karnataka get the same generic government bulletin — identical for 2 acres in Raichur or 20 acres in Bengaluru. That generality is costing lives.</p>
+      <div class="sec-label">The Opportunity We Have to Build</div>
+      <h2>A massive opportunity for precision agriculture</h2>
+      <p>Karnataka has one of India’s strongest opportunities to scale district-specific, language-first farm intelligence. The gap is not farmer intent — it is access to personalized, actionable advisory.</p>
     </div>
 
     <div class="stats-3">
-      <div class="sc rv d1"><div class="sc-icon">⚠️</div><h3>287</h3><p>Farmer suicides in Karnataka 2024, most linked directly to crop failure from unfit advisory.</p></div>
-      <div class="sc rv d2"><div class="sc-icon">👩‍🌾</div><h3>62 Lakh</h3><p>Women do the majority of farm labour in Karnataka but receive the least tailored guidance.</p></div>
-      <div class="sc rv d3"><div class="sc-icon">📵</div><h3>73%</h3><p>Women farmers receive zero personalised advisory for their actual land, crop, and district.</p></div>
+      <div class="sc rv d1"><div class="sc-icon">👨‍🌾</div><h3>62 Lakh+</h3><p>A large farmer base in Karnataka can benefit from district-level, hyper-local crop decisions.</p></div>
+      <div class="sc rv d2"><div class="sc-icon">📱</div><h3>Mobile-first</h3><p>Advisory can reach farmers through simple browser flows in Kannada, without app-install friction.</p></div>
+      <div class="sc rv d3"><div class="sc-icon">📈</div><h3>High ROI</h3><p>Precision irrigation, fertilizer optimization, and weather-aware planning can unlock major cost and yield improvements.</p></div>
+    </div>
+    <div class="rv" style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+      *Opportunity signals based on public agriculture and state ecosystem data.
     </div>
 
-    <div class="quote-box rv">
-      <p>"The government SMS they get? The <strong>same generic bulletin</strong> for every farmer in the district — regardless of their soil, water source, or land size. <strong>Rytha Mitra changes that.</strong>"</p>
+    <div class="quote-box rv" style="margin-top: 2rem;">
+      <p>"This is not just a farming challenge, it is a scale opportunity: when advisory becomes <strong>district-specific and Kannada-first</strong>, adoption becomes natural and impact compounds season after season."</p>
     </div>
 
     <!-- For Whom -->
     <div class="sec-head rv" style="margin-top:3.5rem;margin-bottom:2rem">
       <div class="sec-label">For Whom</div>
-      <h2>Who benefits from Rytha Mitra</h2>
+      <h2>Who can scale this opportunity</h2>
     </div>
     <div class="whom-grid">
       <div class="wc rv d1"><div class="wc-ico">👨‍🌾</div><h3>Smallholder Farmers</h3><p>Empowering Karnataka's farmers to make daily crop decisions with science-backed, personalised advice in their own language.</p></div>
-      <div class="wc rv d2"><div class="wc-ico">📊</div><h3>Field Extension Officers</h3><p>KVK officers serving dozens of villages can generate district-specific structured advisory instantly, not from monthly bulletins.</p></div>
-      <div class="wc rv d3"><div class="wc-ico">🏛️</div><h3>NGOs & Government Bodies</h3><p>KSSC, NABARD, and climate-action NGOs can deploy this as a ₹0-cost advisory layer for drought-prone taluk programs.</p></div>
-    </div>
-
-    <div class="chips rv">
-      <span>Target districts:</span>
-      <span class="chip chip-r">Raichur</span>
-      <span class="chip chip-r">Kalaburagi</span>
-      <span class="chip chip-r">Vijayapura</span>
-      <span class="chip chip-r">Bidar</span>
-      <span class="chip chip-r">Koppal</span>
-      <span class="chip chip-y">Davanagere</span>
-      <span class="chip chip-y">Chitradurga</span>
-      <span class="chip chip-y">Tumakuru</span>
+      <div class="wc rv d2"><div class="wc-ico">🚜</div><h3>Tenant & Lease Farmers</h3><p>Providing independent agricultural intelligence for farmers working on leased lands, reducing dependency on external advice.</p></div>
+      <div class="wc rv d3"><div class="wc-ico">🩺</div><h3>ASHA & Rural Workers</h3><p>Equipping rural frontline workers with the tools to share vital agricultural and climate alerts within their local communities.</p></div>
+      <div class="wc rv d4"><div class="wc-ico">📊</div><h3>Field Extension Officers</h3><p>KVK officers serving dozens of villages can generate district-specific structured advisory instantly, not from monthly bulletins.</p></div>
+      <div class="wc rv d5"><div class="wc-ico">🏛️</div><h3>NGOs & Government Bodies</h3><p>KSSC, NABARD, and climate-action NGOs can deploy this as a ₹0-cost advisory layer for drought-prone taluk programs.</p></div>
     </div>
   </div>
 </section>
@@ -381,7 +357,7 @@
   <div class="container">
     <div class="sec-head rv">
       <div class="sec-label">What We Deliver</div>
-      <h2>10 climate modules. One platform. In Kannada.</h2>
+      <h2>8 climate modules. One platform. In Kannada.</h2>
       <p>From crop selection to carbon tracking — every tool a farmer needs to adapt to climate change.</p>
     </div>
     <div class="feat-grid">
@@ -495,7 +471,7 @@
         <a href="core.html" class="btn btn-out">Crop Advisory</a>
         <a href="#why" class="btn btn-out">Learn More</a>
       </div>
-      <p class="cta-note">Made with 💚 for climate action · ರೈತ ಮಿತ್ರ · 10 AI modules · ₹0 stack cost</p>
+      <p class="cta-note">Made with 💚 for climate action · ರೈತ ಮಿತ್ರ · 8 AI modules · ₹0 stack cost</p>
     </div>
   </div>
 </section>
@@ -519,8 +495,8 @@
 
     <div class="foot-tabs rv" id="footTabs" aria-label="Footer section tabs">
       <a href="#home" class="foot-tab is-active">Home</a>
-      <a href="#why" class="foot-tab">Problem</a>
-      <a href="#features" class="foot-tab">10 Modules</a>
+      <a href="#why" class="foot-tab">Opportunity</a>
+      <a href="#features" class="foot-tab">8 Modules</a>
       <a href="climate.html" class="foot-tab">🌍 Climate Dashboard</a>
       <a href="core.html" class="foot-tab">Advisory</a>
       <a href="#agents" class="foot-tab">AI Pipeline</a>
@@ -553,16 +529,10 @@
       <div class="foot-col">
         <h5>Climate Action</h5>
         <ul>
-          <li>10 climate intelligence modules</li>
+          <li>8 climate intelligence modules</li>
           <li>Real-time scenario simulation</li>
           <li>Carbon footprint tracking</li>
           <li>Sustainability scoring (0–100)</li>
-        </ul>
-        <h5 style="margin-top:1.3rem">Focus Districts</h5>
-        <ul>
-          <li>Raichur · Kalaburagi · Vijayapura</li>
-          <li>Bidar · Koppal · Davanagere</li>
-          <li>Chitradurga · Tumakuru · Hassan</li>
         </ul>
       </div>
       <div class="foot-col">
@@ -637,6 +607,65 @@
 
   const counters = document.getElementById('impactCounters');
   if (counters) obs.observe(counters);
+})();
+</script>
+<script>
+// Splash skip button + aria helpers (coordinates with app.js splash logic)
+(function(){
+  const splash = document.getElementById('splash');
+  const spSkip = document.getElementById('spSkip');
+  const navHam = document.getElementById('navHam');
+  const navLinks = document.getElementById('navLinks');
+
+  function hideSplash() {
+    if (!splash) return;
+    splash.classList.add('hide');
+    splash.style.display = 'none';
+    document.body.style.overflow = '';
+    try { localStorage.setItem('rytha_skip_splash','1'); } catch(e){}
+    // Re-trigger counter animation after splash is gone
+    setTimeout(function() {
+      var counters = document.getElementById('impactCounters');
+      if (counters) {
+        counters.querySelectorAll('.ic-num').forEach(function(el) {
+          var target = parseInt(el.dataset.target);
+          var prefix = el.dataset.prefix || '';
+          var suffix = el.dataset.suffix || '';
+          if (target === 0 || isNaN(target)) { el.textContent = prefix + '0' + suffix; return; }
+          var start = null, dur = 2000;
+          function fmt(n) {
+            if (n >= 10000000) return (n/10000000).toFixed(1)+'Cr';
+            if (n >= 100000) return Math.round(n/100000)+'L';
+            if (n >= 1000) return (n/1000).toFixed(0)+'K';
+            return n.toString();
+          }
+          function step(ts) {
+            if (!start) start = ts;
+            var p = Math.min((ts - start) / dur, 1);
+            var ease = 1 - Math.pow(1 - p, 3);
+            el.textContent = prefix + fmt(Math.round(ease * target)) + suffix;
+            if (p < 1) requestAnimationFrame(step);
+            else el.textContent = prefix + fmt(target) + suffix;
+          }
+          requestAnimationFrame(step);
+        });
+      }
+    }, 200);
+  }
+
+  // If user previously skipped, hide splash immediately
+  try { if (localStorage.getItem('rytha_skip_splash') === '1') hideSplash(); } catch(e){}
+
+  if (spSkip) spSkip.addEventListener('click', hideSplash);
+
+  // Hamburger aria-expanded toggle (supplements app.js)
+  if (navHam && navLinks) {
+    navHam.addEventListener('click', function(){
+      var expanded = navHam.getAttribute('aria-expanded') === 'true';
+      navHam.setAttribute('aria-expanded', String(!expanded));
+      navLinks.setAttribute('aria-hidden', String(expanded));
+    });
+  }
 })();
 </script>
 </body>

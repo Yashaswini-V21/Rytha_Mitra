@@ -14,6 +14,7 @@
     document.body.style.overflow = 'hidden';
     function closeSplash() {
       splash.classList.add('hide');
+      splash.style.display = 'none';
       document.body.style.overflow = '';
     }
     if (spEnter) spEnter.addEventListener('click', closeSplash);
