@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="core.css">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="/public/9ryta.webp" type="image/webp">
+  <script src="lang_engine.js" defer></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -449,6 +450,26 @@
             </div>
             
             <div class="vision-body">
+              <div class="vision-demo-samples">
+                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem; text-align: center;">
+                  <strong>Quick Demo Samples:</strong> Click to auto-load or right-click to save
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem;">
+                  <div class="demo-sample-item" onclick="window._loadDemoImage('demo_images/healthy.png', 'healthy')">
+                    <img src="demo_images/healthy.png" alt="Healthy Leaf" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid var(--mint); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <span style="display: block; font-size: 0.7rem; text-align: center; margin-top: 0.4rem; color: var(--mint);">1. Healthy</span>
+                  </div>
+                  <div class="demo-sample-item" onclick="window._loadDemoImage('demo_images/average.png', 'average')">
+                    <img src="demo_images/average.png" alt="Average Leaf" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid var(--gold); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <span style="display: block; font-size: 0.7rem; text-align: center; margin-top: 0.4rem; color: var(--gold);">2. Average</span>
+                  </div>
+                  <div class="demo-sample-item" onclick="window._loadDemoImage('demo_images/bad.png', 'bad')">
+                    <img src="demo_images/bad.png" alt="Bad Leaf" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid var(--red); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <span style="display: block; font-size: 0.7rem; text-align: center; margin-top: 0.4rem; color: var(--red);">3. Bad</span>
+                  </div>
+                </div>
+              </div>
+
               <div class="vision-upload-zone" id="visionUploadZone">
                 <input type="file" id="visionFile" accept="image/*" hidden>
                 <div class="vuz-content">

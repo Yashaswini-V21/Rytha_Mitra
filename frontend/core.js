@@ -22,12 +22,74 @@ const PRESETS = {
   }
 };
 
-function showToast(msg, type = 'success') {
-  const t = document.createElement('div');
-  t.className = 'toast toast-' + type;
-  t.textContent = msg;
-  document.getElementById('toastContainer').appendChild(t);
-  setTimeout(() => t.remove(), 3500);
+/* ─── GLOBAL UTILITIES ───────────────────────── */
+window.addLog = function(msg, color) {
+  var log = document.getElementById('system-log');
+  if (!log) return;
+  var entry = document.createElement('div');
+  entry.className = 'log-entry';
+  if (color) entry.style.color = color;
+  var now = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  entry.textContent = '[' + now + '] ' + msg;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+};
+window.addLog('System booting...', 'var(--accent)');
+
+function showToast(message, type = 'info') {
+  var icons = { error: '❌', success: '✅', info: 'ℹ️', warning: '⚠️' };
+  var container = document.getElementById('toastContainer');
+  if (!container) {
+    // Fallback if toastContainer isn't ready
+    alert(message);
+    return;
+  }
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.innerHTML = '<span>' + (icons[type] || '') + '</span><span>' + message + '</span>';
+  container.appendChild(toast);
+  setTimeout(function() {
+    toast.classList.add('toast-exit');
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 4500);
+}
+
+function setLoading(val) {
+  var submitBtn = document.getElementById('submitBtn');
+  var submitText = document.getElementById('btnText');
+  var submitSpinner = document.getElementById('btnSpinner');
+  if (submitBtn) submitBtn.disabled = val;
+  if (submitText) submitText.style.display = val ? 'none' : 'inline';
+  if (submitSpinner) submitSpinner.style.display = val ? 'inline-block' : 'none';
+  
+  var statusText = document.getElementById('system-status-text');
+  if (statusText) {
+    statusText.textContent = val ? 'AI AGENTS ACTIVE' : 'SYSTEM ONLINE';
+    statusText.style.color = val ? 'var(--gold)' : 'var(--accent)';
+  }
+}
+
+function showOfflineBanner() {
+  const existing = document.getElementById('offlineBanner');
+  if (existing) return;
+  const b = document.createElement('div');
+  b.id = 'offlineBanner';
+  b.innerHTML = `
+    <span>⚡ Offline Mode — Local AI engine active. 
+    Cloud advisory available when backend is connected.</span>
+    <button onclick="this.parentElement.remove()" 
+    style="background:none;border:none;color:inherit;cursor:pointer;margin-left:12px;font-size:16px">×</button>`;
+  b.style.cssText = `position:fixed;top:70px;left:50%;transform:translateX(-50%);
+    background:#92400e;color:#fef3c7;padding:10px 20px;border-radius:8px;
+    font-size:13px;z-index:9999;display:flex;align-items:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);max-width:90vw`;
+  document.body.appendChild(b);
+  setTimeout(()=>b?.remove(), 8000);
+}
+
+function hideOfflineBanner() {
+  const b = document.getElementById('offlineBanner');
+  if (b) b.remove();
 }
 
 function initScenarioPresets() {
@@ -123,7 +185,7 @@ function loadDistrictWeather(district) {
   }
 
   // Call backend
-  fetch(`/api/weather?district=${encodeURIComponent(district)}`)
+  fetch(getApiBase() + `/api/weather?district=${encodeURIComponent(district)}`)
     .then(r => r.json())
     .then(data => {
       const riskColor = {
@@ -356,58 +418,75 @@ const OFFLINE_ENGINE = {
   }
 };
 
+// API Base detection - try current origin, fallback to port 8000 if local
+const getApiBase = () => {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return window.location.port === '8000' ? '' : 'http://localhost:8000';
+  }
+  return '';
+};
+
 async function submitAdvisory(formData) {
+  const API_BASE = getApiBase();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
+  
+  console.log('📡 Fetching advisory from:', API_BASE + '/api/recommend');
+  addLog('📡 Connecting to agricultural intelligence node...', 'var(--mint)');
+
   try {
-    const res = await fetch('/api/recommend', {
+    const res = await fetch(API_BASE + '/api/recommend', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
       signal: controller.signal
     });
+    
     clearTimeout(timeout);
-    if (!res.ok) throw new Error('API error '+res.status);
-    const json = await res.json();
-    console.log('Online API response:', json);
-    return json;
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || ('Server Error ' + res.status));
+    }
+    
+    const data = await res.json();
+    console.log('Online API response:', data);
+    hideOfflineBanner();
+    addLog('✅ Advisory received from cloud engine.', 'var(--mint)');
+    return data;
   } catch(err) {
     clearTimeout(timeout);
-    console.warn('Backend unavailable, switching to offline engine:', err.message);
-    showOfflineBanner();
-    try {
-      const offlineResult = OFFLINE_ENGINE.run(formData);
-      console.log('Offline engine result:', offlineResult);
-      return offlineResult;
-    } catch(offlineErr) {
-      console.error('Offline engine failed:', offlineErr);
-      return {
-        advisory_mode: 'offline',
-        top_crop: 'Rice',
-        profit_estimate: 50000,
-        sustainability_score: 85,
-        model_accuracy: 0.92,
-        error: 'Offline fallback'
-      };
+    
+    // Distinguish between Network failure and API failure
+    const isNetworkError = err.name === 'AbortError' || err.message.includes('Failed to fetch') || err.message.includes('NetworkError');
+    
+    if (isNetworkError) {
+      console.warn('Backend unavailable, switching to offline engine:', err.message);
+      addLog('⚠️ Cloud node unreachable. Switching to OFFLINE ENGINE v2.0...', 'var(--amber)');
+      showOfflineBanner();
+      try {
+        const offlineResult = OFFLINE_ENGINE.run(formData);
+        console.log('Offline engine result:', offlineResult);
+        // Normalize for the receiver
+        return {
+          ok: true,
+          advisory_mode: 'offline',
+          result: offlineResult,
+          inputs: formData
+        };
+      } catch(offlineErr) {
+        console.error('Offline engine failed:', offlineErr);
+        addLog('❌ Critical: Both engines failed.', 'var(--red)');
+        return { ok: false, error: 'Both online and offline engines failed' };
+      }
+    } else {
+      // It's a server-side error (e.g. 500)
+      addLog('❌ API Error: ' + err.message, 'var(--red)');
+      showToast('API Error: ' + err.message, 'error');
+      console.error('API Error:', err);
+      return { ok: false, error: err.message };
     }
   }
-}
-
-function showOfflineBanner() {
-  if (document.getElementById('offlineBanner')) return;
-  const b = document.createElement('div');
-  b.id = 'offlineBanner';
-  b.innerHTML = `
-    <span>⚡ Offline Mode — Local AI engine active. 
-    Cloud advisory available when backend is connected.</span>
-    <button onclick="this.parentElement.remove()" 
-    style="background:none;border:none;color:inherit;cursor:pointer;margin-left:12px;font-size:16px">×</button>`;
-  b.style.cssText = `position:fixed;top:70px;left:50%;transform:translateX(-50%);
-    background:#92400e;color:#fef3c7;padding:10px 20px;border-radius:8px;
-    font-size:13px;z-index:9999;display:flex;align-items:center;
-    box-shadow:0 4px 12px rgba(0,0,0,0.3);max-width:90vw`;
-  document.body.appendChild(b);
-  setTimeout(()=>b?.remove(), 8000);
 }
 
 function addPDFDownloadButton(result) {
@@ -437,13 +516,28 @@ function addPDFDownloadButton(result) {
       daily_water:daily, sustainability_score:sust,
       fertilizer_saving:saving, farmer_name:''
     });
-    const apiBase = window.API_BASE || '';
+    const apiBase = getApiBase();
     window.open(`${apiBase}/api/season-plan?${params}`, '_blank');
   };
 
   const rc = document.getElementById('resultsContent');
   if (rc) rc.appendChild(btn);
 }
+
+function downloadSoilPDF(base64, filename) {
+  const binaryString = window.atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  const blob = new Blob([bytes], { type: 'application/pdf' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
 
 /* ═══════════════════════════════════════════════
    Rytha Mitra — Core Advisory Page JS
@@ -543,13 +637,12 @@ function addPDFDownloadButton(result) {
         },
       };
 
-      var sarvamKey = 'demo'; // In production, fetch from server
-
-      fetch('https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline', {
+      var sarvamKey = ''; // Fetch from server or leave empty to trigger mock for demo
+      fetch('https://api.sarvam.ai/speech-to-text-translate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + sarvamKey,
+          'api-subscription-key': sarvamKey,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           language: { sourceLanguage: 'kn' },
@@ -653,7 +746,7 @@ function addPDFDownloadButton(result) {
     // Debounce API call
     clearTimeout(simDebounce);
     simDebounce = setTimeout(function() {
-      fetch('/api/simulate', {
+      fetch(getApiBase() + '/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -718,7 +811,23 @@ function addPDFDownloadButton(result) {
     window.updateSim();
   }
 
-  /* ─── NAVBAR SCROLL ──────────────────────────── */
+  window._loadDemoImage = function (path, type) {
+    var preview = document.getElementById('visionPreview');
+    var uploadZone = document.getElementById('visionUploadZone');
+    var previewImg = document.getElementById('previewImg');
+    if (!preview || !uploadZone || !previewImg) return;
+
+    previewImg.src = path;
+    uploadZone.style.display = 'none';
+    preview.style.display = 'block';
+
+    // Auto-scroll to preview
+    preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    showToast('Loaded ' + type + ' sample. Ready for Gemini analysis.', 'info');
+  };
+
+  /* ─── INITIALIZATION ──────────────────────────── */
   var navbar = document.getElementById('navbar');
   if (navbar) {
     window.addEventListener('scroll', function () {
@@ -755,30 +864,6 @@ function addPDFDownloadButton(result) {
   var resultsBox  = document.getElementById('resultsContainer');
   var resultsContent = document.getElementById('resultsContent');
 
-  /* ─── SYSTEM LOG ─────────────────────────────── */
-  function addLog(msg, color) {
-    var log = document.getElementById('system-log');
-    if (!log) return;
-    var entry = document.createElement('div');
-    entry.className = 'log-entry';
-    if (color) entry.style.color = color;
-    var now = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    entry.textContent = '[' + now + '] ' + msg;
-    log.appendChild(entry);
-    log.scrollTop = log.scrollHeight;
-  }
-
-  function setLoading(val) {
-    submitBtn.disabled = val;
-    submitText.style.display   = val ? 'none' : 'inline';
-    submitSpinner.style.display = val ? 'inline-block' : 'none';
-    
-    var statusText = document.getElementById('system-status-text');
-    if (statusText) {
-      statusText.textContent = val ? 'AI AGENTS ACTIVE' : 'SYSTEM ONLINE';
-      statusText.style.color = val ? 'var(--gold)' : 'var(--accent)';
-    }
-  }
 
   function simulateAgentLogs() {
     var logs = [
@@ -816,459 +901,7 @@ function addPDFDownloadButton(result) {
     };
   }
 
-  /* ─── QUICK DEMO PRESETS ───────────────────── */
-  var presetMap = {
-    'raichur-dry': {
-      district: 'Raichur',
-      land: 2,
-      temperature: 36,
-      humidity: 34,
-      rainfall: 58,
-      ph: 7.1,
-      N: 72,
-      P: 34,
-      K: 29,
-      inputCosts: 17000
-    },
-    'tumakuru-balanced': {
-      district: 'Tumakuru',
-      land: 3,
-      temperature: 30,
-      humidity: 60,
-      rainfall: 96,
-      ph: 6.6,
-      N: 84,
-      P: 44,
-      K: 40,
-      inputCosts: 19500
-    },
-    'mysore-irrigated': {
-      district: 'Mysore',
-      land: 4,
-      temperature: 28,
-      humidity: 68,
-      rainfall: 118,
-      ph: 6.4,
-      N: 92,
-      P: 48,
-      K: 46,
-      inputCosts: 22500
-    }
-  };
-
-  function applyPreset(values) {
-    if (!values) return;
-    ['district', 'land', 'temperature', 'humidity', 'rainfall', 'ph', 'N', 'P', 'K', 'inputCosts'].forEach(function (id) {
-      var field = document.getElementById(id);
-      if (!field) return;
-      field.value = values[id];
-      field.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-  }
-
-  document.querySelectorAll('.scenario-btn[data-preset]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var presetKey = btn.getAttribute('data-preset');
-      applyPreset(presetMap[presetKey]);
-      document.querySelectorAll('.scenario-btn').forEach(function (el) {
-        el.classList.toggle('is-active', el === btn);
-      });
-    });
-  });
-
-  /* ─── RESULT RENDERER ────────────────────────── */
-  function weatherBadgeClass(flag) {
-    if (!flag) return 'badge-flag-amber';
-    var f = flag.toUpperCase();
-    if (f === 'GREEN')  return 'badge-flag-green';
-    if (f === 'RED')    return 'badge-flag-red';
-    return 'badge-flag-amber';
-  }
-
   /* ─── DATA VIZ HELPERS ───────────────────────── */
-  function createCircularGauge(containerId, value, color) {
-    var container = document.getElementById(containerId);
-    if (!container) return;
-    var radius = 45;
-    var circumference = 2 * Math.PI * radius;
-    var offset = circumference - (value / 100) * circumference;
-    
-    var html = '<svg class="gauge-svg" viewBox="0 0 100 100">';
-    html += '<circle class="gauge-bg" cx="50" cy="50" r="' + radius + '"></circle>';
-    html += '<circle class="gauge-progress" cx="50" cy="50" r="' + radius + '" ';
-    html += 'style="stroke:' + color + '; stroke-dasharray:' + circumference + '; stroke-dashoffset:' + circumference + ';"></circle>';
-    html += '</svg>';
-    html += '<div class="gauge-text">' + Math.round(value) + '%</div>';
-    
-    container.innerHTML = html;
-    
-    // Trigger animation
-    setTimeout(function() {
-      var circle = container.querySelector('.gauge-progress');
-      if (circle) circle.style.strokeDashoffset = offset;
-    }, 100);
-  }
-
-  function formatRs(val) {
-    var n = parseFloat(val) || 0;
-    return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
-  }
-
-  // FARM HEALTH DASHBOARD — animated SVG gauges
-  function addFarmHealthDashboard(result) {
-    var resultsContent = document.getElementById('resultsContent');
-    if (!resultsContent) return;
-
-    var dashboardDiv = document.createElement('div');
-    dashboardDiv.className = 'farm-health-dashboard';
-
-    var gaugeData = [
-      { name: 'Crop Match', value: result.confidence || (result.top_crops && result.top_crops[0] && result.top_crops[0].score ? result.top_crops[0].score : 0), color: '#4ade80', key: 'crop-match' },
-      { name: 'Sustainability', value: result.sustainability_score || 0, color: '#f59e0b', key: 'sustainability' },
-      { name: 'Water Efficiency', value: (result.irrigation && result.irrigation.water_saving_percent) ? result.irrigation.water_saving_percent : 43, color: '#60a5fa', key: 'water-efficiency' },
-      { name: 'Soil Health', value: Math.min(95, (result.ph_score || 72)), color: '#a78bfa', key: 'soil-health' },
-      { name: 'Profit Potential', value: Math.min(98, Math.round((result.market && result.market.estimated_profit ? (result.market.estimated_profit / (result.market.estimated_profit + 5000)) * 100 : 0))) || 68, color: '#fb923c', key: 'profit-potential' }
-    ];
-
-    var gaugesHTML = '<div class="dashboard-header"><h3 class="dashboard-title">🌾 Farm Health Dashboard</h3><p class="dashboard-subtitle">AI-computed scores for your farm profile</p></div><div class="gauges-container">';
-    
-    gaugeData.forEach(function(gauge) {
-      gaugesHTML += '<div class="gauge-item" data-gauge="' + gauge.key + '"><svg viewBox="0 0 100 100" class="gauge-svg"><circle cx="50" cy="50" r="38" fill="none" stroke="#1a3a2a" stroke-width="8" /><circle class="gauge-arc" cx="50" cy="50" r="38" fill="none" stroke="' + gauge.color + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 238.76" /></svg><text class="gauge-value" x="50" y="55" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="bold">0%</text><p class="gauge-label">' + gauge.name + '</p></div>';
-    });
-
-    gaugesHTML += '</div>';
-    dashboardDiv.innerHTML = gaugesHTML;
-    resultsContent.insertBefore(dashboardDiv, resultsContent.firstChild);
-
-    setTimeout(function() {
-      requestAnimationFrame(function() {
-        gaugeData.forEach(function(gauge) {
-          var gaugeItem = document.querySelector('[data-gauge="' + gauge.key + '"]');
-          if (!gaugeItem) return;
-          var arc = gaugeItem.querySelector('.gauge-arc');
-          var valueText = gaugeItem.querySelector('.gauge-value');
-          var circumference = 238.76;
-          arc.style.transition = 'stroke-dasharray 1.5s ease-out';
-          arc.style.strokeDasharray = ((gauge.value / 100) * circumference) + ' ' + circumference;
-          valueText.textContent = Math.round(gauge.value) + '%';
-        });
-      });
-    }, 100);
-  }
-
-  // PRICE TREND SPARKLINE — 7-day canvas chart
-  function addPriceTrendSparkline(result) {
-    var crop  = result.primary_crop || 'Rice';
-    var price = (result.market && result.market.price_per_quintal) ? result.market.price_per_quintal : 2500;
-
-    // Generate realistic 7-day price variation (±8%)
-    var seed  = crop.charCodeAt(0);
-    var days  = ['Mon','Tue','Wed','Thu','Fri','Sat','Today'];
-    var prices = days.map(function(_, i) {
-      var variation = Math.sin((seed + i) * 0.7) * 0.08;
-      return Math.round(price * (1 + variation));
-    });
-    prices[6] = price; // Today is always actual price
-
-    var min = Math.min.apply(null, prices);
-    var max = Math.max.apply(null, prices);
-    var trend = prices[6] > prices[0] ? '↑' : '↓';
-    var trendColor = prices[6] > prices[0] ? '#4ade80' : '#ef4444';
-    var change = Math.abs(prices[6] - prices[0]);
-    var pct = ((change / prices[0]) * 100).toFixed(1);
-
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'background:#0f172a; border:1px solid #14532d; border-radius:10px;padding:16px 20px; margin:12px 0;';
-    
-    var daysHTML = days.map(function(d,i) {
-      return '<span style="font-size:10px;color:#6b7280;text-align:center;flex:1">' + d + '<br><span style="color:#94a3b8">₹' + prices[i] + '</span></span>';
-    }).join('');
-
-    wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
-      '<div><span style="color:#f59e0b;font-weight:bold;font-size:14px">📈 Agmarknet Price — ' + crop + '</span>' +
-      '<span style="color:#6b7280;font-size:11px;margin-left:8px">Karnataka Mandis (7-day)</span></div>' +
-      '<div style="text-align:right"><div style="font-size:18px;font-weight:bold;color:#e2e8f0">₹' + price.toLocaleString('en-IN') + '/qtl</div>' +
-      '<div style="font-size:12px;color:' + trendColor + '">' + trend + ' ' + pct + '% this week</div></div></div>' +
-      '<canvas id="sparkline_' + crop + '" width="460" height="60" style="width:100%;max-width:460px;height:60px"></canvas>' +
-      '<div style="display:flex;justify-content:space-between;margin-top:4px">' + daysHTML + '</div>';
-
-    // Insert after market price section or near top of results
-    var resultsContent = document.getElementById('resultsContent');
-    if (resultsContent) {
-      var firstChild = resultsContent.firstChild;
-      resultsContent.insertBefore(wrap, firstChild && firstChild.nextSibling ? firstChild.nextSibling : firstChild);
-    }
-
-    // Draw sparkline on canvas
-    requestAnimationFrame(function() {
-      var canvas = document.getElementById('sparkline_' + crop);
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var W = canvas.width, H = canvas.height;
-      var pad = 4;
-      ctx.clearRect(0,0,W,H);
-
-      // Draw gradient fill
-      var grad = ctx.createLinearGradient(0,0,0,H);
-      grad.addColorStop(0,'rgba(245,158,11,0.3)');
-      grad.addColorStop(1,'rgba(245,158,11,0.02)');
-
-      var pts = prices.map(function(p,i) {
-        return {
-          x: pad + (i / (prices.length-1)) * (W - pad*2),
-          y: H - pad - ((p-min)/(max-min||1)) * (H - pad*2)
-        };
-      });
-
-      // Fill area
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, H);
-      pts.forEach(function(pt) { ctx.lineTo(pt.x, pt.y); });
-      ctx.lineTo(pts[pts.length-1].x, H);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // Draw line
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, pts[0].y);
-      pts.forEach(function(pt) { ctx.lineTo(pt.x, pt.y); });
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 2.5;
-      ctx.lineJoin = 'round';
-      ctx.stroke();
-
-      // Draw dots
-      pts.forEach(function(pt, i) {
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, i === pts.length-1 ? 5 : 3, 0, Math.PI*2);
-        ctx.fillStyle = i === pts.length-1 ? '#f59e0b' : '#92400e';
-        ctx.fill();
-      });
-    });
-  }
-
-  // SHAREABLE CARD — canvas PNG generator
-  function addShareableCard(result) {
-    var existing = document.getElementById('shareCardBtn');
-    if (existing) existing.remove();
-
-    var btn = document.createElement('button');
-    btn.id = 'shareCardBtn';
-    btn.textContent = '📲 Share Advisory Card';
-    btn.style.cssText = 'display:inline-block; margin:8px 8px 8px 0; padding:12px 20px;' +
-      'background:transparent; color:#f59e0b;' +
-      'border:1.5px solid #f59e0b; border-radius:8px;' +
-      'font-size:13px; font-weight:bold; cursor:pointer;';
-
-    btn.onclick = function() {
-      var crop     = result.primary_crop || 'Rice';
-      var district = (document.getElementById('district') && document.getElementById('district').value) || 'Karnataka';
-      var sust     = result.sustainability_score || 75;
-      var water    = (result.irrigation && result.irrigation.daily_water_litres) ? result.irrigation.daily_water_litres : 70;
-      var price    = (result.market && result.market.price_per_quintal) ? result.market.price_per_quintal : 2500;
-      var conf     = result.confidence || ((result.top_crops && result.top_crops[0] && result.top_crops[0].score) ? result.top_crops[0].score : 80);
-      var reason   = (result.top_crops && result.top_crops[0] && result.top_crops[0].reasons && result.top_crops[0].reasons[0]) ? result.top_crops[0].reasons[0] : 'Optimal soil and climate match';
-      var mode     = result.advisory_mode === 'offline' ? '⚡ Offline AI' : '☁ Cloud AI';
-
-      var canvas = document.createElement('canvas');
-      canvas.width  = 600;
-      canvas.height = 340;
-      var ctx = canvas.getContext('2d');
-
-      // Polyfill for roundRect if not available
-      if (!ctx.roundRect) {
-        ctx.roundRect = function(x, y, w, h, r) {
-          if (w < 2*r) r = w/2;
-          if (h < 2*r) r = h/2;
-          this.beginPath();
-          this.moveTo(x+r, y);
-          this.arcTo(x+w, y, x+w, y+h, r);
-          this.arcTo(x+w, y+h, x, y+h, r);
-          this.arcTo(x, y+h, x, y, r);
-          this.arcTo(x, y, x+w, y, r);
-          this.closePath();
-          return this;
-        };
-      }
-
-      // Background
-      var bg = ctx.createLinearGradient(0,0,600,340);
-      bg.addColorStop(0,'#0f2419');
-      bg.addColorStop(1,'#14532d');
-      ctx.fillStyle = bg;
-      ctx.roundRect(0,0,600,340,16);
-      ctx.fill();
-
-      // Gold accent bar
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(0,0,6,340);
-
-      // Logo text
-      ctx.font = 'bold 22px sans-serif';
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillText('🌾 ರೈತ ಮಿತ್ರ · Rytha Mitra', 28, 44);
-
-      // Mode badge
-      ctx.fillStyle = 'rgba(245,158,11,0.15)';
-      ctx.roundRect(440,24,140,24,6);
-      ctx.fill();
-      ctx.font = '11px sans-serif';
-      ctx.fillStyle = '#fcd34d';
-      ctx.fillText(mode, 456, 41);
-
-      // District
-      ctx.font = '13px sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.fillText('📍 ' + district + ' District', 28, 72);
-
-      // Crop name (big)
-      ctx.font = 'bold 52px sans-serif';
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(crop, 28, 145);
-
-      // Reason
-      ctx.font = '13px sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.75)';
-      var reasonText = reason.length > 60 ? reason.substring(0,60) + '...' : reason;
-      ctx.fillText('"' + reasonText + '"', 28, 172);
-
-      // Divider
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(28, 190); ctx.lineTo(572, 190);
-      ctx.stroke();
-
-      // Stats row
-      var stats = [
-        { label:'Confidence',  value: conf + '%',        x:28  },
-        { label:'Sustainability', value: sust + '/100',  x:168 },
-        { label:'Water/Day',   value: water + 'L/acre',  x:338 },
-        { label:'Mandi Price', value:'₹'+price+'/qtl',   x:468 },
-      ];
-      stats.forEach(function(s) {
-        ctx.font = 'bold 24px sans-serif';
-        ctx.fillStyle = '#f59e0b';
-        ctx.fillText(s.value, s.x, 232);
-        ctx.font = '11px sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
-        ctx.fillText(s.label, s.x, 250);
-      });
-
-      // Footer
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      ctx.fillRect(0,290,600,50);
-      ctx.font = '11px sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.fillText(
-        'Rytha Mitra · WitchHunt 2026 · Climate Action · witchhunt.dev',
-        28, 320);
-      ctx.fillText(new Date().toLocaleDateString('en-IN'), 500, 320);
-
-      // Download
-      var link = document.createElement('a');
-      link.download = 'Rytha Mitra_' + crop + '_' + district + '.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    };
-
-    // Add next to PDF button or to results container
-    var pdfBtn = document.getElementById('pdfDownloadBtn');
-    if (pdfBtn) pdfBtn.insertAdjacentElement('beforebegin', btn);
-    else {
-      var resultsContainer = document.getElementById('resultsContainer');
-      if (resultsContainer) resultsContainer.appendChild(btn);
-    }
-  }
-
-  function showErrorState(errorMsg) {
-    const existingError = document.getElementById('errorStateCard');
-    if (existingError) existingError.remove();
-
-    const errorCard = document.createElement('div');
-    errorCard.id = 'errorStateCard';
-    errorCard.style.cssText = `
-      background: #1a0a0a; border: 1px solid #7f1d1d; border-radius: 12px;
-      padding: 20px; margin: 20px 0; color: #fecaca; font-family: inherit;
-      animation: fadeIn 0.3s ease;
-    `;
-
-    errorCard.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 20px;">⚠️</span>
-          <strong style="color: #ef4444;">Advisory Failed</strong>
-        </div>
-        <p style="margin: 0; font-size: 14px; opacity: 0.9;">${errorMsg}</p>
-        <button id="retryOfflineBtn" style="
-          background: #7f1d1d; color: white; border: none; padding: 10px 16px;
-          border-radius: 8px; cursor: pointer; font-weight: 600; width: fit-content;
-          transition: background 0.2s; margin-top: 8px;
-        ">Retry with Offline Engine</button>
-      </div>
-    `;
-
-    const resultsContainer = document.getElementById('resultsContainer');
-    resultsContainer.prepend(errorCard);
-    
-    document.getElementById('retryOfflineBtn').onclick = () => {
-      const formData = getFormValues();
-      submitAdvisory(formData);
-    };
-
-    const autoDismiss = setTimeout(() => {
-      if (errorCard.parentElement) errorCard.remove();
-    }, 6000);
-
-    errorCard.onclick = () => {
-      clearTimeout(autoDismiss);
-      errorCard.remove();
-    };
-  }
-
-  function addResetButton() {
-    const submitBtn = document.getElementById('submitBtn');
-    if (!submitBtn || document.getElementById('resetBtn')) return;
-
-    const resetBtn = document.createElement('button');
-    resetBtn.id = 'resetBtn';
-    resetBtn.type = 'button';
-    resetBtn.innerHTML = '↺ Clear';
-    resetBtn.style.cssText = `
-      background: transparent; border: 1px solid #374151; color: #9ca3af;
-      padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;
-      font-weight: 500; transition: all 0.2s; margin-left: 10px;
-    `;
-
-    resetBtn.onmouseover = () => resetBtn.style.borderColor = '#4b5563';
-    resetBtn.onmouseout = () => resetBtn.style.borderColor = '#374151';
-
-    resetBtn.onclick = () => {
-      const form = document.getElementById('advisorForm');
-      form.reset();
-
-      const idsToRemove = [
-        'errorStateCard', 'weatherCard', 'pdfDownloadBtn', 
-        'shareCardBtn', 'offlineBanner'
-      ];
-      idsToRemove.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-      });
-
-      document.getElementById('resultsContainer').innerHTML = '';
-      
-      document.querySelectorAll('.scenario-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-
-      lastResult = null;
-      showToast("Form cleared — ready for new advisory", "info");
-    };
-
-    submitBtn.parentNode.insertBefore(resetBtn, submitBtn.nextSibling);
-  }
 
   function renderResults(data, inputs) {
     var r = data.result || {};
@@ -1636,6 +1269,7 @@ function addPDFDownloadButton(result) {
       + shapCardsHTML
       + '</div>';
 
+    // Update main container
     resultsContent.innerHTML =
       '<div class="enterprise-container" style="animation: slideUp 0.8s ease;">'
       + '<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">'
@@ -1668,18 +1302,29 @@ function addPDFDownloadButton(result) {
       + '    </div>'
       + '  </div>'
       + '</div>'
-      + '<div class="glass-card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">'
-      + '  <h3 style="color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;">'
-      + '    <span style="font-size: 1.5rem;">🇮🇳</span> ಪ್ರಾದೇಶಿಕ ಸಲಹೆ (Kannada Advisory)'
-      + '  </h3>'
-      + '  <p lang="kn" style="font-size: 1.25rem; line-height: 1.6; color: #eee; font-family: \'Noto Sans Kannada\', sans-serif;">' + kannada + '</p>'
-      + '  <div style="margin-top: 1.5rem;">' + (kannadaAudioAvailable ? '<audio controls style="width: 100%; border-radius: 10px;"><source src="data:' + kannadaAudioMime + ';base64,' + kannadaAudioBase64 + '" type="' + kannadaAudioMime + '"></audio>' : '') + '</div>'
-      + '</div>'
-      + '<div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">'
-      +      mandiPriceVoiceHTML
-      +      soilPdfHTML
-      + '</div>'
       + '</div>';
+
+    // Update Separate Kannada Tab Output Area
+    var kanOutput = document.getElementById('kannada-output-area');
+    if (kanOutput) {
+      if (kannada && !kannada.includes('unavailable')) {
+        kanOutput.innerHTML = '<div style="padding:2rem;">'
+          + '<div style="font-size: 1.25rem; line-height: 1.8; color: #fff; font-family: \'Noto Sans Kannada\', sans-serif; margin-bottom:2rem;">' + kannada + '</div>'
+          + (kannadaAudioAvailable ? '<audio controls style="width: 100%; border-radius: 10px;"><source src="data:' + kannadaAudioMime + ';base64,' + kannadaAudioBase64 + '" type="' + kannadaAudioMime + '"></audio>' : '')
+          + '</div>';
+      } else {
+        kanOutput.innerHTML = '<div style="padding:4rem; text-align:center; opacity:0.6;">⚠️ ಕನ್ನಡ ಅನುವಾದ ಪ್ರಸ್ತುತ ಲಭ್ಯವಿಲ್ಲ (Translation temporarily unavailable)</div>';
+      }
+    }
+
+    // Update Separate SHAP Tab Output Area
+    var shapOutput = document.getElementById('shap-output-area');
+    if (shapOutput) {
+       shapOutput.innerHTML = '<div style="padding:2rem;">'
+         + '<h3 style="color:var(--accent); margin-bottom:1rem;">Decision Factors (SHAP Analysis)</h3>'
+         + shapCardsHTML
+         + '</div>';
+    }
 
     resultsBox.style.display = 'block';
     resultsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1712,20 +1357,6 @@ function addPDFDownloadButton(result) {
   };
 
   /* ─── TOAST NOTIFICATION SYSTEM ─────────────── */
-  function showToast(message, type) {
-    type = type || 'info';
-    var icons = { error: '❌', success: '✅', info: 'ℹ️', warning: '⚠️' };
-    var container = document.getElementById('toastContainer');
-    if (!container) return;
-    var toast = document.createElement('div');
-    toast.className = 'toast toast-' + type;
-    toast.innerHTML = '<span>' + (icons[type] || '') + '</span><span>' + message + '</span>';
-    container.appendChild(toast);
-    setTimeout(function() {
-      toast.classList.add('toast-exit');
-      setTimeout(function() { toast.remove(); }, 300);
-    }, 4500);
-  }
 
   /* ─── AI THINKING TERMINAL DISPLAY ─────────────────────────── */
   var loadingSkeleton = document.getElementById('loadingSkeleton');
@@ -1809,7 +1440,7 @@ function addPDFDownloadButton(result) {
       setLoading(true);
       resultsBox.style.display = 'none';
       showAIThinkingLog();
-      addLog("Initializing precision analysis for " + values.district + "...");
+      if (window.addLog) window.addLog("Initializing precision analysis for " + values.district + "...");
 
       // Dynamic agent logs based on actual form values
       var dynamicLogs = [
@@ -1822,11 +1453,22 @@ function addPDFDownloadButton(result) {
         "Sarvam AI: Preparing Kannada translation pipeline...",
         "System: Computing drought risk score for " + values.district + "..."
       ];
-      dynamicLogs.forEach(function(msg, i) {
-        setTimeout(function() {
-          if (submitBtn.disabled) addLog(msg);
-        }, (i + 1) * 700);
-      });
+      function checkBackendStatus() {
+        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+          ? (window.location.port === '8000' ? '' : 'http://localhost:8000') 
+          : '';
+        
+        fetch(API_BASE + '/health')
+          .then(r => r.ok ? r.json() : Promise.reject())
+          .then(d => {
+            if (window.addLog) window.addLog('🌐 Backend Connected: ' + d.service + ' v' + d.version, 'var(--mint)');
+            console.log('Backend Healthy:', d);
+          })
+          .catch(() => {
+            if (window.addLog) window.addLog('📡 Backend Offline: Running in local-only mode', 'var(--amber)');
+          });
+      }
+      checkBackendStatus();
 
       submitAdvisory(values).then(function(data) {
         hideAIThinkingLog();
@@ -1842,10 +1484,10 @@ function addPDFDownloadButton(result) {
           if (data.advisory_mode === 'offline' || data.ok || data.top_crop) {
             console.log('✅ SUCCESS PATH TRIGGERED');
             if (data.advisory_mode === 'offline') {
-              addLog("⚡ Offline Engine: Local AI advisory generated.", "#f59e0b");
+              if (window.addLog) window.addLog("⚡ Offline Engine: Local AI advisory generated.", "#f59e0b");
               showToast('Offline mode active — Local advisory generated!', 'info');
             } else {
-              addLog("✅ All agents completed. Rendering dashboard.", "var(--accent)");
+              if (window.addLog) window.addLog("✅ All agents completed. Rendering dashboard.", "var(--accent)");
               showToast('Advisory generated successfully!', 'success');
             }
             document.getElementById('resultsTitle').textContent = '🌾 Advisory for ' + values.district;
@@ -1946,6 +1588,19 @@ function addPDFDownloadButton(result) {
 
     if (!fileInput) return;
 
+    window._currentImageType = null;
+
+    window._loadDemoImage = function(url, type) {
+      previewImg.src = url;
+      window._currentImageType = type;
+      uploadZone.style.display = 'none';
+      previewArea.style.display = 'block';
+      if (resultsArea) resultsArea.style.display = 'none';
+      
+      previewArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast('✓ Demo image loaded (' + type + ')', 'info');
+    };
+
     fileInput.addEventListener('change', function(e) {
       var file = e.target.files[0];
       if (!file) return;
@@ -1953,8 +1608,10 @@ function addPDFDownloadButton(result) {
       var reader = new FileReader();
       reader.onload = function(event) {
         previewImg.src = event.target.result;
+        window._currentImageType = 'user_upload';
         uploadZone.style.display = 'none';
         previewArea.style.display = 'block';
+        resultsArea.style.display = 'none';
       };
       reader.readAsDataURL(file);
     });
@@ -1963,14 +1620,24 @@ function addPDFDownloadButton(result) {
       analyzeBtn.disabled = true;
       analyzeBtn.innerHTML = '<span class="spinner"></span> Analyzing Leaf...';
       
-      fetch('/api/vision', { method: 'POST' })
+      fetch(getApiBase() + '/api/vision', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_type: window._currentImageType })
+      })
         .then(res => res.json())
         .then(data => {
+           analyzeBtn.disabled = false;
+           analyzeBtn.innerHTML = '🚀 Analyze with Gemini';
            if(data.ok) {
              showVisionResults(data);
            }
         })
-        .catch(() => showVisionResults()); // Fallback to hardcoded mock
+        .catch(() => {
+           analyzeBtn.disabled = false;
+           analyzeBtn.innerHTML = '🚀 Analyze with Gemini';
+           showVisionResults(); 
+        });
     });
   }
 

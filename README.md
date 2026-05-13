@@ -92,7 +92,7 @@ Rytha Mitra isn't just another crop recommender; it's a high-fidelity intelligen
 
 For this hackathon, we didn't just build a prototype; we built an **enterprise-ready product**. Here are the premium features implemented in our latest release:
 
-*   **Pest & Disease Scanner (Vision AI):** A sleek, animated interface simulating a Gemini 1.5 Flash Vision AI analysis. It detects issues like Early Blight and provides immediate mitigation steps.
+*   **Pest & Disease Scanner (Vision AI):** A sleek, animated interface simulating a Gemini 1.5 Flash Vision AI analysis. **Strategic Choice:** For this hackathon release, we use a *High-Fidelity Behavioral Demo* with categorical samples (Healthy, Early Blight, Late Blight). This ensures 100% demo reliability and mimics our planned "Edge-AI" offline scanning feature for rural fields without 5G.
 *   **Sentinel-2 Field View:** A real-time NDVI visualization card that maps out farm health, soil moisture, and localized stress hotspots based on geolocation.
 *   **Farm Credit Score:** A dynamic badging system that calculates a sustainability and reliability score, proving to judges the platform's potential for real-world fintech integration.
 *   **Community Pulse Ticker:** A persistent, animated marquee that displays live social-proof data (e.g., "Mysore: PMFBY claims active") to foster community trust.
@@ -153,9 +153,9 @@ We have engineered Rytha Mitra to scale meticulously. Our roadmap is data-driven
 
 | Phase & Timeline | Focus Area | Key Deliverables & Targets |
 | :--- | :--- | :--- |
-| **Phase 1<br/>Current (MVP)** | **Foundational Architecture** | <ul><li>**Status:** completed(current) 📍</li><li>**Specs:** Synthetic data (2.2k rows), 9 districts, ₹0 stack cost.</li><li>**Core:** RF Model, SHAP, Offline engine, Sarvam AI Kannada TTS.</li><li>**Limitation:** 91.7% accuracy based on clean synthetic data.</li></ul> |
-| **Phase 2<br/>Next 2–4 Weeks** | **Data Enhancement & Real Noise** | <ul><li>**Target:** 10,000+ rows, 94–95% accuracy.</li><li>**Augmentation:** Inject ±5% Gaussian noise to simulate sensor flaws.</li><li>**Integration:** Merge real NPK/pH from `soilhealth.dac.gov.in`.</li><li>**Expansion:** Align with ICRISAT (1966–2017) district crop data.</li></ul> |
-| **Phase 3<br/>1–2 Months** | **Algorithmic Evolution** | <ul><li>**Target:** 95–97% accuracy, Seasonal mapping.</li><li>**Upgrade:** Test XGBoost against RF baseline; execute GridSearchCV.</li><li>**Seasonal Split:** Distinct models for *Kharif* vs. *Rabi* seasons.</li><li>**Yield Prediction:** Evolve from classification ("Which crop?") to regression ("How much yield?").</li></ul> |
+| **Phase 1<br/>Current (MVP)** | **Foundational Architecture** | <ul><li>**Status:** completed(current) 📍</li><li>**Specs:** Synthetic data (2.2k rows), 9 districts, ₹0 stack cost.</li><li>**Core:** RF Model, SHAP, Offline engine, Sarvam AI Kannada TTS.</li><li>**Vision:** **High-Fidelity Behavioral Demo** (Category-based logic).</li><li>**Limitation:** 91.7% accuracy based on clean synthetic data.</li></ul> |
+| **Phase 2<br/>Next 2–4 Weeks** | **Data Enhancement & Vision API** | <ul><li>**Target:** 10,000+ rows, 94–95% accuracy.</li><li>**Vision:** **Live API Integration** (Transition from behavioral to Gemini 1.5 Flash).</li><li>**Augmentation:** Inject ±5% Gaussian noise to simulate sensor flaws.</li><li>**Integration:** Merge real NPK/pH from `soilhealth.dac.gov.in`.</li></ul> |
+| **Phase 3<br/>1–2 Months** | **Algorithmic Evolution** | <ul><li>**Target:** 95–97% accuracy, Seasonal mapping.</li><li>**Hardware:** Edge-AI deployment for instant offline leaf scanning.</li><li>**Yield Prediction:** Evolve from classification to regression yield models.</li></ul> |
 | **Phase 4<br/>3–6 Months** | **Product Scale & Hardware** | <ul><li>**Target:** 30 districts, Hardware integration, Feedback loop.</li><li>**Ground Truth:** Farmer feedback loop ("Did it succeed?") for continuous retraining.</li><li>**Hardware:** IoT soil sensors to replace manual NPK inputs.</li><li>**Language:** Expand Sarvam AI to Telugu, Marathi, and Hindi for border districts.</li></ul> |
 
 ---
