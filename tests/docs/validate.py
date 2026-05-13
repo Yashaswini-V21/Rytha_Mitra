@@ -1,13 +1,15 @@
 """Quick validation script for Rytha Mitra project integrity."""
 import re
 import os
+from pathlib import Path
 
-BASE = os.path.dirname(os.path.abspath(__file__))
-FRONTEND = os.path.join(BASE, "frontend")
+DOCS_DIR = Path(__file__).resolve().parent
+ROOT = DOCS_DIR.parents[1]
+FRONTEND = ROOT / "frontend"
 
 def check_html(filename):
-    path = os.path.join(FRONTEND, filename)
-    html = open(path, encoding="utf-8").read()
+    path = FRONTEND / filename
+    html = path.read_text(encoding="utf-8")
     opens = len(re.findall(r"<div[\s>]", html))
     closes = html.count("</div>")
     status = "PASS" if opens == closes else "FAIL"
@@ -15,8 +17,8 @@ def check_html(filename):
     return opens == closes
 
 def check_css(filename):
-    path = os.path.join(FRONTEND, filename)
-    css = open(path, encoding="utf-8").read()
+    path = FRONTEND / filename
+    css = path.read_text(encoding="utf-8")
     o = css.count("{")
     c = css.count("}")
     status = "PASS" if o == c else "FAIL"
@@ -24,13 +26,13 @@ def check_css(filename):
     return o == c
 
 def check_file_exists(filepath, label):
-    exists = os.path.exists(os.path.join(BASE, filepath))
+    exists = (ROOT / filepath).exists()
     status = "PASS" if exists else "FAIL"
     print(f"  {label}: [{status}]")
     return exists
 
 def check_file_contains(filepath, keyword, label):
-    content = open(os.path.join(BASE, filepath), encoding="utf-8").read()
+    content = (ROOT / filepath).read_text(encoding="utf-8")
     found = keyword in content
     status = "PASS" if found else "FAIL"
     print(f"  {label}: [{status}]")

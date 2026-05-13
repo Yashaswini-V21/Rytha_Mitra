@@ -7,12 +7,12 @@
   <meta name="description" content="Rytha Mitra Core Advisory — AI crop recommendations with SHAP, live mandi prices, weather flag, soil alerts, and Kannada output.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="core.css">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="/public/9ryta.webp" type="image/webp">
-  <script src="lang_engine.js" defer></script>
+  <script src="lang_engine.js?v=2.4" defer></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -414,6 +414,7 @@
               <div style="text-align: center; padding: 4rem; color: var(--muted);">
                 <p lang="kn">ಕನ್ನಡ ವರದಿಯನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಮೊದಲು ಸಮಾಲೋಚನೆಯನ್ನು ಚಲಾಯಿಸಿ.</p>
                 <p>(Please run advisory first to see the Kannada report here)</p>
+                <button type="button" class="btn btn-mint" id="kannadaListenBtn" style="margin-top:1rem;" onclick="window.speakKannadaText(window.__lastKannadaTranslation || 'ಕನ್ನಡ ಅನುವಾದ ಲಭ್ಯವಿಲ್ಲ')">🔊 Listen Kannada</button>
               </div>
             </div>
           </div>
@@ -432,6 +433,7 @@
             <div id="shap-output-area" class="results-container" style="display:block; min-height: 200px; background: rgba(0,0,0,0.2); border-radius: var(--radius);">
                <div style="text-align: center; padding: 4rem; color: var(--muted);">
                 <p>SHAP visualizations and soil intelligence will appear here after the AI finishes its analysis.</p>
+                <button type="button" class="btn btn-mint" style="margin-top:1rem;" onclick="document.getElementById('tab-btn-advisory')?.click()">Run advisory to populate soil analytics</button>
               </div>
             </div>
           </div>
@@ -618,8 +620,8 @@
     </div>
   </footer>
 
-  <script src="app.js"></script>
-  <script src="core.js"></script>
-  <script src="premium.js"></script>
+  <script src="app.js?v=2.4"></script>
+  <script src="core.js?v=2.4"></script>
+  <script src="premium.js?v=2.4"></script>
 </body>
 </html>

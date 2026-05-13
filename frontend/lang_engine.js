@@ -79,15 +79,48 @@
 
   var currentLang = localStorage.getItem('ryt-lang') || 'en';
 
+  function normalizeText(text) {
+    return String(text || '')
+      .replace(/\s+/g, ' ')
+      .replace(/[\u00a0\u200b]/g, ' ')
+      .trim();
+  }
+
+  function getSpeech() {
+    return window.speechSynthesis || null;
+  }
+
+  window.stopKannadaSpeech = function() {
+    var speech = getSpeech();
+    if (speech) speech.cancel();
+  };
+
+  window.speakKannadaText = function(text, options) {
+    var speech = getSpeech();
+    if (!speech || !text) return false;
+
+    var utterance = new SpeechSynthesisUtterance(String(text));
+    utterance.lang = (options && options.lang) || 'kn-IN';
+    utterance.rate = (options && options.rate) || 0.95;
+    utterance.pitch = (options && options.pitch) || 1;
+
+    speech.cancel();
+    setTimeout(function() {
+      speech.speak(utterance);
+    }, 120);
+    return true;
+  };
+
   function applyTranslations() {
     var dict = TRANSLATIONS[currentLang];
+    document.documentElement.lang = currentLang;
     
     // Select elements to translate
     // 1. All text nodes
     var walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     var node;
     while(node = walk.nextNode()) {
-      var txt = node.textContent.trim();
+      var txt = normalizeText(node.textContent);
       // Reverse translation if switching back to English
       if (currentLang === 'en') {
         // This is hard since we don't have the original text saved per node.
@@ -102,7 +135,7 @@
 
     // 2. All buttons and links
     document.querySelectorAll('a, button, h1, h2, h3, h4, label, span, p').forEach(function(el) {
-       var txt = el.textContent.trim();
+       var txt = normalizeText(el.textContent);
        if (dict && dict[txt]) {
          el.textContent = dict[txt];
        }
@@ -129,7 +162,9 @@
   window.toggleLanguage = function() {
     currentLang = currentLang === 'en' ? 'kn' : 'en';
     localStorage.setItem('ryt-lang', currentLang);
+    document.documentElement.lang = currentLang;
     if (currentLang === 'en') {
+      window.stopKannadaSpeech();
       location.reload();
     } else {
       applyTranslations();
@@ -167,6 +202,7 @@
     if (currentLang === 'kn') {
       applyTranslations();
     } else {
+      document.documentElement.lang = 'en';
       updateToggleButton();
     }
   }

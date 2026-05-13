@@ -165,7 +165,7 @@ We have engineered Rytha Mitra to scale meticulously. Our roadmap is data-driven
 Rytha Mitra leverages a modern, cost-effective, and highly scalable technology stack (Total Stack Cost: ₹0 via free-tier APIs):
 
 *   **Frontend:** HTML5, CSS3 (Glassmorphism UI), Vanilla JS, PWA (Service Workers for offline support)
-*   **Backend:** Python 3.11, Flask, Pydantic (Input Validation), Gunicorn
+*   **Backend:** Python 3.11+, Flask, Pydantic (Input Validation), Gunicorn
 *   **Machine Learning:** Scikit-Learn (Random Forest 100-Trees)
 *   **AI Explainability:** SHAP (SHapley Additive exPlanations)
 *   **Agent Orchestration:** CrewAI (4-Agent Pipeline)
@@ -181,11 +181,11 @@ Rytha Mitra leverages a modern, cost-effective, and highly scalable technology s
 
 The project follows a clean, enterprise-standard organization for audit readiness:
 
-- 📂 `src/`: Core application source code.
+- 📂 `src/`: Core API package source code.
   - 📂 `src/api/`: Backend server logic and endpoint definitions.
-  - 📂 `src/crew/`: Multi-agent orchestration logic (CrewAI).
-  - 📂 `src/model/`: Serialized ML models and training scripts.
-  - 📂 `src/tools/`: Custom AI tools (Market price, etc.).
+  - 📂 `src/model/`: API-adjacent model assets and helpers.
+- 📂 `crew/`: Multi-agent orchestration logic (CrewAI runtime and tools).
+- 📂 `tools/`: Tooling datasets and market intelligence utilities.
 - 📂 `scripts/`: Helper scripts for development and demonstration.
   - `run_demo.py`: Fast CLI demonstration of the AI pipeline.
   - `serve.py`: Simple HTTP server for local frontend preview.
@@ -212,6 +212,7 @@ While Rytha Mitra is designed for high accuracy, the following limitations apply
 
 - 📄 [Code of Conduct](docs/CODE_OF_CONDUCT.md)
 - 📄 [Contribution Guide](docs/CONTRIBUTING.md)
+- 📄 [Project Backlog](docs/PROJECT_BACKLOG.md)
 - 📄 [Test Plan & Test Cases](tests/docs/TEST_PLAN.md)
 - 📄 [Security Audit Report](tests/security/vulnerability_scan.md)
 - 📄 [Latest Test Summary](tests/reports/test_summary.md)

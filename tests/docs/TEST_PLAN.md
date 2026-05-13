@@ -5,7 +5,7 @@ This document outlines the testing strategy for Rytha Mitra (ರೈತ ಮಿತ
 
 ## 2. Test Folders Structure
 - `tests/unit/`: Core logic and utility tests.
-- `tests/integration/`: End-to-end flow and API integration.
+- `tests/unit/test_integration_e2e.py`: End-to-end flow and API integration checks.
 - `tests/security/`: Security audits and vulnerability scans.
 - `tests/performance/`: Load testing and latency benchmarks.
 - `tests/reports/`: Historical test execution summaries.
@@ -26,7 +26,7 @@ This document outlines the testing strategy for Rytha Mitra (ರೈತ ಮಿತ
 ### 3.3 Integration (E2E Tests)
 - **TC-INT-01**: Full flow from soil input to forensic report generation.
 - **TC-INT-02**: CrewAI agent collaboration validation.
-- **TC-INT-03**: Frontend-Backend communication via FastAPI.
+- **TC-INT-03**: Frontend-Backend communication via Flask API routes.
 
 ## 4. Execution Tools
 - **Framework**: `pytest`
